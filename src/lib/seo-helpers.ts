@@ -40,7 +40,11 @@ export function pageMetadata(page: Page, settings?: SiteSetting | null): Metadat
     defaultOgImage: mediaUrl(settings?.defaultOgImage ?? null),
     // Task 13: a record with no editor-chosen image gets its own generated OG
     // (title rendered over the brand plate) instead of an imageless card.
-    fallbackOgImage: page.slug ? `/og/page/${page.slug}` : null,
+    // The TRAILING SLASH is load-bearing: `trailingSlash: true` makes the slash
+    // form the canonical, directly-servable URL, so the bare form would 308 and
+    // strict OG fetchers that do not follow it would drop the image entirely —
+    // the same class of bug as the media-URL redirect in AGENTS.md.
+    fallbackOgImage: page.slug ? `/og/page/${page.slug}/` : null,
     brandName: settings?.brandName ?? undefined,
   }
 }
@@ -55,8 +59,9 @@ export function postMetadata(post: Post, settings?: SiteSetting | null): Metadat
     canonicalOverride: post.seo?.canonicalOverride ?? null,
     ogImage: mediaUrl(post.seo?.ogImage ?? null),
     defaultOgImage: mediaUrl(settings?.defaultOgImage ?? null),
-    // Task 13: same generated-OG fallback as pages (`/og/post/<slug>`).
-    fallbackOgImage: post.slug ? `/og/post/${post.slug}` : null,
+    // Task 13: same generated-OG fallback as pages (`/og/post/<slug>/`) —
+    // trailing slash for the same canonical-URL reason.
+    fallbackOgImage: post.slug ? `/og/post/${post.slug}/` : null,
     publishedTime: post.publishedAt ?? null,
     modifiedTime: post.updatedAt ?? null,
     brandName: settings?.brandName ?? undefined,

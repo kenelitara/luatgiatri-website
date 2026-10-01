@@ -5,18 +5,28 @@ import { DEFAULT_BRAND } from '@/lib/metadata'
 import { getSiteSettings } from '@/lib/site'
 
 /**
- * Dynamic Open Graph cards (M3 Task 13): `/og/page/<slug>` and `/og/post/<slug>`,
+ * Dynamic Open Graph cards (M3 Task 13): `/og/page/<slug>/` and `/og/post/<slug>/`,
  * 1200×630, brand plate + gold bar + the record's title.
  *
- * Same DB-at-build convention as every other route (AGENTS.md, Docker-stack):
- * the docker build has no database, so the reads are fail-soft and the first
- * runtime revalidation past `revalidate` heals the baked brand-only card.
+ * The reads below are fail-soft, but NOTE what that is for: this handler is
+ * `ƒ (Dynamic)` — it is never executed during `next build`, so nothing about it
+ * is baked. The try/catches cover runtime and ISR DB hiccups (a restart whose
+ * first request lands before the pool is warm), where the brand-only card is a
+ * better answer than a 500.
  *
  * `/og/...` is deliberately NOT in robots.txt's Disallow list (`/admin`, `/api/`)
  * — crawlable OG images are the point (social + link previews).
  */
-export const revalidate = 3600
+// 60s to MATCH the record pages (`revalidate = 60` in src/app/(frontend)/**)
+// rather than the plan's 3600: there is no on-demand revalidatePath/Tag in this
+// project, so all healing is time-based, and an editor's title change would
+// otherwise show on the page ~60× sooner than on the card. OG cards are
+// crawler-only traffic, so the extra renders are negligible.
+export const revalidate = 60
 export const runtime = 'nodejs' // the brand font is read from disk
+
+const OG_WIDTH = 1200
+const OG_HEIGHT = 630
 
 // brand-900 / gold-500, inlined because Tailwind classes do not apply inside
 // satori. Values MUST stay in sync with `@theme` in src/app/globals.css.
@@ -25,13 +35,18 @@ const GOLD_500 = '#ffd700'
 
 const OG_FONT_FAMILY = 'Be Vietnam Pro'
 
+/** Lines the title is clamped to before it would crowd the 630px card. */
+const TITLE_LINES = 3
+
 type OgFont = { name: string; data: Buffer; weight: 400 | 700; style: 'normal' }
 
 /**
  * The site renders in Be Vietnam Pro (spec §6.8) but satori cannot read a
  * `next/font/google` face — it needs raw font bytes. The two TTFs are committed
  * under `public/fonts/` (copied into the standalone runner by the Dockerfile)
- * and read once per process.
+ * and read once per process, LAZILY: `readFileSync` may only run inside a
+ * request, never at module evaluation, so a build-time import of this route
+ * never touches disk.
  *
  * `undefined` = not attempted yet, `null` = load failed. On failure the `fonts`
  * option is omitted entirely so `@vercel/og` uses its bundled Geist face — which
@@ -57,7 +72,11 @@ function getBrandFonts(): OgFont[] | null {
         style: 'normal',
       },
     ]
-  } catch {
+  } catch (err) {
+    // Logged once per process (the cache above short-circuits retries): a
+    // mis-provisioned runner image would otherwise serve Geist cards forever
+    // with no signal at all.
+    console.error('[og] brand font load failed; falling back to the bundled font:', err)
     brandFonts = null
   }
   return brandFonts
@@ -88,8 +107,10 @@ async function resolveTitle(type: string | undefined, recordSlug: string | undef
       })
       return r.docs[0]?.title ?? brand
     }
-  } catch {
-    // DB-at-build: fall back to the brand-only OG; ISR heals at runtime
+  } catch (err) {
+    // Without this, a renamed field / bad `where` / schema drift silently
+    // degrades EVERY page and post card to brand-only.
+    console.error('[og] title lookup failed:', { type, recordSlug }, err)
   }
   return brand
 }
@@ -123,10 +144,29 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
           <div style={{ width: 64, height: 64, background: GOLD_500, borderRadius: 8 }} />
           <div style={{ fontSize: 32, fontWeight: 700 }}>{brand}</div>
         </div>
-        <div style={{ fontSize: 60, fontWeight: 700, lineHeight: 1.15, maxWidth: 1000 }}>{title}</div>
+        <div
+          style={{
+            fontSize: 60,
+            fontWeight: 700,
+            lineHeight: 1.15,
+            maxWidth: 1000,
+            // Clamp long titles rather than letting them run off the fixed
+            // 630px canvas. satori's clamp branch needs ALL of these together
+            // (measured in @vercel/og's compiled satori: it reads
+            // textOverflow + display:'-webkit-box' + WebkitBoxOrient:'vertical'
+            // + a positive WebkitLineClamp).
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: TITLE_LINES,
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+          }}
+        >
+          {title}
+        </div>
         <div style={{ height: 8, width: 240, background: GOLD_500 }} />
       </div>
     ),
-    { width: 1200, height: 630, ...(fonts ? { fonts } : {}) },
+    { width: OG_WIDTH, height: OG_HEIGHT, ...(fonts ? { fonts } : {}) },
   )
 }

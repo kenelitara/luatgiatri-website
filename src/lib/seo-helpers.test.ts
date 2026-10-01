@@ -84,11 +84,14 @@ describe('generated-OG fallback (Task 13)', () => {
   const page = (seo: Page['seo'], slug: string | null) =>
     ({ id: 1, title: 'Giới thiệu', primaryHeading: 'Giới thiệu', slug, seo }) as unknown as Page
 
-  it('points a page with no editor OG at /og/page/<slug>', () => {
-    expect(pageMetadata(page(undefined, 'gioi-thieu')).fallbackOgImage).toBe('/og/page/gioi-thieu')
+  // The trailing slash is asserted deliberately: `trailingSlash: true` makes it
+  // the canonical URL, and the bare form 308s (dropping the image for strict
+  // OG fetchers) — see the note in seo-helpers.ts.
+  it('points a page with no editor OG at /og/page/<slug>/', () => {
+    expect(pageMetadata(page(undefined, 'gioi-thieu')).fallbackOgImage).toBe('/og/page/gioi-thieu/')
   })
 
-  it('points a post with no editor OG at /og/post/<slug>', () => {
+  it('points a post with no editor OG at /og/post/<slug>/', () => {
     const post = {
       id: 1,
       title: 'Tin',
@@ -96,7 +99,7 @@ describe('generated-OG fallback (Task 13)', () => {
       slug: 'tin-moi',
       body: { root: { children: [] } },
     } as unknown as Post
-    expect(postMetadata(post).fallbackOgImage).toBe('/og/post/tin-moi')
+    expect(postMetadata(post).fallbackOgImage).toBe('/og/post/tin-moi/')
   })
 
   it('emits no fallback when the record has no slug', () => {
@@ -108,6 +111,6 @@ describe('generated-OG fallback (Task 13)', () => {
       page({ ogImage: { id: 9, url: '/api/media/file/x.png/' } } as Page['seo'], 'gioi-thieu'),
     )
     expect(withOg.ogImage).toBe('/api/media/file/x.png')
-    expect(withOg.fallbackOgImage).toBe('/og/page/gioi-thieu')
+    expect(withOg.fallbackOgImage).toBe('/og/page/gioi-thieu/')
   })
 })

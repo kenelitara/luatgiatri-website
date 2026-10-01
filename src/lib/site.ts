@@ -1,4 +1,5 @@
 import { getPayloadClient } from '@/lib/getPayload'
+import { DEFAULT_BRAND } from '@/lib/metadata'
 import type { Navigation, SiteSetting } from '@/payload-types'
 
 /**
@@ -12,7 +13,9 @@ import type { Navigation, SiteSetting } from '@/payload-types'
  */
 const SITE_SETTINGS_FALLBACK: SiteSetting = {
   id: 0,
-  brandName: 'Luật Gia Trí',
+  // DEFAULT_BRAND, not a re-typed literal: with no DB this fallback IS the
+  // effective brand source — including for the `/og` cards.
+  brandName: DEFAULT_BRAND,
   hotline: '0919088119',
   email: 'luatsu@luatgiatri.com',
   address: {

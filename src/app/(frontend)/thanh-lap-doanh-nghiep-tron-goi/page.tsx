@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { PageShell } from '@/components/PageShell'
 import { getPage } from '@/lib/getPage'
 import { getSiteSettings } from '@/lib/site'
-import { buildMetadata } from '@/lib/metadata'
+import { buildMetadata, DEFAULT_BRAND } from '@/lib/metadata'
 import { pageMetadata } from '@/lib/seo-helpers'
 
 export const revalidate = 60
@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   ])
   if (!page)
     return buildMetadata({
-      title: 'Luật Gia Trí',
+      title: DEFAULT_BRAND,
       path: '/thanh-lap-doanh-nghiep-tron-goi/',
       branded: false,
     })

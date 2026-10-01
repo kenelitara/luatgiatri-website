@@ -374,15 +374,49 @@ app (`next start -p 3100`), not dev.
   gained `fallbackOgImage`, and `buildMetadata`'s image chain is
   `ogImage ?? defaultOgImage ?? fallbackOgImage`. Both are NULL in the current
   DB, so the observable result is the same today.
-- **`/og/[...slug]` shape.** One `route.tsx` serves both `/og/page/<slug>` and
-  `/og/post/<slug>` (`revalidate = 3600`, `runtime = 'nodejs'`). The build marks
-  it `ƒ (Dynamic)` — it is never executed during `next build`, so a DB-less
-  docker build cannot fail on it. Verified with `next start` (2026-10-01):
-  `/og/page/{gioi-thieu,home}` → `200 image/png`; `/og/page` (no slug),
-  `/og/page/` (trailing slash), `/og/post/khong-ton-tai` and `/og/bogus/x` all →
+- **The advertised OG URL MUST carry the trailing slash.** `trailingSlash: true`
+  makes `/og/page/<slug>/` the canonical, directly-servable form; the bare
+  `/og/page/<slug>` **308s** to it. `buildMetadata`'s `absoluteOrNull` only
+  prepends the base — it does NOT normalise slashes — so the slash has to be in
+  the value `seo-helpers.ts` emits. Same failure class as the media-URL
+  redirect above: strict OG fetchers that do not follow a 308 lose the image
+  entirely. Verified with `curl`-equivalent against the built app:
+  `/og/page/gioi-thieu/` → `200`, 0 redirects.
+- **`/og/[...slug]` shape.** One `route.tsx` serves both `/og/page/<slug>/` and
+  `/og/post/<slug>/` (`revalidate = 60`, `runtime = 'nodejs'`). `revalidate` is
+  a deliberate DEVIATION from the plan's 3600: every record page uses 60 and
+  there is no on-demand `revalidatePath`/`revalidateTag` anywhere in the
+  project, so all healing is time-based — at 3600 an editor's title change would
+  reach the card up to 60× later than the page. OG traffic is crawler-only, so
+  the extra renders are negligible. The build marks the route `ƒ (Dynamic)` — it
+  is never executed during `next build`, so a DB-less docker build cannot fail
+  on it, and nothing about it is baked (which is also why the "heal the baked
+  card" phrasing does not apply here: the try/catches cover runtime/ISR DB
+  hiccups, not build-time prerender). Verified with `next start` (2026-10-01):
+  `/og/page/{gioi-thieu,home}/` → `200 image/png`; `/og/page` (no slug),
+  `/og/page/` (bare trailing), `/og/post/khong-ton-tai` and `/og/bogus/x` all →
   `200 image/png` brand-only cards (never a 500); `/og` bare → `404` (a
   `[...slug]` catch-all needs at least one segment). `next/og`'s own fallback is
   what makes the malformed paths safe.
+- **Both fail-soft catches log.** `console.error('[og] title lookup failed:',
+  { type, recordSlug }, err)` and `'[og] brand font load failed; …'` — matching
+  the `src/lib/db.ts` / `src/app/api/health/route.ts` convention. Without them a
+  renamed field, a bad `where` or a mis-provisioned runner image degrades every
+  card to brand-only with no signal at all. Both fire at runtime only (the route
+  is dynamic); the font one is LATCHED by the process-level font cache, so it
+  logs once, not per request.
+- **The title is clamped to 3 lines** (`display: '-webkit-box'` +
+  `WebkitBoxOrient: 'vertical'` + `WebkitLineClamp` + `textOverflow: 'ellipsis'`)
+  so a long `Post.title` truncates with an ellipsis instead of running off the
+  fixed 630px canvas. satori's clamp branch requires all four together — read
+  off its compiled source, same technique as the `fonts` finding above. Verified
+  with a 160-char title: the card stays in bounds.
+- **`DEFAULT_BRAND` is the single source for the brand string.** Exported from
+  `src/lib/metadata.ts`; imported by `src/lib/site.ts`'s
+  `SITE_SETTINGS_FALLBACK` (the effective brand when the DB is down — i.e. what
+  the OG card depends on) and by the nine `(frontend)` routes' DB-less
+  `generateMetadata` fallbacks. The dependency is acyclic: `metadata.ts` imports
+  only `site-env.ts`, which imports nothing.
 - **`/og` stays OUT of robots.txt on purpose.** `disallow: ['/admin', '/api/']`
   does not cover it, and crawlable OG images are the point (social + link
   previews). Do not "tidy" it in.
