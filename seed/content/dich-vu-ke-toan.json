@@ -1,0 +1,985 @@
+{
+  "title": "Dịch Vụ Kế Toán - Luật Gia Trí",
+  "slug": "dich-vu-ke-toan",
+  "primaryHeading": "Dịch Vụ Kế Toán - Luật Gia Trí",
+  "layout": [
+    {
+      "blockType": "hero",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/img-blog-14.jpg",
+        "alt": "Dịch Vụ Kế Toán"
+      },
+      "headline": "Dịch Vụ Kế Toán",
+      "subheadline": "Cung cấp dịch vụ làm kế toán thuê ngoài cho các doanh nghiệp. Dịch vụ này sẽ giải quyết toàn bộ công việc kế toán cho đơn vị từ thuế, kê khai thuế, tài chính đến báo cáo tài chính ,… một các uy tín và chính xác.",
+      "ctaLabel": "Liên hệ ngay",
+      "ctaHref": "/lien-he/"
+    },
+    {
+      "blockType": "pricingTable",
+      "heading": "Dịch Vụ Kế Toán",
+      "columns": "service-fee",
+      "groups": [
+        {
+          "title": "Thương Mại & Dịch Vụ",
+          "rows": [
+            {
+              "service": "Không có hóa đơn, chứng từ",
+              "fee": "400.000"
+            },
+            {
+              "service": "Từ 01 – 10 hóa đơn",
+              "fee": "900.000"
+            },
+            {
+              "service": "Từ 11 – 20 hóa đơn",
+              "fee": "1.200.000"
+            },
+            {
+              "service": "Từ 21 – 30 hóa đơn",
+              "fee": "1.400.000"
+            }
+          ]
+        },
+        {
+          "title": "Sản Xuất",
+          "rows": [
+            {
+              "service": "Không có hóa đơn, chứng từ",
+              "fee": "500.000"
+            },
+            {
+              "service": "Từ 01 – 10 hóa đơn",
+              "fee": "1.200.000"
+            },
+            {
+              "service": "Từ 11 – 20 hóa đơn",
+              "fee": "1.400.000"
+            },
+            {
+              "service": "Từ 21 – 30 hóa đơn",
+              "fee": "1.800.000"
+            }
+          ]
+        }
+      ],
+      "note": "Thương Mại & Dịch Vụ — Trừ ngành xuất nhập khẩu là ngành chính của doanh nghiệp; nhà hàng quán ăn.\nThương Mại & Dịch Vụ: Thêm 20.000₫/tháng cho mỗi hóa đơn tăng thêm từ 31 hóa đơn trở lên\nSản Xuất — Xây Dựng, Xuất Nhập Khẩu ; Nhà Hàng, Quán Ăn, Phục Vụ Ăn Uống.\nSản Xuất: Thêm 30.000₫/tháng cho mỗi hóa đơn tăng thêm từ 31 hóa đơn trở lên"
+    },
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Mô tả dịch vụ kế toán thuế",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "version": 0,
+              "listType": "bullet",
+              "tag": "ul",
+              "children": [
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Lập và gửi các loại hồ sơ, giấy tờ theo yêu cầu của cơ quan thuế."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Hướng dẫn viết hoá đơn và lập các loại chứng từ theo quy định."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Lập và gửi các loại báo cáo thuế hàng tháng, quý theo qui định."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Hướng dẫn lập và hoàn thành phiếu thu, phiếu chi, phiếu nhập kho, phiếu xuất kho theo chứng từ gốc của đơn vị."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Phân loại, sắp xếp và đóng chứng từ theo tháng."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Hỗ trợ đơn vị hoàn chỉnh và in các loại sổ sách kế toán theo quy định hiện hành."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Cử người trực tiếp làm việc với cơ quan thuế khi có yêu cầu."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Lập quyết toán thuế, báo cáo tài chính cuối năm gửi các cơ quan chức năng."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Lập và gửi các loại báo cáo thống kê, đăng ký các loại hồ sơ cho năm mới."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "blockType": "faq",
+      "heading": "Câu Hỏi Thường Gặp",
+      "items": [
+        {
+          "question": "Bảng giá trên còn phát sinh gì nữa không?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Phí trên bao gồm hoàn thành các file sổ sách, chứng từ của công ty."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Phí làm quyết toán thuế TNDN, TNCN tính theo số lượng hóa đơn phát sinh trong năm: (Áp dụng cho các doanh nghiệp làm quyết toán năm 2017 và hồ sơ kế toán bắt đầu từ năm 2018) "
+                            },
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": " "
+                            }
+                          ]
+                        },
+                        {
+                          "type": "list",
+                          "version": 0,
+                          "listType": "bullet",
+                          "tag": "ul",
+                          "children": [
+                            {
+                              "type": "listitem",
+                              "version": 0,
+                              "value": 0,
+                              "children": [
+                                {
+                                  "type": "paragraph",
+                                  "version": 0,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "version": 0,
+                                      "text": "Doanh nghiệp xuất hóa đơn GTGT đầu ra + đầu vào từ 0-10 hóa đơn/ năm là 1.100.000."
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "listitem",
+                              "version": 0,
+                              "value": 0,
+                              "children": [
+                                {
+                                  "type": "paragraph",
+                                  "version": 0,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "version": 0,
+                                      "text": "Doanh nghiệp xuất hóa đơn GTGT đầu ra + đầu vào từ 11-20 hóa đơn/ năm là 1.600.000."
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "listitem",
+                              "version": 0,
+                              "value": 0,
+                              "children": [
+                                {
+                                  "type": "paragraph",
+                                  "version": 0,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "version": 0,
+                                      "text": "Doanh nghiệp xuất hóa đơn GTGT đầu ra + đầu vào từ 21-30 hóa đơn/ năm là 2.200.000. Số lượng hóa đơn tăng thêm là 10.000/hóa đơn."
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Giá trên chưa bao gồm Thuế GTGT và các loại thuế DN phải nộp cho Cơ quan thuế."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Tại sao hồ sơ kế toán chính xác, đầy đủ, kịp thời?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Công ty có nghĩa vụ thực hiện đúng các quy định pháp luật về kế toán vả thuế, điều này đòi hỏi hồ sơ kế toán của công ty phải đáp ứng các yêu cầu:"
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Chính xác:",
+                              "bold": true
+                            },
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": " Phản ánh chính xác hoạt động của công ty. Chính xác về mặt tính toán, kê khai."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Đầy đủ:",
+                              "bold": true
+                            },
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": " Pháp luật yêu cầu công ty phải kê khai nhiều thông tin liên quan đến tình hình tài chính của mình, do đó công ty phải kê khai đầy đủ nhưng nội dung này, việc kê khai không đầy đủ dẫn đến mức phạt do kê khai không đầy đủ từ 15.000.000 – 25.000.000."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Kịp thời:",
+                              "bold": true
+                            },
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": " Pháp luật yêu cầu công ty phải kê khai theo những mốc thời gian nhất định, việc kê khai không kịp thời dẫn đến khả năng bị phạt do kê khai chậm và công ty có thể đánh mất quyền lợi của mình (ví dụ như kê khai giao dịch liên kết chậm có thể dẫn đến mất quyền kê khai và bị ấn định thuế nếu có giao dịch liên kết."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Tại sao cần sự thông suốt, đồng nhất về dữ liệu kế toán và thuế?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Dữ liệu kế toán cần được q"
+                    },
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "uản lý thông suốt, đồng nhất, liên tục không bị đứt đoạn."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Sự thông suốt, đồng nhất còn thể hiện ở việc các kê khai của công ty phải đồng nhất với dữ liệu kế toán, đó là các kê khai bao gồm:"
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Tất cả các kê khai thuế so với sổ sách kế toán"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Tất cả các kê khai về tiền lương, bảo hiểm xã hội so với sổ sách kế toán"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Số liệu tài chính thể hiện ở Báo cáo tài chính so với sổ sách kế toán"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Việc số liệu kế toán không đồng nhất tạo ra rủi ro rất lớn khi cơ quan thẩm quyền kiểm tra phát hiện, hoặc tiềm ẩn các rủi ro lớn của sự không đồng nhất."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Điều này còn giúp cho công ty không gặp rủi ro khi nhân viên phụ trách nghỉ như mất số liệu, số liệu không đồng nhất (không sử dụng được), không ai nắm tình hình của công ty để bàn giao hay nhận bàn giao"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Tư vấn tối ưu thuế là gì?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Với hơn 14 năm kinh nghiệm, chúng tôi có kiến thức, kinh nghiệm với đa dạng ngành nghề hoạt động kinh doanh của doanh nghiệp, nhờ đó tư vấn doanh nghiệp thực hiện các giao dịch một cách đúng đắn, hiệu quả và đảm bảo lợi ích hợp pháp của doanh nghiệp."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Tôi có được cập nhật kịp thời về kế toán và thuế không?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Chúng tôi theo dõi và cập nhật, thông báo kịp thời các vấn đề liên quan trực tiếp đến doanh nghiệp. Xác định cụ thể vấn đề và tư vấn cách thức xử lý triệt để và tối ưu."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Tại sao người đứng đầu doanh nghiệp phải quan tâm đúng mức về vấn đề kế toán và thuế?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Trách nhiệm của người đứng đầu doanh nghiệp đối với nghĩa vụ kế toán, thuế, tài chính là không thể xem thường."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Trong bối cảnh môi trường pháp luật ngày càng minh bạch và quản lý đồng bộ, bạn cần phải quan tâm đúng mức và có phương án tổ chức khoa học cho chúng."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Việc thất bại trong vấn đề kế toán và thuế có thể dẫn đến những hậu quả cá nhân người đứng đầu như là: không được đầu tư kinh doanh thành lập công ty mới, hơn thế nữa còn có thể bị tạm hoãn xuất cảnh."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Tại sao cần dịch vụ Kế toán và Thuế trọn gói mà không nên quản lý rời rạc?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Chính vì sự liên quan chặt chẽ giữa kế toán và thuế, do đó, để đảm bảo mục tiêu quản lý và tuân thủ luật pháp, công việc kế toán và thuế nên được thực hiện đồng nhất bởi một đội ngũ của doanh nghiệp hoặc thuê ngoài đội ngũ chuyên gia của đơn vị có đầy đủ kiến thức và kinh nghiệm cần thiết cho nhiệm vụ này."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Tại sao tôi cần dịch vụ kế toán và thuế trọn gói mà không nên tự thực hiện?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Dịch vụ kế toán thuế trọn gói có thể nói là cần thiết cho mọi doanh nghiệp hoạt động tại Việt Nam."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Bất kỳ doanh nghiệp nào cũng có thể xây dựng đội ngũ kế toán và thuế để thực hiện công việc, tuy nhiên, do đặc tính “liên quan chặt chẽ đến các quy định pháp luật” của việc Lập báo cáo tài chính và Thực hiện nghĩa vụ về thuế của doanh nghiệp, cho nên việc sử dụng dịch vụ kế toán trọn gói uy tín của một đơn vị chuyên nghiệp luôn mang lại sự tối ưu hơn so với tự tổ chức thực hiện trên các phương diện:"
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "number",
+                  "tag": "ol",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Chi phí vận hành."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Hao phí thời gian."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Sự đầu tư về tâm trí của chủ doanh nghiệp."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Mức độ rủi ro có thể xảy ra cho doanh nghiệp."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Sử dụng dịch vụ kế toán và thuế trọn gói giúp "
+                    },
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "dữ liệu thông suốt, đồng nhất, liên tục không bị đứt đoạn."
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Không gặp rủi ro khi nhân viên nghỉ như mất số liệu, số liệu không đồng nhất (không sử dụng được), không ai nắm tình hình của công ty để bàn giao hay nhận bàn giao."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Không mất thời gian hướng dẫn, bàn giao công việc cho nhân viên mới."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Khách Hàng Của Chúng Tôi",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chúng tôi luôn duy trì mối quan hệ bền vững và đáng tin cậy với từng khách hàng của mình, giúp họ đạt được mục tiêu của mình đồng thời đảm bảo mức độ an toàn và bảo mật cao nhất trong hoạt động kinh doanh của họ."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "blockType": "featureGrid",
+      "items": [
+        {
+          "title": "8+",
+          "body": "Năm kinh nghiệm thực tiễn"
+        },
+        {
+          "title": "140+",
+          "body": "Cuộc gọi tư vấn mỗi tháng"
+        },
+        {
+          "title": "700+",
+          "body": "Hồ sơ khách hàng mỗi năm"
+        },
+        {
+          "title": "99%",
+          "body": "Khách hàng hài lòng"
+        }
+      ]
+    },
+    {
+      "blockType": "ctaBanner",
+      "heading": "Liên Hệ Ngay Với Luật Gia Trí",
+      "body": "Chuyên viên tư vấn giàu kinh nghiệm sẵn sàng hỗ trợ mọi vấn đề pháp lý của bạn 24/7",
+      "eyebrow": "Contact"
+    }
+  ],
+  "serviceMeta": {
+    "serviceName": "Dịch Vụ Kế Toán",
+    "shortDescription": "Cung cấp dịch vụ làm kế toán thuê ngoài cho các doanh nghiệp. Dịch vụ này sẽ giải quyết toàn bộ công việc kế toán cho đơn vị từ thuế, kê khai thuế, tài chính đến báo cáo tài chính ,… một các uy tín và chính xác.",
+    "fromPrice": "400.000",
+    "icon": {
+      "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/mgp-ke-toan-bao-cao-thue.jpg",
+      "alt": "KẾ TOÁN BÁO CÁO THUẾ"
+    }
+  },
+  "_status": "published"
+}

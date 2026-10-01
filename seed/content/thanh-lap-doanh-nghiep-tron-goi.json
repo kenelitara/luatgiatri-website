@@ -1,0 +1,427 @@
+{
+  "title": "Thành Lập Doanh Nghiệp Trọn Gói - Luật Gia Trí",
+  "slug": "thanh-lap-doanh-nghiep-tron-goi",
+  "primaryHeading": "Thành Lập Doanh Nghiệp Trọn Gói - Luật Gia Trí",
+  "layout": [
+    {
+      "blockType": "hero",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/img-blog-11.jpg",
+        "alt": "Dịch vụ pháp lý của Luật Gia Trí"
+      },
+      "headline": "Thành Lập Doanh Nghiệp Trọn Gói",
+      "subheadline": "Luật Gia Trí mang đến dịch vụ thành lập doanh nghiệp trọn gói tại TP.HCM, hỗ trợ hoàn thiện mọi thủ tục pháp lý và tư vấn luật chuyên sâu, giúp doanh nghiệp yên tâm khởi nghiệp và phát triển bền vững theo đúng quy định pháp luật.",
+      "ctaLabel": "Liên hệ ngay",
+      "ctaHref": "/lien-he/"
+    },
+    {
+      "blockType": "pricingTable",
+      "heading": "Thành Lập Doanh Nghiệp Trọn Gói",
+      "columns": "service-fee",
+      "groups": [
+        {
+          "title": "Gói thành lập doanh nghiệp",
+          "rows": [
+            {
+              "service": "Tư vấn miễn phí pháp lý doanh nghiệp; Hồ sơ giấy phép kinh doanh trọn gói; Con dấu tròn chất lượng cao; Đăng ký mẫu dấu theo quy định; Đăng bố cáo điện tử thông tin doanh nghiệp; Thời gian xử lý hồ sơ: 4-5 ngày làm việc",
+              "fee": "1.600.000"
+            }
+          ]
+        },
+        {
+          "title": "Hồ sơ thuế ban đầu",
+          "rows": [
+            {
+              "service": "Soạn thảo hồ sơ thuế ban đầu; Nộp và nhận kết quả hồ sơ thuế; Hỗ trợ giải đáp thắc mắc về thuế; Hoàn thành trong 1 ngày làm việc",
+              "fee": "500.000"
+            }
+          ]
+        },
+        {
+          "title": "Hồ sơ hóa đơn điện tử",
+          "rows": [
+            {
+              "service": "Đăng ký sử dụng hóa đơn điện tử; Tư vấn các quy định thông tư 78 Tổng cục thuế; Hoàn tất nhanh chóng: 1 ngày",
+              "fee": "500.000"
+            }
+          ]
+        },
+        {
+          "title": "Hóa đơn điện tử",
+          "rows": [
+            {
+              "service": "150 số hóa đơn điện tử Wintech; Tư vấn, hỗ trợ sử dụng, kỹ thuật; Thời hạn sử dụng không giới hạn",
+              "fee": "660.000"
+            }
+          ]
+        },
+        {
+          "title": "Chữ ký số điện tử",
+          "rows": [
+            {
+              "service": "Token chữ ký số nộp thuế điện tử; Tư vấn sử dụng, hỗ trợ kỹ thuật; Sử dụng trong 3 năm",
+              "fee": "1.400.000"
+            }
+          ]
+        },
+        {
+          "title": "TỔNG CỘNG",
+          "rows": [
+            {
+              "service": "TỔNG CỘNG",
+              "fee": "4.660.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "blockType": "faq",
+      "heading": "Giải Đáp Thắc Mắc Khi Thành Lập Doanh Nghiệp",
+      "items": [
+        {
+          "question": "Doanh nghiệp mới thành lập phải nộp những loại thuế và lệ phí nào?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp mới thành lập cần lưu ý các nghĩa vụ thuế sau:"
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Thuế GTGT (Giá trị gia tăng): 10% lợi nhuận phát sinh định kỳ."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Thuế TNDN (Thu nhập doanh nghiệp): 20% lợi nhuận trước thuế hàng năm."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Lệ phí môn bài: Theo vốn điều lệ; dưới 10 tỷ: 2.000.000đ/năm, từ 10 tỷ: 3.000.000đ/năm."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Các đơn vị trực thuộc công ty chịu 1.000.000đ/năm. Thành lập từ tháng 7 được giảm 50% phí. Doanh nghiệp mới thành lập miễn lệ phí môn bài năm đầu."
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Thuế TNCN (Thu nhập cá nhân): Đóng khi trả thu nhập cho người lao động, từ 5%-20% tùy mức lương."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Khi phát sinh chuyển nhượng cổ phần, chứng khoán sẽ nộp thêm thuế TNCN."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Thời hạn nộp lệ phí: Tháng 1 hàng năm."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp mới thành lập có bắt buộc mở tài khoản Ngân hàng không?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp mới thành lập bắt buộc phải mở tài khoản ngân hàng để thực hiện các giao dịch với cơ quan thuế, nộp thuế điện tử và thanh toán các hoạt động thương mại hợp pháp."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Những giấy tờ tuỳ thân nào cần phải chuẩn bị cho hồ sơ thành lập doanh nghiệp?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Cần chuẩn bị 2 bản sao công chứng công chứng còn hạn của CCCD/CMND/hộ chiếu của tất cả thành viên/cổ đông góp vốn. Thời hạn chứng thực không quá 6 tháng."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Với công ty TNHH 2 thành viên trở lên hoặc cổ phần, mỗi thành viên đều phải cung cấp đầy đủ giấy tờ này."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp phải khai thuế như thế nào sau khi thành lập?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp mới thành lập cần thực hiện khai thuế GTGT, TNCN định kỳ hàng quý và báo cáo tài chính, quyết toán thuế cuối năm theo quy định, đảm bảo chấp hành đúng chính sách thuế Nhà nước."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Đăng ký ngành nghề kinh doanh có điều kiện cần lưu ý gì?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Khi đăng ký ngành nghề kinh doanh có điều kiện, sau khi nhận giấy phép kinh doanh, doanh nghiệp cần chủ động thực hiện các thủ tục xin giấy phép con phù hợp, ví dụ: tư vấn du học, dịch vụ bảo vệ, hóa chất… theo quy định từng ngành nghề."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Có ưu đãi gì cho doanh nghiệp mới thành lập không?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp thành lập mới được miễn lệ phí môn bài trong năm đầu tiên, hưởng các chính sách hỗ trợ từ Nhà nước và được Luật Gia Trí tư vấn miễn phí các vấn đề pháp lý liên quan quá trình khởi nghiệp."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Khách Hàng Của Luật Gia Trí",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Luật Gia Trí xây dựng uy tín vững chắc qua nhiều năm đồng hành cùng doanh nghiệp lớn nhỏ ở TP.HCM & khu vực phía Nam, cam kết đồng hành cùng khách hàng trên hành trình thành lập và phát triển kinh doanh bền vững, an toàn pháp lý."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "blockType": "featureGrid",
+      "items": [
+        {
+          "title": "8+",
+          "body": "Năm xây dựng thương hiệu"
+        },
+        {
+          "title": "140+",
+          "body": "Khách hàng tư vấn mỗi tháng"
+        },
+        {
+          "title": "700+",
+          "body": "Hồ sơ thực hiện chuyên nghiệp"
+        },
+        {
+          "title": "99%",
+          "body": "Tỉ lệ khách hàng hài lòng"
+        }
+      ]
+    },
+    {
+      "blockType": "ctaBanner",
+      "heading": "Liên Hệ Ngay Với Luật Gia Trí",
+      "body": "Chuyên viên tư vấn giàu kinh nghiệm sẵn sàng hỗ trợ mọi vấn đề pháp lý của bạn 24/7",
+      "eyebrow": "Contact"
+    }
+  ],
+  "serviceMeta": {
+    "serviceName": "Thành Lập Doanh Nghiệp Trọn Gói",
+    "shortDescription": "Luật Gia Trí mang đến dịch vụ thành lập doanh nghiệp trọn gói tại TP.HCM, hỗ trợ hoàn thiện mọi thủ tục pháp lý và tư vấn luật chuyên sâu, giúp doanh nghiệp yên tâm khởi nghiệp và phát triển bền vững theo đúng quy định pháp luật.",
+    "fromPrice": "500.000",
+    "icon": {
+      "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/mgp-thanh-lap-doanh-nghiep.jpg",
+      "alt": "THÀNH LẬP CÔNG TY TRỌN GÓI"
+    }
+  },
+  "_status": "published"
+}

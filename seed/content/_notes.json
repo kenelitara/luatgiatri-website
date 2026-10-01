@@ -1,0 +1,147 @@
+{
+  "transcribed": [
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[0].headline",
+      "value": "Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế",
+      "why": "banner PNG text not extractable (spec §2.8); derived from the page <title>"
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[0].subheadline",
+      "value": "Luật Gia Trí",
+      "why": "banner PNG text not extractable (spec §2.8); derived from the brand string in the page <title>"
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[0].image.alt",
+      "value": "Luật Gia Trí - Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế",
+      "why": "banner PNG has empty alt in raw; alt derived from the same HTML signal as the headline"
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[1].headline",
+      "value": "Giá trị bạn nhận được khi chọn Luật Gia Trí",
+      "why": "banner PNG text not extractable (spec §2.8); derived from the featureGrid section heading + the 5 value-prop h3 titles"
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[1].subheadline",
+      "value": "Tư vấn tận tâm – Tiến trình nhanh gọn – Giá cạnh tranh – Chất lượng hàng đầu – Hỗ trợ 24/7",
+      "why": "banner PNG text not extractable (spec §2.8); derived from the 5 value-prop h3 titles joined with \" – \""
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[1].image.alt",
+      "value": "Giá trị bạn nhận được khi chọn Luật Gia Trí",
+      "why": "banner PNG has empty alt in raw; alt derived from the same HTML signal as the headline"
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[2].headline",
+      "value": "BẠN ĐÃ SẴN SÀNG KHỞI NGHIỆP?",
+      "why": "banner PNG text not extractable (spec §2.8); derived from the ctaBanner section h2"
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[2].subheadline",
+      "value": "Chinh phục thử thách khởi nghiệp cùng Luật Gia Trí – Đội ngũ chuyên nghiệp, giàu kinh nghiệm sẽ đồng hành cùng bạn để đưa doanh nghiệp đi đúng hướng ngay từ những thủ tục pháp lý đầu tiên.",
+      "why": "banner PNG text not extractable (spec §2.8); derived from the ctaBanner section h5"
+    },
+    {
+      "page": "home",
+      "field": "heroCarousel.slides[2].image.alt",
+      "value": "BẠN ĐÃ SẴN SÀNG KHỞI NGHIỆP?",
+      "why": "banner PNG has empty alt in raw; alt derived from the same HTML signal as the headline"
+    }
+  ],
+  "choices": [
+    {
+      "page": "home",
+      "topic": "service showcase section (#section_834417175)",
+      "detail": "Raw is a 6-card slider (image + h3 title + link, no body text). No block supports an image-card grid; mapped the whole section to ONE servicePair: heading = section h2 \"Dành cho mọi Doanh Nghiệp\", body = section h5 intro, bullets = the 6 card titles (verbatim), image = the first card image. Card hrefs exist in the site nav; the 5 remaining card images are not referenced (they also exist on their target pages)."
+    },
+    {
+      "page": "home",
+      "topic": "newsPreview",
+      "detail": "Post thumbnails/excerpts in the news section are Posts data (M3) — only the section heading and \"Xem tất cả\" href are ported; the \"Xem tất cả bài viết\" label is not a newsPreview field."
+    },
+    {
+      "page": "hoa-don-dien-tu",
+      "topic": "pricing packages (HD300…HD100000)",
+      "detail": "Raw shows 8 package cards (HD300…HD100000), not an mgp-price-table. Mapped to one pricingTable block: one group per package (group title = package code, row service = \"Số lượng hoá đơn : N\" line, fee = price). The per-card \"Miễn phí khởi tạo\" / \"Miễn phí lưu trữ 10 năm\" lines are identical on all 8 cards and are carried once in pricingTable.note."
+    },
+    {
+      "page": "dich-vu-lien-ket",
+      "topic": "partner services count",
+      "detail": "Raw contains 16 partner-service cards (h3 + description paragraph), not 22 as estimated in the task brief; all 16 are ported verbatim as featureGrid items. No pricing, FAQ or logos exist on this raw page."
+    },
+    {
+      "page": "gioi-thieu",
+      "topic": "team members",
+      "detail": "Raw shows 3 team members (Nguyễn Minh Trí, Lê Thanh Hoa, Phạm Anh Quân); only the first two exist as Authors (Task 12) — teamGrid links those two. Phạm Anh Quân has no Author record (no photo/credentials captured); flagged for the client to add an Author if wanted. Member photos (mbws-avatar-*.jpg) are not downloaded."
+    },
+    {
+      "page": "gioi-thieu",
+      "topic": "MGP-CHUAN-3F banner (#section_125322682)",
+      "detail": "A full-width background-image banner with no HTML text content — no block can hold it; not ported."
+    },
+    {
+      "page": "lien-he",
+      "topic": "contact form",
+      "detail": "The CF7 contact form is M3 scope (Leads) — not ported. The three contact boxes are ported as a richText block with \"label: value\" lines assembled from the raw h3 labels and values. ctaBanner carries the section heading/intro; its ctaLabel/ctaHref are left to the schema defaults (\"Liên hệ ngay\" → /lien-he/)."
+    },
+    {
+      "page": "all",
+      "topic": "mgp-price-table feature lists",
+      "detail": "Where a price-table package cell carries a ux-menu feature list (thanh-lap, ho-tro), the features are joined with \"; \" into the row service text (all values verbatim); group title = package name, fee = price. ke-toan tabs become pricingTable groups titled by tab label; the per-tab h5 notes are combined into pricingTable.note with \"label — note\" lines."
+    },
+    {
+      "page": "all",
+      "topic": "\"Khách Hàng\" stats sections",
+      "detail": "Every page's \"Khách Hàng Của…\" section contains counters (8+/140+/700+/99% + labels), not quotes — no testimonials exist anywhere in the raws, so no testimonials block is seeded. Counters map to richText [bold-p(h2), p(intro)] + featureGrid [items {title: count, body: label}]."
+    },
+    {
+      "page": "all",
+      "topic": "h6 kicker labels",
+      "detail": "Small h6 kickers above section headings (e.g. \"DỊCH VỤ\", \"Bảng giá\", \"8 NĂM ĐỒNG HÀNH\", \"GIỚI THIỆU\", \"ĐỊNH NGŨ\") have no block field except ctaBanner.eyebrow (used where present: \"Contact\", \"GIẢI PHÁP PHÁP LÝ NHANH CHÓNG!\"); they are otherwise not ported. The h2 section headings themselves are preserved."
+    },
+    {
+      "page": "all",
+      "topic": "hero ctaLabel/ctaHref",
+      "detail": "Service-page heroes have no button in the raw; ctaLabel \"Liên hệ ngay\" + ctaHref \"/lien-he/\" follow the task example fixture and match the site header button (raw HTML text)."
+    },
+    {
+      "page": "all",
+      "topic": "shared hero background image",
+      "detail": "img-blog-11.jpg is the hero background on 4 pages (thanh-lap, hoa-don, chu-ky, dich-vu-lien-ket) and has an empty alt in every raw; it gets one neutral alt \"Dịch vụ pháp lý của Luật Gia Trí\" (derived from the nav \"Dịch vụ\" + brand). Media dedupes by URL."
+    },
+    {
+      "page": "all",
+      "topic": "decorative section backgrounds",
+      "detail": "Section background images (mgp-people-3.png, mgp-people-2.png, bgn-*.jpg/png) are decorative Flatsome backgrounds with no alt and no block field for backgrounds; not ported. thanh-lap's FAQ decorative image (img-blog-12-1024x1024.jpg) likewise has no block slot; not ported."
+    },
+    {
+      "page": "all",
+      "topic": "heading demotion inside richText",
+      "detail": "Per spec §6.4 the Heading component is the only h2/h3 emitter in blocks, so section headings that fall inside richText bodies (e.g. \"Mô tả dịch vụ kế toán thuế\", stats-section h2s, gioi-thieu h2 pairs) are stored as bold paragraphs in the Lexical body instead of heading nodes. Text is verbatim."
+    },
+    {
+      "page": "all",
+      "topic": "serviceMeta.icon",
+      "detail": "serviceMeta.icon is populated from the home service-card image of the matching service (alt = the card h3 title, verbatim). ho-tro-doanh-nghiep uses its first card (\"THAY ĐỔI THÔNG TIN DOANH NGHIỆP\"); dich-vu-lien-ket has no card on home and gets null."
+    },
+    {
+      "page": "all",
+      "topic": "_status",
+      "detail": "Fixtures carry \"_status\": \"published\" so the draft-enabled Pages records are queryable by Task 21's published-only getPage()."
+    }
+  ],
+  "deferred": [
+    {
+      "page": "chu-ky-so-token",
+      "topic": "pricing matrix",
+      "detail": "Raw has 7 provider tabs (FPT, VINA, NCCA, CA2-CA, VIETTEL, VNPT, EASY-CA) × 15 mgp-price-table structures (Đăng ký mới / Token / Dịch vụ / Duy trì / Tổng₫ per 1-2-3 năm). Per task plan, the matrix is DEFERRED to Task 23 — only non-pricing content is ported here. serviceMeta.fromPrice left null until Task 23."
+    }
+  ]
+}

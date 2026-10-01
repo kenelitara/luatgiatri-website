@@ -1,0 +1,321 @@
+{
+  "title": "Hỗ Trợ Doanh Nghiệp - Luật Gia Trí",
+  "slug": "ho-tro-doanh-nghiep",
+  "primaryHeading": "Hỗ Trợ Doanh Nghiệp - Luật Gia Trí",
+  "layout": [
+    {
+      "blockType": "hero",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/img-blog-13.jpg",
+        "alt": "Hỗ trợ Doanh Nghiệp"
+      },
+      "headline": "Hỗ trợ Doanh Nghiệp",
+      "subheadline": "Cung cấp đầy đủ những dịch vụ liên quan đến vấn đề pháp lý, hỗ trợ doanh nghiệp tốt nhất về các thủ tục pháp lý cùng các tranh chấp liên quan như : Thành lập chi nhánh; Thay đổi GPKD; Đăng ký nhãn hiệu, thương hiệu; Bảo hộ sáng chế, quyền tác giả, …",
+      "ctaLabel": "Liên hệ ngay",
+      "ctaHref": "/lien-he/"
+    },
+    {
+      "blockType": "pricingTable",
+      "heading": "Hỗ trợ Doanh Nghiệp",
+      "columns": "service-fee",
+      "groups": [
+        {
+          "title": "Cấp lại Giấy phép kinh doanh",
+          "rows": [
+            {
+              "service": "Mất giấy phép kinh doanh; Thất lạc giấy phép kinh doanh; Thời gian: 4-5 ngày",
+              "fee": "800.000"
+            }
+          ]
+        },
+        {
+          "title": "Cập nhật lại CCCD mới cho đại diện pháp luật",
+          "rows": [
+            {
+              "service": "Thời gian: 4-5 ngày",
+              "fee": "800.000"
+            }
+          ]
+        },
+        {
+          "title": "Thay đổi thông tin của Doanh nghiệp",
+          "rows": [
+            {
+              "service": "Thay đổi đại diện pháp luật; Thay đổi cổ đông/thành viên công ty; Bổ sung ngành nghề kinh doanh; Thay đổi tên doanh nghiệp; Tăng vốn điều lệ; Thay đổi địa chỉ trụ sở cùng quận; Thời gian: 4-5 ngày",
+              "fee": "1.100.000"
+            }
+          ]
+        },
+        {
+          "title": "Thay đổi địa chỉ trụ sở doanh nghiệp khác quận quản lý",
+          "rows": [
+            {
+              "service": "Thay đổi con dấu (Nếu có); thời gian nhận kết quả: 25 ngày",
+              "fee": "1.400.000"
+            }
+          ]
+        },
+        {
+          "title": "Tạm ngưng hoạt động doanh nghiệp",
+          "rows": [
+            {
+              "service": "Thời gian: 4-5 ngày",
+              "fee": "950.000"
+            }
+          ]
+        },
+        {
+          "title": "Giải thể doanh nghiệp",
+          "rows": [
+            {
+              "service": "Tuỳ thuộc vào doanh thu và số năm hoạt động; không bao gồm các khoàn tiền nợ thuế, tiền phạt VPHC, tiền chi khác",
+              "fee": "1.800.000 – 4.000.000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "blockType": "faq",
+      "heading": "Câu Hỏi Thường Gặp",
+      "items": [
+        {
+          "question": "Làm gì khi mất giấy phép kinh doanh?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp phải làm hồ sơ xin cấp lại GPKD để tiện cho hoạt động kinh doanh của công ty. GPKD được cấp tại Phòng ĐKKD nơi thành lập công ty, số ĐKKD sẽ giống như số ĐKKD thành lập lần đầu."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Không cập nhật lại CCCD mới cho đại diện pháp luật có bị phạt không?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Chưa có quy định sẽ phạt vấn đề này, nhưng giấy tờ tuỳ thân của Chủ DN nên thay đổi để tiện Giao dịch các hoạt động kinh doanh của công ty. Thời gian thay đổi mất 4-5 ngày làm việc (không tính thứ 7, chủ nhật)."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Những nội dung nào cần phải thông báo khi thay đổi nội dung đăng ký doanh nghiệp?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Nội dung cần thông báo bao gồm những thông tin về Chủ sở hữu công ty, vốn điều lệ, ngành nghề, phải thể hiện đầy đủ trên Giấy thông báo."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Trường hợp nào thì DN không được thông báo thay đổi nội dung đăng ký DN?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp đang tạm ngưng, đang khoá MST, DN đang nộp hồ sơ khác lên Phòng ĐKKD…"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Khi nào thay đổi địa chỉ trụ sở doanh nghiệp khác quận mà cần thay đổi con dấu ?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Khi con dấu ở địa chỉ cũ có phần thông tin “ QUẬN” thì khi chuyển quận mới cần phải đổi con dấu."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Thời gian: 20-25 ngày (không tính thứ 7, chủ nhật)"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Khi nào nộp hồ sơ tạm ngừng hoạt động?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Khi doanh nghiệp hoạt động Kinh doanh không hiệu quả tại thời điểm hiện tại. Thời gian tạm ngừng hoạt động ko quá 1 năm, và ko giới hạn số lần tạm ngưng kế tiếp. Nếu doanh nghiệp tạm ngưng không trọn năm tài chính (1/1-31/12) thì phải hoàn tất nghĩa vụ nộp thuế và hoàn tất nghĩa vụ khai thuế tại quý hiện tại."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Điều kiện để giải thể doanh nghiệp?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp không còn điều kiện để có thể tiếp tục hoạt động nữa."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Khách Hàng Của Chúng Tôi",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chúng tôi luôn duy trì mối quan hệ bền vững và đáng tin cậy với từng khách hàng của mình, giúp họ đạt được mục tiêu của mình đồng thời đảm bảo mức độ an toàn và bảo mật cao nhất trong hoạt động kinh doanh của họ."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "blockType": "featureGrid",
+      "items": [
+        {
+          "title": "8+",
+          "body": "Năm kinh nghiệm thực tiễn"
+        },
+        {
+          "title": "140+",
+          "body": "Cuộc gọi tư vấn mỗi tháng"
+        },
+        {
+          "title": "700+",
+          "body": "Hồ sơ khách hàng mỗi năm"
+        },
+        {
+          "title": "99%",
+          "body": "Khách hàng hài lòng"
+        }
+      ]
+    },
+    {
+      "blockType": "ctaBanner",
+      "heading": "Liên Hệ Ngay Với Luật Gia Trí",
+      "body": "Chuyên viên tư vấn giàu kinh nghiệm sẵn sàng hỗ trợ mọi vấn đề pháp lý của bạn 24/7",
+      "eyebrow": "Contact"
+    }
+  ],
+  "serviceMeta": {
+    "serviceName": "Hỗ trợ Doanh Nghiệp",
+    "shortDescription": "Cung cấp đầy đủ những dịch vụ liên quan đến vấn đề pháp lý, hỗ trợ doanh nghiệp tốt nhất về các thủ tục pháp lý cùng các tranh chấp liên quan như : Thành lập chi nhánh; Thay đổi GPKD; Đăng ký nhãn hiệu, thương hiệu; Bảo hộ sáng chế, quyền tác giả, …",
+    "fromPrice": "800.000",
+    "icon": {
+      "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/mgp-thay-doi-thong-tin-doanh-nghiep.jpg",
+      "alt": "THAY ĐỔI THÔNG TIN DOANH NGHIỆP"
+    }
+  },
+  "_status": "published"
+}

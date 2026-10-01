@@ -1,0 +1,307 @@
+{
+  "title": "Hóa Đơn Điện Tử - Luật Gia Trí",
+  "slug": "hoa-don-dien-tu",
+  "primaryHeading": "Hóa Đơn Điện Tử - Luật Gia Trí",
+  "layout": [
+    {
+      "blockType": "hero",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/img-blog-11.jpg",
+        "alt": "Dịch vụ pháp lý của Luật Gia Trí"
+      },
+      "headline": "Hóa Đơn Điện Tử",
+      "subheadline": "Dịch vụ Hóa đơn điện tử tại Luật Gia Trí hỗ trợ doanh nghiệp lập, quản lý và lưu trữ hóa đơn điện tử nhanh chóng, an toàn, tuân thủ đầy đủ pháp luật kế toán và thuế. Chúng tôi đảm bảo tính bảo mật, minh bạch, giúp tối ưu hóa quy trình kinh doanh tại TP.HCM.",
+      "ctaLabel": "Liên hệ ngay",
+      "ctaHref": "/lien-he/"
+    },
+    {
+      "blockType": "pricingTable",
+      "heading": "Hóa Đơn Điện Tử",
+      "columns": "service-fee",
+      "groups": [
+        {
+          "title": "HD300",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 300",
+              "fee": "880.000"
+            }
+          ]
+        },
+        {
+          "title": "HD500",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 500",
+              "fee": "1.100.000"
+            }
+          ]
+        },
+        {
+          "title": "HD1000",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 1000",
+              "fee": "1.320.000"
+            }
+          ]
+        },
+        {
+          "title": "HD2000",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 2000",
+              "fee": "1.870.000"
+            }
+          ]
+        },
+        {
+          "title": "HD5000",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 5000",
+              "fee": "3.300.000"
+            }
+          ]
+        },
+        {
+          "title": "HD10000",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 10000",
+              "fee": "5.500.000"
+            }
+          ]
+        },
+        {
+          "title": "HD50000",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 50000",
+              "fee": "22.000.000"
+            }
+          ]
+        },
+        {
+          "title": "HD100000",
+          "rows": [
+            {
+              "service": "Số lượng hoá đơn : 100000",
+              "fee": "38.500.000"
+            }
+          ]
+        }
+      ],
+      "note": "Miễn phí khởi tạo; Miễn phí lưu trữ 10 năm"
+    },
+    {
+      "blockType": "faq",
+      "heading": "Câu Hỏi Thường Gặp",
+      "items": [
+        {
+          "question": "Doanh nghiệp mới thành lập phải nộp những loại thuế và lệ phí nào?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp mới thành lập cần nộp thuế GTGT, thuế TNDN, lệ phí môn bài và thuế TNCN tùy vào hoạt động kinh doanh. Mức phí cụ thể áp dụng theo quy định hiện hành từng năm. Lệ phí môn bài được miễn trong năm đầu và cần nộp vào tháng 1 dương lịch. Ngoài ra, nếu có chi trả lương hoặc chuyển nhượng cổ phần thì phát sinh thêm thuế TNCN tương ứng."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp mới thành lập có bắt buộc mở tài khoản Ngân hàng không?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp mới thành lập phải mở tài khoản Ngân hàng để thuận tiện cho việc nộp thuế điện tử, giao dịch mua bán và quản lý tài chính, theo quy định của pháp luật hiện hành."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Những giấy tờ tuỳ thân nào cần phải chuẩn bị cho hồ sơ thành lập doanh nghiệp?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Khách hàng cần chuẩn bị 2 bản sao y công chứng CCCD/hộ chiếu/CMND còn giá trị trong 6 tháng cho mỗi thành viên hoặc cổ đông. Trường hợp là công ty cổ phần/ TNHH 2 thành viên trở lên, mỗi người đều cần chuẩn bị đủ giấy tờ."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp phải khai thuế như thế nào sau khi thành lập?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp mới thành lập thực hiện khai thuế khấu trừ theo quý, cuối năm tài chính sẽ lập báo cáo tài chính và quyết toán thuế TNDN năm, theo quy trình của cơ quan thuế TP.HCM."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp đăng ký những ngành nghề kinh doanh có điều kiện thì như thế nào?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Những ngành nghề kinh doanh có điều kiện cần đăng ký giấy phép sau khi nhận được giấy đăng ký doanh nghiệp bản gốc, ví dụ như: tư vấn du học, bảo vệ, kinh doanh hóa chất, thuốc bảo vệ thực vật… Việc bổ sung giấy phép đảm bảo doanh nghiệp hoạt động đúng quy định."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp đăng ký những ngành nghề kinh doanh có điều kiện thì như thế nào?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Ngành nghề kinh doanh có điều kiện bắt buộc đăng ký giấy phép phù hợp sau khi có giấy phép kinh doanh gốc. Ví dụ: giấy phép tư vấn du học, giấy phép bảo vệ, giấy phép mua bán hóa chất, thuốc bảo vệ thực vật và các giấy phép đặc thù khác."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Khách Hàng Của Luật Gia Trí",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Luật Gia Trí cam kết đồng hành cùng doanh nghiệp tại TP.HCM, mang lại giải pháp pháp lý hiệu quả, bảo mật và chuyên nghiệp. Khách hàng luôn nhận được sự hỗ trợ tận tình, giúp doanh nghiệp phát triển bền vững, an toàn và tuân thủ mọi quy định pháp luật hiện hành."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "blockType": "featureGrid",
+      "items": [
+        {
+          "title": "8+",
+          "body": "Năm kinh nghiệm pháp lý"
+        },
+        {
+          "title": "140+",
+          "body": "Cuộc gọi tư vấn pháp luật"
+        },
+        {
+          "title": "700+",
+          "body": "Hồ sơ dịch vụ thực hiện"
+        },
+        {
+          "title": "99%",
+          "body": "Khách hàng đánh giá hài lòng"
+        }
+      ]
+    },
+    {
+      "blockType": "ctaBanner",
+      "heading": "Liên Hệ Ngay Với Luật Gia Trí",
+      "body": "Chuyên viên tư vấn giàu kinh nghiệm sẵn sàng hỗ trợ mọi vấn đề pháp lý của bạn 24/7",
+      "eyebrow": "Contact"
+    }
+  ],
+  "serviceMeta": {
+    "serviceName": "Hóa Đơn Điện Tử",
+    "shortDescription": "Dịch vụ Hóa đơn điện tử tại Luật Gia Trí hỗ trợ doanh nghiệp lập, quản lý và lưu trữ hóa đơn điện tử nhanh chóng, an toàn, tuân thủ đầy đủ pháp luật kế toán và thuế. Chúng tôi đảm bảo tính bảo mật, minh bạch, giúp tối ưu hóa quy trình kinh doanh tại TP.HCM.",
+    "fromPrice": "880.000",
+    "icon": {
+      "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/mgp-hoa-don-dien-tu.jpg",
+      "alt": "CUNG CẤP HOÁ ĐƠN ĐIỆN TỬ"
+    }
+  },
+  "_status": "published"
+}

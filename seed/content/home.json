@@ -1,0 +1,160 @@
+{
+  "title": "Luật Gia Trí - Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế",
+  "slug": "home",
+  "primaryHeading": "Luật Gia Trí - Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế",
+  "layout": [
+    {
+      "blockType": "heroCarousel",
+      "slides": [
+        {
+          "image": {
+            "mediaRef": "https://luatgiatri.com/wp-content/uploads/2026/07/ChatGPT-Image-11_35_10-21-thg-7-2026.png",
+            "alt": "Luật Gia Trí - Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế"
+          },
+          "headline": "Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế",
+          "subheadline": "Luật Gia Trí"
+        },
+        {
+          "image": {
+            "mediaRef": "https://luatgiatri.com/wp-content/uploads/2026/07/ChatGPT-Image-15_02_45-21-thg-7-2026.png",
+            "alt": "Giá trị bạn nhận được khi chọn Luật Gia Trí"
+          },
+          "headline": "Giá trị bạn nhận được khi chọn Luật Gia Trí",
+          "subheadline": "Tư vấn tận tâm – Tiến trình nhanh gọn – Giá cạnh tranh – Chất lượng hàng đầu – Hỗ trợ 24/7"
+        },
+        {
+          "image": {
+            "mediaRef": "https://luatgiatri.com/wp-content/uploads/2026/07/ChatGPT-Image-11_52_29-21-thg-7-2026-1024x384.png",
+            "alt": "BẠN ĐÃ SẴN SÀNG KHỞI NGHIỆP?"
+          },
+          "headline": "BẠN ĐÃ SẴN SÀNG KHỞI NGHIỆP?",
+          "subheadline": "Chinh phục thử thách khởi nghiệp cùng Luật Gia Trí – Đội ngũ chuyên nghiệp, giàu kinh nghiệm sẽ đồng hành cùng bạn để đưa doanh nghiệp đi đúng hướng ngay từ những thủ tục pháp lý đầu tiên.",
+          "ctaLabel": "Liên hệ ngay",
+          "ctaHref": "/lien-he/"
+        }
+      ]
+    },
+    {
+      "blockType": "featureGrid",
+      "heading": "Giá trị bạn nhận được khi chọn Luật Gia Trí",
+      "items": [
+        {
+          "title": "Tư vấn tận tâm",
+          "body": "Đội ngũ luật sư và chuyên viên giàu kinh nghiệm, nhiệt tình, cam kết hỗ trợ khách hàng với sự minh bạch, trách nhiệm và chuyên nghiệp."
+        },
+        {
+          "title": "Tiến trình nhanh gọn",
+          "body": "Chúng tôi hỗ trợ tư vấn trực tiếp và từ xa, tối ưu thủ tục pháp lý hiệu quả, tiết kiệm thời gian cho doanh nghiệp tại TP.HCM."
+        },
+        {
+          "title": "Giá cạnh tranh",
+          "body": "Luật Gia Trí cam kết chi phí hợp lý, minh bạch, không phát sinh. Khách hàng luôn yên tâm khi lựa chọn dịch vụ pháp lý chuyên nghiệp của chúng tôi."
+        },
+        {
+          "title": "Chất lượng hàng đầu",
+          "body": "Mọi dịch vụ pháp lý tại Luật Gia Trí luôn đảm bảo chính xác, an tâm, mang lại sự hài lòng tuyệt đối cho quý khách hàng."
+        },
+        {
+          "title": "Hỗ trợ 24/7",
+          "body": "Tổng đài 0919088119, Zalo, Email luatsu@luatgiatri.com luôn sẵn sàng giải đáp thắc mắc và hỗ trợ doanh nghiệp mọi lúc mọi nơi."
+        }
+      ]
+    },
+    {
+      "blockType": "servicePair",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/06/img-team.png",
+        "alt": "Công ty Luật Luật Gia Trí"
+      },
+      "heading": "Công ty Luật Luật Gia Trí",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Luật Gia Trí là đơn vị tư vấn pháp lý hàng đầu tại TP.HCM, với đội ngũ luật sư tâm huyết, giàu kinh nghiệm, luôn đặt lợi ích khách hàng lên hàng đầu. Chúng tôi hướng tới mục tiêu đồng hành cùng doanh nghiệp, mang lại giải pháp pháp lý tối ưu và chất lượng vượt trội."
+                },
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": " "
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "ctaLabel": "Tìm hiểu thêm",
+      "ctaHref": "/gioi-thieu",
+      "reverse": true
+    },
+    {
+      "blockType": "ctaBanner",
+      "eyebrow": "GIẢI PHÁP PHÁP LÝ NHANH CHÓNG!",
+      "heading": "BẠN ĐÃ SẴN SÀNG KHỞI NGHIỆP?",
+      "body": "Chinh phục thử thách khởi nghiệp cùng Luật Gia Trí – Đội ngũ chuyên nghiệp, giàu kinh nghiệm sẽ đồng hành cùng bạn để đưa doanh nghiệp đi đúng hướng ngay từ những thủ tục pháp lý đầu tiên.",
+      "ctaLabel": "Liên hệ ngay",
+      "ctaHref": "/lien-he/"
+    },
+    {
+      "blockType": "servicePair",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/mgp-thanh-lap-doanh-nghiep.jpg",
+        "alt": "THÀNH LẬP CÔNG TY TRỌN GÓI"
+      },
+      "heading": "Dành cho mọi Doanh Nghiệp",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Luật Gia Trí cung cấp dịch vụ tư vấn, hỗ trợ pháp lý và hoàn thiện thủ tục cho Công ty, Doanh nghiệp, đảm bảo uy tín hàng đầu tại TP.HCM."
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "bullets": [
+        {
+          "item": "THÀNH LẬP CÔNG TY TRỌN GÓI"
+        },
+        {
+          "item": "THAY ĐỔI THÔNG TIN DOANH NGHIỆP"
+        },
+        {
+          "item": "KẾ TOÁN BÁO CÁO THUẾ"
+        },
+        {
+          "item": "CUNG CẤP CHỮ KÝ SỐ KHAI BÁO THUẾ"
+        },
+        {
+          "item": "CUNG CẤP HOÁ ĐƠN ĐIỆN TỬ"
+        },
+        {
+          "item": "TẠM NGƯNG GIẢI THỂ DOANH NGHIỆP"
+        }
+      ]
+    },
+    {
+      "blockType": "newsPreview",
+      "heading": "Tin tức & Sự kiện",
+      "ctaHref": "/tin-tuc/"
+    }
+  ],
+  "_status": "published"
+}

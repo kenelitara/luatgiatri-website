@@ -1,0 +1,438 @@
+{
+  "title": "Chữ Ký Số - Token - Luật Gia Trí",
+  "slug": "chu-ky-so-token",
+  "primaryHeading": "Chữ Ký Số - Token - Luật Gia Trí",
+  "layout": [
+    {
+      "blockType": "hero",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/img-blog-11.jpg",
+        "alt": "Dịch vụ pháp lý của Luật Gia Trí"
+      },
+      "headline": "Chữ Ký Số – Token",
+      "subheadline": "Là tên gọi tắt của loại chữ ký số sử dụng USB token. Đây là dạng chữ ký số cần đã được mã hóa và cần cắm USB token vào PC thì mới có thể thực hiện ký số trên môi trường số hóa. Đây là điểm khác với chữ ký số từ xa SmartCA.",
+      "ctaLabel": "Liên hệ ngay",
+      "ctaHref": "/lien-he/"
+    },
+    {
+      "blockType": "faq",
+      "heading": "Câu Hỏi Thường Gặp",
+      "items": [
+        {
+          "question": "Doanh nghiệp mới thành lập phải nộp những loại thuế và lệ phí nào?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Doanh nghiệp mới thành lập sẽ có những loại thuế đi kèm như :"
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Thuế GTGT (Giá trị gia tăng): Tính trên giá trị lợi nhuận dương của doanh nghiệp vào mỗi kỳ báo cáo quý/tháng. Mức thuế áp dụng là 10% trên tổng lợi nhuận của công ty."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Thuế TNDN (Thu nhập doanh nghiệp): Tính trên giá trị lợi nhuận trước thuế vào cuối mỗi năm tài chính (31/12 hàng năm). Mức thuế áp dụng là 20%."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Lệ phí môn bài năm: Phần lệ phí môn bài nộp theo năm dương lịch tương ứng với vốn điều lệ đã đăng ký của công ty: "
+                            },
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": " "
+                            }
+                          ]
+                        },
+                        {
+                          "type": "list",
+                          "version": 0,
+                          "listType": "bullet",
+                          "tag": "ul",
+                          "children": [
+                            {
+                              "type": "listitem",
+                              "version": 0,
+                              "value": 0,
+                              "children": [
+                                {
+                                  "type": "paragraph",
+                                  "version": 0,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "version": 0,
+                                      "text": "Vốn điều lệ 10 tỷ trở xuống: 2.000.000/năm"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "listitem",
+                              "version": 0,
+                              "value": 0,
+                              "children": [
+                                {
+                                  "type": "paragraph",
+                                  "version": 0,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "version": 0,
+                                      "text": "Vốn điều lệ từ 10 tỷ trở lên: 3.000.000/năm"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Đối với Chi nhánh, VP đại diện, Địa điểm kinh doanh trực tiếp Công ty: 1.000.000/năm"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Nếu Doanh nghiệp thành lập từ tháng 7 của năm dương lịch trở đi, mức lệ phí môn bài phải nộp là ½ số tiền lệ phí phải nộp của cả năm."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Lưu ý: Lệ phí môn bài của Doanh nghiệp mới thành lập sẽ được miễn trong năm đầu tiên.",
+                      "bold": true
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Thời gian nộp lệ phí môn bài: Tháng 1 dương lịch của năm tài chính hiện tại."
+                    }
+                  ]
+                },
+                {
+                  "type": "list",
+                  "version": 0,
+                  "listType": "bullet",
+                  "tag": "ul",
+                  "children": [
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Thuế TNCN (Thu nhập cá nhân): Thuế này nộp trong trường hợp công ty phát sinh chi trả lương, thu nhập cho nhân viên hàng tháng/hàng quý. Mức thuế đóng phụ thuộc với mức thu nhập của cá nhân , dao động từ 5% đến 20% dựa trên Thu nhập tính thuế."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "listitem",
+                      "version": 0,
+                      "value": 0,
+                      "children": [
+                        {
+                          "type": "paragraph",
+                          "version": 0,
+                          "children": [
+                            {
+                              "type": "text",
+                              "version": 0,
+                              "text": "Ngoài ra khi công ty có thực hiện hoạt động chuyển nhượng cổ phần, chuyển nhượng chứng khoán thì phải nộp thuế TNCN tương ứng với số tiền chuyển nhượng."
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp mới thành lập có bắt buộc mở tài khoản Ngân hàng không?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Theo quy định chung, các doanh nghiệp mới thành lập phải mở tài khoản Ngân hàng để thực hiện các hoạt động, giao dịch của doanh nghiệp như nộp thuế điện tử, giao dịch với các hoạt động mua bán…"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Những giấy tờ tuỳ thân nào cần phải chuẩn bị cho hồ sơ thành lập doanh nghiệp?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Khách hàng cần chuẩn bị 2 bản sao y công chứng(không quá 6 tháng) của CCCD/hộ chiếu/CMND còn thời hạn sử dụng."
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Đối với doanh nghiệp là công ty Cổ phần, Công ty TNHH 2 thành viên trở lên thì mỗi cổ đông, mỗi thành viên đều phải chuẩn bị 2 bản."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp phải khai thuế như thế nào sau khi thành lập?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Hiện tại, các doanh nghiệp mới thành lập sẽ thực hiện khai thuế khấu trừ hàng quý (3 quý khai thuế 1 lần), cuối năm tài chính sẽ làm báo cáo tài chính và Quyết toán thuế TNDN năm."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp đăng ký những ngành nghề kinh doanh có điều kiện thì như thế nào?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Đối với những ngành nghề kinh doanh có điều kiện (giấy phép điều kiện) để đủ cơ sở hoạt động thì sau khi có GPKD bản gốc, Doanh nghiệp sẽ tự đăng ký những giấy phép hỗ trợ trên. Ví dụ như: Giấy phép hoạt động tư vấn du học, Giấy phép hoạt động bảo vệ, Giấy phép hoạt động mua bán hoá chất, thuốc bảo vệ thực vật….."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "question": "Doanh nghiệp đăng ký những ngành nghề kinh doanh có điều kiện thì như thế nào?",
+          "answer": {
+            "root": {
+              "type": "root",
+              "version": 0,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "version": 0,
+                  "children": [
+                    {
+                      "type": "text",
+                      "version": 0,
+                      "text": "Đối với những ngành nghề kinh doanh có điều kiện (giấy phép điều kiện) để đủ cơ sở hoạt động thì sau khi có GPKD bản gốc, Doanh nghiệp sẽ tự đăng ký những giấy phép hỗ trợ trên. Ví dụ như : Giấy phép hoạt động tư vấn du học, Giấy phép hoạt động bảo vệ, Giấy phép hoạt động mua bán hoá chất, thuốc bảo vệ thực vật…."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Khách Hàng Của Chúng Tôi",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chúng tôi luôn duy trì mối quan hệ bền vững và đáng tin cậy với từng khách hàng của mình, giúp họ đạt được mục tiêu của mình đồng thời đảm bảo mức độ an toàn và bảo mật cao nhất trong hoạt động kinh doanh của họ."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "blockType": "featureGrid",
+      "items": [
+        {
+          "title": "8+",
+          "body": "Năm kinh nghiệm thực tiễn"
+        },
+        {
+          "title": "140+",
+          "body": "Cuộc gọi tư vấn mỗi tháng"
+        },
+        {
+          "title": "700+",
+          "body": "Hồ sơ khách hàng mỗi năm"
+        },
+        {
+          "title": "99%",
+          "body": "Khách hàng hài lòng"
+        }
+      ]
+    },
+    {
+      "blockType": "ctaBanner",
+      "heading": "Liên Hệ Ngay Với Luật Gia Trí",
+      "body": "Chuyên viên tư vấn giàu kinh nghiệm sẵn sàng hỗ trợ mọi vấn đề pháp lý của bạn 24/7",
+      "eyebrow": "Contact"
+    }
+  ],
+  "serviceMeta": {
+    "serviceName": "Chữ Ký Số – Token",
+    "shortDescription": "Là tên gọi tắt của loại chữ ký số sử dụng USB token. Đây là dạng chữ ký số cần đã được mã hóa và cần cắm USB token vào PC thì mới có thể thực hiện ký số trên môi trường số hóa. Đây là điểm khác với chữ ký số từ xa SmartCA.",
+    "fromPrice": null,
+    "icon": {
+      "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/mgp-chu-ky-so.jpg",
+      "alt": "CUNG CẤP CHỮ KÝ SỐ KHAI BÁO THUẾ"
+    }
+  },
+  "_status": "published"
+}

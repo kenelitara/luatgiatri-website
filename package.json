@@ -18,6 +18,7 @@
     "generate:importmap": "payload generate:importmap",
     "capture": "node scripts/capture-content.mjs",
     "seed": "tsx scripts/seed.ts",
+    "seed:media": "tsx scripts/seed-media.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write ."

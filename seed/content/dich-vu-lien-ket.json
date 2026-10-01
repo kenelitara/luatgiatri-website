@@ -1,0 +1,155 @@
+{
+  "title": "Dịch Vụ Liên Kết - Luật Gia Trí",
+  "slug": "dich-vu-lien-ket",
+  "primaryHeading": "Dịch Vụ Liên Kết - Luật Gia Trí",
+  "layout": [
+    {
+      "blockType": "hero",
+      "image": {
+        "mediaRef": "https://luatgiatri.com/wp-content/uploads/2023/07/img-blog-11.jpg",
+        "alt": "Dịch vụ pháp lý của Luật Gia Trí"
+      },
+      "headline": "Dịch Vụ Liên Kết",
+      "subheadline": "Giao dịch liên kết là những giao dịch phát sinh giữa các bên có quan hệ liên kết phát sinh trong quá trình sản xuất, kinh doanh như hoạt động: Mua, bán, trao đổi, thuê, cho thuê, mượn, cho mượn, chuyển giao, chuyển nhượng máy móc, thiết bị, hàng hóa, cung cấp dịch vụ; đi vay, cho vay, dịch vụ tài chính, đảm bảo tài chính và các công cụ tài chính khác; mua, bán, trao đổi, thuê, cho thuê, mượn, cho mượn, chuyển giao, chuyển nhượng tài sản hữu hình, tài sản vô hình và thỏa thuận sử dụng chung nguồn lực như hợp lực, hợp tác khai thác sử dụng nhân lực; chia sẻ chi phí giữa các bên có quan hệ liên kết.",
+      "ctaLabel": "Liên hệ ngay",
+      "ctaHref": "/lien-he/"
+    },
+    {
+      "blockType": "featureGrid",
+      "items": [
+        {
+          "title": "Giấy Chứng Nhận Bản Quyền Tác Giả",
+          "body": "Đăng ký quyền tác giả là việc tác giả, chủ sở hữu tác phẩm nộp hồ sơ cho Cục Bản quyền Tác giả để cấp Giấy chứng nhận đăng ký quyền tác giả cho tác phẩm nhằm ghi nhận các thông tin về tác giả, tác phẩm."
+        },
+        {
+          "title": "Chứng Chỉ Năng Lực Xây Dựng",
+          "body": "Chứng chỉ năng lực xây dựng thực tế là bản đánh giá năng lực sơ lược do Bộ Xây Dựng, Sở Xây dựng với các tổ chức, đơn vị tham gia vào hoạt động xây dựng của cá nhân cấp. Chứng chỉ này sẽ ghi ra điều kiện, quyền hạn của tổ chức, đơn vị tham gia hoạt động xây dựng trên lãnh thổ Việt Nam."
+        },
+        {
+          "title": "Hỗ Trợ Tư Vấn Khám Sức Khoẻ Tổng Quát",
+          "body": "Khám sức khỏe tổng quát là dịch vụ khám bệnh toàn diện mọi bộ phận, cơ quan trên cơ thể nhằm tầm soát bệnh lý. Bao gồm các hạng mục: khám lâm sàng tổng quát, tư vấn, xét nghiệm tổng quát, chẩn đoán hình ảnh, thăm dò chức năng."
+        },
+        {
+          "title": "Cung Cấp Lắp Đặt Camera, Máy Chiếu Kỹ Thuật Số",
+          "body": "Hệ thống camera giám sát (Closed circuit television – Truyền hình nội bộ) viết tắt là CCTV là một hệ thống trong đó sử dụng camera và các thiết bị truyền dẫn để truyền tín hiệu hình ảnh về một khu vực cần quan sát đến một nơi cụ thể.."
+        },
+        {
+          "title": "Bằng Bảo Hộ Thương Hiệu",
+          "body": "Theo quy định Luật Sở hữu trí tuệ, bảo hộ thương hiệu là thủ tục hành chính đề nghị Cục Sở hữu trí tuệ bảo hộ các dấu hiệu dùng để phân biệt hàng hoá, dịch vụ của các tổ chức, cá nhân khác nhau thông qua việc cấp văn bằng bảo hộ cho thương hiệu."
+        },
+        {
+          "title": "Thiết Kế Hồ Sơ Năng Lực",
+          "body": "Hồ sơ năng lực còn có cách gọi khác là profile thường được thiết kế với dung lượng lớn gồm nhiều trang khổ A4. Hồ sơ năng lực sẽ nói về công ty sở hữu nó, những thành tích cũng như kinh nghiệm trong lĩnh vực hoạt động."
+        },
+        {
+          "title": "Giải Pháp Văn Phòng Điện Tử",
+          "body": "Văn phòng điện tử là là mô hình áp dụng công nghệ hiện đại mang đầy đủ những phần mềm có tính năng quản lý hồ sơ, công việc, thông tin, tài liệu, văn bản, báo cáo,… của công ty, nhằm hiện đại hóa các phương thức quản lý truyền thống."
+        },
+        {
+          "title": "Cung Cấp Văn Phòng Phẩm",
+          "body": "Văn phòng phẩm là tên gọi chung bao gồm tất cả những vật phẩm đơn giản được sử dụng nhằm phục vụ các hoạt động văn phòng hàng ngày như: giấy in, bút viết, sổ, ghim, kẹp, keo, kéo, phong bì, túi bìa cứng, giấy note, bìa hồ sơ,…"
+        },
+        {
+          "title": "Visa Các Nước",
+          "body": "Visa hay còn được gọi thị thực, là giấy chứng nhận được cấp bởi Đại sứ quán/ Lãnh sự quán của một quốc gia, cho phép người nước ngoài nhập cảnh vào quốc gia đó. Tùy vào từng đối tượng và tình trạng hồ sơ mà bạn có thể được cấp visa nhập cảnh 1 lần hoặc nhiều lần với thời gian lưu trú khác nhau, tùy quốc gia bạn xin thị thực."
+        },
+        {
+          "title": "Hỗ Trợ Tư Vấn Du Học",
+          "body": "Dịch vụ tư vấn du học là các hoạt động: Giới thiệu, tư vấn thông tin về trường học, khóa học tại nước ngoài; tổ chức quảng cáo, hội nghị, hội thảo, hội chợ, triển lãm về du học nước ngoài; tổ chức tuyển sinh du học; tổ chức bồi dưỡng kiến thức ngoại ngữ, văn hóa và kỹ năng cần thiết khác cho công dân Việt Nam ra nước."
+        },
+        {
+          "title": "Sinh Trắc Vân Tay",
+          "body": "Sinh trắc vân tay là phương pháp khoa học sử dụng công nghệ hiện đại để phân tích hình dạng, độ dài và mật độ của các dấu vân tay. Việc hiểu rõ các phân tích sinh trắc vân tay sẽ giúp bố mẹ nuôi dưỡng trẻ tốt hơn dựa trên cá tính, điểm mạnh và điểm yếu để tăng cường sức mạnh và cải thiện khả năng của con."
+        },
+        {
+          "title": "Cung Cấp Nông Sản Sạch",
+          "body": "Nông sản sạch thực chất là những sản phẩm nông sản được những người nông dân chăn nuôi hoặc gây trồng nên nhưng phải đảm bảo theo một tiêu chuẩn nhất định. Những tiêu chuẩn được ở đây có thể kể đến như: Hạn chế tối đa việc sử dụng thuốc trừ sâu, phân bón hóa học và tránh sử dụng thuốc kích thích tăng trưởng."
+        },
+        {
+          "title": "Tư Vấn Bất Động Sản",
+          "body": "Tư vấn bất động sản là hoạt động trợ giúp về các vấn đề liên quan đến kinh doanh bất động sản theo yêu cầu của các bên."
+        },
+        {
+          "title": "Quà Tặng Lưu Niệm",
+          "body": "Là một đồ vật mà người ta mua hoặc sưu tập rồi gắn nó với một kỷ niệm nào đó, ví dụ mang về nhà để ghi nhớ chuyến đi du lịch vừa diễn ra"
+        },
+        {
+          "title": "Tour Du Lịch Việt Và Quốc Tế",
+          "body": "Tổ chức tour du lịch trong nước và nước ngoài với nhiều tiện ích cũng như nhiều chương trình hấp dẫn khuyến du khách cảm thấy thoải mái nhất khi sử dụng dịch vụ."
+        },
+        {
+          "title": "Thiết Kế Website",
+          "body": "Thiết kế website doanh nghiệp đa lĩnh vực với nhiều chức năng hỗ trợ người dùng dễ dàng tiếp cận khách hàng tiềm năng, qua đó phát triển thương hiệu Online một cách bền vững."
+        }
+      ]
+    },
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Khách Hàng Của Chúng Tôi",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chúng tôi luôn duy trì mối quan hệ bền vững và đáng tin cậy với từng khách hàng của mình, giúp họ đạt được mục tiêu của mình đồng thời đảm bảo mức độ an toàn và bảo mật cao nhất trong hoạt động kinh doanh của họ."
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "blockType": "featureGrid",
+      "items": [
+        {
+          "title": "8+",
+          "body": "Năm kinh nghiệm thực tiễn"
+        },
+        {
+          "title": "140+",
+          "body": "Cuộc gọi tư vấn mỗi tháng"
+        },
+        {
+          "title": "700+",
+          "body": "Hồ sơ khách hàng mỗi năm"
+        },
+        {
+          "title": "99%",
+          "body": "Khách hàng hài lòng"
+        }
+      ]
+    },
+    {
+      "blockType": "ctaBanner",
+      "heading": "Liên Hệ Ngay Với Luật Gia Trí",
+      "body": "Chuyên viên tư vấn giàu kinh nghiệm sẵn sàng hỗ trợ mọi vấn đề pháp lý của bạn 24/7",
+      "eyebrow": "Contact"
+    }
+  ],
+  "serviceMeta": {
+    "serviceName": "Dịch Vụ Liên Kết",
+    "shortDescription": "Giao dịch liên kết là những giao dịch phát sinh giữa các bên có quan hệ liên kết phát sinh trong quá trình sản xuất, kinh doanh như hoạt động: Mua, bán, trao đổi, thuê, cho thuê, mượn, cho mượn, chuyển giao, chuyển nhượng máy móc, thiết bị, hàng hóa, cung cấp dịch vụ; đi vay, cho vay, dịch vụ tài chính, đảm bảo tài chính và các công cụ tài chính khác; mua, bán, trao đổi, thuê, cho thuê, mượn, cho mượn, chuyển giao, chuyển nhượng tài sản hữu hình, tài sản vô hình và thỏa thuận sử dụng chung nguồn lực như hợp lực, hợp tác khai thác sử dụng nhân lực; chia sẻ chi phí giữa các bên có quan hệ liên kết.",
+    "fromPrice": null,
+    "icon": null
+  },
+  "_status": "published"
+}
