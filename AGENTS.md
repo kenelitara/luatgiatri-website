@@ -428,6 +428,27 @@ app (`next start -p 3100`), not dev.
   succeeded. On the DB-connected build the same file DOES bake the generated
   `og:image`, which is what the curl check asserts.
 
+## Meta descriptions are DERIVED, never authored (spec §10.1 item 4)
+
+- **Defect (fixed 2026-10-01):** `pageMetadata` set
+  `description: page.seo?.metaDescription || undefined` — no fallback — so 9 of
+  11 public pages emitted NO `<meta name="description">`, while `postMetadata`
+  had carried an excerpt chain since M1. The crawl gate (`crawl.spec.ts`)
+  asserts a description on all 11.
+- `seo-helpers.ts` now exposes `pageDescription()` with the chain
+  `seo.metaDescription` → `serviceMeta.shortDescription` → first `richText` block
+  body (through `lexicalText`) → `primaryHeading`, capped at
+  `META_DESCRIPTION_MAX` (160) on a **word boundary** by the shared
+  `truncateText()`. 160 matches the admin SEO panel counter
+  (`SeoPreview.tsx` DESC_MAX). No new copy is authored (content law, spec §3.2) —
+  every tier is already-ported content.
+- **Handover flags:** `lien-he` falls to its first `richText` block, which is the
+  contact block ("Địa chỉ: … Email: … Phone: …") — a poor SERP description.
+  `home` has NO richText block at all, so it lands on `primaryHeading`. Both want
+  a hand-written `seo.metaDescription` from the client.
+- `staticMetadata` is deliberately unchanged — `/tin-tuc/` supplies its own
+  description and there is no record to derive from.
+
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 
 - Payload is **embedded**: no separate backend, no REST from the browser. Public

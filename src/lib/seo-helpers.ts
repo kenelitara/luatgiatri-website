@@ -24,6 +24,61 @@ export function lexicalText(body: unknown, max = 160): string {
   return out.join(' ').replace(/\s+/g, ' ').trim().slice(0, max)
 }
 
+/**
+ * The meta-description ceiling (Google's practical ~160-char limit, spec §10.1
+ * item 4). The admin SEO panel's counter (`SeoPreview.tsx` — `DESC_MIN/DESC_MAX`)
+ * uses the same 150–160 window, so an editor writing a page description sees
+ * exactly this bound in the SERP preview.
+ */
+export const META_DESCRIPTION_MAX = 160
+
+/**
+ * Truncate plain text to at most `max` chars, preferring to end on a word
+ * boundary so a description never cuts a word in half. Whitespace is collapsed
+ * first, matching `lexicalText`. This is the shared slicer for the derived
+ * description chain below: `serviceMeta.shortDescription` is a plain `textarea`
+ * (not Lexical) and takes this path directly, while the richText tier extracts
+ * with `lexicalText` and then reuses this for the boundary-aware cut.
+ */
+export function truncateText(text: string, max = META_DESCRIPTION_MAX): string {
+  const clean = text.replace(/\s+/g, ' ').trim()
+  if (clean.length <= max) return clean
+  const cut = clean.slice(0, max)
+  const boundary = cut.lastIndexOf(' ')
+  // `> 0` guards a single long token with no space: there is no boundary to
+  // prefer, so hard-cut at `max`.
+  return (boundary > 0 ? cut.slice(0, boundary) : cut).trim()
+}
+
+/**
+ * The page's meta description, DERIVED from content already in the system — no
+ * new copy is authored (content law, spec §3.2). Priority (spec §10.1 item 4):
+ *
+ *   1. `seo.metaDescription` — the editor's explicit override (admin SEO panel).
+ *   2. `serviceMeta.shortDescription` — the purpose-made service summary, present
+ *      on the six service pages (e.g. `dich-vu-lien-ket` is 603 chars → capped).
+ *   3. the first `richText` block body — real ported prose (e.g. `gioi-thieu`).
+ *   4. `primaryHeading` — last resort for a page with no prose at all.
+ *
+ * `postMetadata` has carried an excerpt chain since M1; `pageMetadata` had none,
+ * so 9 of 11 public pages emitted no description at all. Every value is capped at
+ * `META_DESCRIPTION_MAX` on a word boundary.
+ */
+function pageDescription(page: Page): string | undefined {
+  const richTextBlock = page.layout?.find((b) => b.blockType === 'richText')
+  // `Infinity`: take the whole body, let `truncateText` pick the word boundary.
+  const richText =
+    richTextBlock && richTextBlock.blockType === 'richText'
+      ? lexicalText(richTextBlock.body, Number.POSITIVE_INFINITY)
+      : ''
+  const source =
+    page.seo?.metaDescription ||
+    page.serviceMeta?.shortDescription ||
+    richText ||
+    page.primaryHeading
+  return truncateText(source ?? '') || undefined
+}
+
 export function pageMetadata(page: Page, settings?: SiteSetting | null): MetadataInput {
   const isHome = page.slug === 'home'
   return {
@@ -32,7 +87,8 @@ export function pageMetadata(page: Page, settings?: SiteSetting | null): Metadat
     // still prevents any doubling. Home is NOT special-cased (2026-10-01).
     title: page.seo?.metaTitle || page.primaryHeading || page.title,
     branded: !page.seo?.metaTitle,
-    description: page.seo?.metaDescription || undefined,
+    // Derived fallback chain (spec §10.1 item 4) — see `pageDescription` above.
+    description: pageDescription(page),
     path: isHome ? '/' : `/${page.slug}/`,
     noindex: page.seo?.noindex ?? false,
     canonicalOverride: page.seo?.canonicalOverride ?? null,
