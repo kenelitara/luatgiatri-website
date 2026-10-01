@@ -264,6 +264,19 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
   `pnpm reindex` and `pnpm seed` now run prompt-free on the dev DB). In
   development, schema changes are `pnpm payload migrate:create` +
   `pnpm payload migrate`; a fresh dev DB must migrate before `pnpm seed`.
+- **Live incident (2026-10-01, Task 11) — `push: false` validated in the wild.**
+  The dev server on :3000, booted hours earlier (pre-`search_vector` migration,
+  pre-fix), recompiled and blocked on the DATA LOSS prompt to delete
+  `search_vector` in categories (1 item) and pages (10 items). Killed
+  unanswered; all three columns and all 10 vectors verified intact; the restart
+  on current code booted with no prompt and no warning. This answers the Task 8b
+  review's open question (a second dev server could not be booted then — Next's
+  single-instance lock).
+- **Pre-`push: false` databases keep their old `batch: -1` dev record**, so
+  `pnpm payload migrate` still shows the dev-mode "data loss" prompt on THIS dev
+  DB (Task 11 met it) until the DB is recreated — the M3 gate will meet it too.
+  Answering `y` there is the documented dev path; it is the _schema push_ prompt
+  that must never be answered `y`.
 - `searchableText` lives in `src/lib/search-text.ts`, NOT in the hook module:
   the hook imports the runtime pg adapter, so the split keeps the pure text
   builder unit-testable without dragging the DB layer into the vitest graph.
