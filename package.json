@@ -2,6 +2,7 @@
   "name": "luatgiatri-website",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@10.33.2",
   "engines": {
     "node": ">=22.12.0"
@@ -11,17 +12,33 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"no tests yet (vitest arrives with M2)\""
+    "payload": "payload",
+    "migrate": "payload migrate",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "capture": "node scripts/capture-content.mjs",
+    "seed": "tsx scripts/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.90.2",
+    "@payloadcms/next": "3.90.2",
+    "@payloadcms/richtext-lexical": "3.90.2",
+    "@payloadcms/translations": "3.90.2",
+    "graphql": "^16.14.2",
     "next": "16.3.6",
+    "payload": "3.90.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "typescript": "^5"
+    "tsx": "^4.22.4",
+    "typescript": "^5",
+    "vitest": "^5.0.3"
   }
 }

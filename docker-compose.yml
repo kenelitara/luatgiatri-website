@@ -20,6 +20,11 @@ services:
   db:
     image: postgres:16-alpine
     env_file: .env
+    # Dev runs the app on the host (`pnpm dev`), so publish Postgres locally.
+    # In-container dev (`docker compose up app`) would need DATABASE_URI to
+    # point at `db:5432` instead — see AGENTS.md.
+    ports:
+      - "127.0.0.1:5432:5432"
     volumes:
       - ./data/db:/var/lib/postgresql/data
     healthcheck:
