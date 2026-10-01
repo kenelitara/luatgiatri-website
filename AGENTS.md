@@ -497,6 +497,33 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
   therefore reproduces the header logo with no manual admin step; the firm can
   still replace it in the admin (Thông tin website → Logo).
 
+## UI notes — favicon & admin fonts (2026-10-01)
+
+- **Favicon = `src/app/icon.svg`** (Next file convention → `<link rel="icon">`
+  on every `(frontend)` route). It is a committed static asset derived from
+  `data/media/Gia-Tri-Law-logo.svg`, NOT the seeded media doc, so the tab icon
+  never depends on the media DB or the domain. It frames the logo's **GT
+  monogram** (`<g id="brand-mark">`, copied byte-identical) in a square
+  transparent `viewBox`: the wordmark + tagline are illegible at 16px, and a
+  brand-navy plate would hide the navy `#002147` half of the monogram. `/admin`
+  keeps Payload's own default favicon — the site icon does not reach it
+  (Payload's `RootLayout` renders its own `<html>`); override with
+  `admin.meta.icons` in `payload.config.ts` if that ever matters.
+- **The admin rich-text editor renders with `--font-serif`, and that stack
+  started with Georgia — which has no Vietnamese glyphs.** Payload styles
+  `.rich-text-lexical .editor-container` (and the version-diff view) with
+  `font-family: var(--font-serif)`, and the stock serif list begins with
+  Georgia. Georgia has no Vietnamese glyphs, so the browser substitutes every
+  accented Vietnamese letter per character and the editor text renders in two
+  mismatched faces with detached tone marks (the acute on Bắt floats off to the
+  right of the ă). `src/app/(payload)/custom.scss` overrides `--font-serif`
+  with a Vietnamese-complete stack (Times New Roman first, then the Linux serif
+  aliases). `--font-body` — the rest of the admin, the sans system stack
+  (`-apple-system` / `Segoe UI` / `Roboto`) — was ALREADY Vietnamese-safe: do
+  not "fix" it, and do NOT import Be Vietnam Pro into the admin (the site font
+  belongs to `(frontend)` only). custom.scss is unlayered, so it wins the
+  cascade against Payload's `@layer payload-default`.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

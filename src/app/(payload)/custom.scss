@@ -1,1 +1,27 @@
-/* Custom Payload admin styles (empty for now, matches the Payload template). */
+/* Custom Payload admin styles. */
+
+/* Vietnamese-safe serif token.
+ *
+ * Payload styles the rich-text editor with `font-family: var(--font-serif)` —
+ * see `.rich-text-lexical .editor-container` in
+ * @payloadcms/richtext-lexical (the version-diff view uses it too). The stock
+ * value starts with Georgia, which ships NO Vietnamese glyphs (it stops at
+ * Latin-1 + a little Latin Extended-A, and has nothing from Latin Extended
+ * Additional, U+1EA0–U+1EFF). The browser therefore substitutes every accented
+ * Vietnamese letter per character from a different font, so the editor text
+ * renders in two mismatched faces with detached tone marks — the acute on
+ * "Bắt" floats off to the right of the ă. Georgia is still there as the
+ * fallback at the end, but no longer first.
+ *
+ * The first font must be Vietnamese-complete: 'Times New Roman' covers it on
+ * Windows and macOS, 'Liberation Serif' is the Linux fontconfig alias for it,
+ * 'Noto Serif' / 'DejaVu Serif' are the explicit Linux options.
+ *
+ * `--font-body` (the rest of the admin: -apple-system, Segoe UI, Roboto, …) is
+ * already Vietnamese-safe and is deliberately left untouched. custom.scss is
+ * unlayered, so it wins the cascade against Payload's `@layer payload-default`
+ * :root — no !important needed. This file is only imported by
+ * src/app/(payload)/layout.tsx, so the public site is unaffected. */
+:root {
+  --font-serif: 'Times New Roman', 'Liberation Serif', 'Noto Serif', 'DejaVu Serif', Georgia, serif;
+}
