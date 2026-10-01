@@ -12,7 +12,12 @@ export const HeroCarousel: Block = {
     {
       name: 'slides',
       type: 'array',
-      label: 'Slide',
+      label: 'Ảnh trình chiếu',
+      // Row titles come from `labels.singular` ("Ảnh trình chiếu 01"), NOT from
+      // the auto-derived English "Slide 01" (sanitizer: `field.labels =
+      // field.labels || formatLabels(field.name)`). The BLOCK's own label
+      // ("Hero nhiều slide") is deliberately left as-is.
+      labels: { singular: 'Ảnh trình chiếu', plural: 'Ảnh trình chiếu' },
       required: true,
       minRows: 1,
       fields: [

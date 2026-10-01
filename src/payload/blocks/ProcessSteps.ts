@@ -14,6 +14,7 @@ export const ProcessSteps: Block = {
       name: 'steps',
       type: 'array',
       label: 'Bước',
+      labels: { singular: 'Bước', plural: 'Bước' },
       required: true,
       fields: [
         { name: 'title', type: 'text', label: 'Tên bước', required: true },

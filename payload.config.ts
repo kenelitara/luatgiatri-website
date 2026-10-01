@@ -94,6 +94,17 @@ export default buildConfig({
     // so the drawer is consistent with fields.block. (The drawer TITLE is NOT
     // this key: it is `fields.addLabel` + the blocks field's `labels.singular` —
     // see the `labels` comment on Pages.layout.)
+    // `fields.toggleBlock` is the half-translated `'Bật/tắt block'` the vi pack
+    // ships (the block collapse toggle's aria-label). 'block' is inconsistent
+    // with our own `fields.block = 'Khối'` override above — same class of gap
+    // as `searchForBlock` — so it becomes 'Bật/tắt khối'.
+    //
+    // `general.globals` is the globals nav-group heading; the vi pack ships it
+    // as `'Cấu hình chung (globals)'`, i.e. an English word in the one nav
+    // heading that shows on EVERY admin screen. Overridden to the Vietnamese
+    // phrase alone (this supersedes the older "acceptable as-is" note in
+    // AGENTS.md's M3-gate findings).
+    //
     // Deliberately NOT overridden, because these read as correct in Vietnamese
     // software: general.email 'Email', authentication.apiKey 'API Key',
     // general.menu 'Menu'.
@@ -101,12 +112,14 @@ export default buildConfig({
       vi: {
         general: {
           collections: 'Bộ sưu tập',
+          globals: 'Cấu hình chung',
         },
         fields: {
           block: 'Khối',
           blocks: 'Khối',
           blockType: 'Loại khối',
           searchForBlock: 'Tìm khối',
+          toggleBlock: 'Bật/tắt khối',
         },
       },
     },

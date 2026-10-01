@@ -14,6 +14,7 @@ export const Faq: Block = {
       name: 'items',
       type: 'array',
       label: 'Câu hỏi',
+      labels: { singular: 'Câu hỏi', plural: 'Câu hỏi' },
       required: true,
       fields: [
         { name: 'question', type: 'text', label: 'Câu hỏi', required: true },

@@ -26,12 +26,14 @@ export const PricingTable: Block = {
       name: 'groups',
       type: 'array',
       label: 'Nhóm hàng',
+      labels: { singular: 'Nhóm', plural: 'Nhóm' },
       fields: [
         { name: 'title', type: 'text', label: 'Tên nhóm' },
         {
           name: 'rows',
           type: 'array',
           label: 'Hàng',
+          labels: { singular: 'Dòng', plural: 'Dòng' },
           required: true,
           fields: [
             { name: 'service', type: 'text', label: 'Dịch vụ', required: true },

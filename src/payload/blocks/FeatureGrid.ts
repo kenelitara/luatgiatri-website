@@ -14,6 +14,7 @@ export const FeatureGrid: Block = {
       name: 'items',
       type: 'array',
       label: 'Mục',
+      labels: { singular: 'Mục', plural: 'Mục' },
       required: true,
       fields: [
         { name: 'title', type: 'text', label: 'Tiêu đề', required: true },

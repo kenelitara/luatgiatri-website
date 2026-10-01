@@ -10,6 +10,7 @@ export const Navigation: GlobalConfig = {
       name: 'headerItems',
       type: 'array',
       label: 'Menu trên cùng',
+      labels: { singular: 'Mục menu', plural: 'Mục menu' },
       required: true,
       fields: [
         { name: 'label', type: 'text', label: 'Nhãn', required: true },
@@ -20,6 +21,7 @@ export const Navigation: GlobalConfig = {
       name: 'footerLinks',
       type: 'array',
       label: 'Liên kết chân trang',
+      labels: { singular: 'Liên kết', plural: 'Liên kết' },
       fields: [
         { name: 'label', type: 'text', label: 'Nhãn', required: true },
         { name: 'href', type: 'text', label: 'Đường dẫn', required: true },

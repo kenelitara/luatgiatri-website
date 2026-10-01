@@ -507,7 +507,9 @@ app (`next start -p 3100`), not dev.
   are `Tiêu đề (admin)` (OUR own Pages label, `src/payload/collections/Pages.ts:40`)
   and `Cấu hình chung (globals)` — the latter is the upstream `vi` language
   pack's own value (`@payloadcms/translations/dist/languages/vi.js:314`), not a
-  leak of ours.
+  leak of ours. **Superseded 2026-10-01:** `general.globals` is now overridden
+  to `'Cấu hình chung'` (see the i18n-override list in the Stack rules section);
+  `Tiêu đề (admin)` is still ours and still deliberate.
 - **The Lexical `Invalid indent value` crash is gone on the served build.**
   Opening `chinh-sach-bao-mat` (which mounts a richText block editor) in the
   :3100 admin mounts `.editor-container` with no error boundary and 0 console
@@ -555,9 +557,9 @@ app (`next start -p 3100`), not dev.
   sibling `general.allCollections` is already `'Tất cả Bộ sưu tập'`, so
   `'Bộ sưu tập'` is the consistent term). `payload.config.ts`'s `i18n` block
   carries
-  `translations: { vi: { general: { collections: 'Bộ sưu tập' }, fields: {
-  block: 'Khối', blocks: 'Khối', blockType: 'Loại khối', searchForBlock:
-  'Tìm khối' } } }`.
+  `translations: { vi: { general: { collections: 'Bộ sưu tập', globals:
+  'Cấu hình chung' }, fields: { block: 'Khối', blocks: 'Khối', blockType:
+  'Loại khối', searchForBlock: 'Tìm khối', toggleBlock: 'Bật/tắt khối' } } }`.
   The shape is `Partial<{ [lang]: <full translations object> }>` on
   `I18nOptions`, but the config type is `I18nOptions<{} | DefaultTranslationsObject>`
   so a nested partial typechecks; at runtime `initI18n`'s `initTFunction`
@@ -566,9 +568,80 @@ app (`next start -p 3100`), not dev.
   `fields.searchForBlock` is the block drawer's search placeholder (the pack
   ships it half-translated as `'Tìm block'`); the drawer TITLE is a different
   key (`fields.addLabel` + the blocks field's `labels.singular`) — see "Adding a
-  new block" below. Deliberately NOT overridden, because they read as correct in
+  new block" below. `fields.toggleBlock` (the block collapse toggle's
+  aria-label) and `general.globals` (the globals nav-group heading, on every
+  admin screen) were the pack's other half-translated strings
+  (`'Bật/tắt block'`, `'Cấu hình chung (globals)'`) — both overridden
+  2026-10-01. Deliberately NOT overridden, because they read as correct in
   Vietnamese software: `authentication.apiKey` "API Key", `general.email`
   "Email", `general.menu` "Menu".
+
+  **The full i18n-override list (what is already patched, and why):**
+
+  | key | pack's value | override | why |
+  | --- | --- | --- | --- |
+  | `general.collections` | `Collections` | `Bộ sưu tập` | untranslated EN; the "Collections" nav/dashboard group heading |
+  | `general.globals` | `Cấu hình chung (globals)` | `Cấu hình chung` | half-EN on every admin screen |
+  | `fields.block` / `blocks` | `Block` / `blocks` | `Khối` | every block here is labelled in Vietnamese |
+  | `fields.blockType` | `Block Type` | `Loại khối` | untranslated EN |
+  | `fields.searchForBlock` | `Tìm block` | `Tìm khối` | half-EN; the block-drawer search placeholder |
+  | `fields.toggleBlock` | `Bật/tắt block` | `Bật/tắt khối` | half-EN; the block collapse toggle's aria-label |
+
+  Two levers do NOT go through `i18n.translations`:
+  a field's own `label` (our code) and **the `labels` vs `label` lever below**.
+
+- **`labels` vs `label` — the row-title trap (the systematic leak, fixed
+  2026-10-01).** Payload's field sanitizer does
+  `field.labels = field.labels || formatLabels(field.name)`
+  (`payload/dist/fields/config/sanitize.js`) — but **only for `array` and
+  `blocks` fields that have a `label`**. So a field with a `label` and no
+  `labels` silently gets its collapsed-row title derived from its **English
+  field `name`**. `ArrayRow.js` renders
+  `` `${getTranslation(labels.singular, i18n)} ${index+1}` `` (zero-padded), and
+  the array's "Thêm: …" add-row button uses the same `labels.singular`. That is
+  the mechanism that produced "Layout"/"Thêm: Layout" for the `layout` blocks
+  field (fixed earlier) and "Item 01", "Row 01", "Group 01", "Section 01",
+  "Column 01", "Slide 01", "Bullet 01", "Step 01", "Logo 01", "Header Item 01"
+  … for the 15 arrays (fixed 2026-10-01). **Every `array`/`blocks` field must
+  carry an explicit `labels: { singular, plural }`.** `group` fields are NOT
+  affected (the sanitizer skips them, and Payload's `Group` component consumes
+  `label`, not `labels`). Vietnamese has no plural inflection, so `singular` and
+  `plural` are the same string — that is correct. `labels` are **admin-only
+  metadata: no migration, and the field `name` (and DB column) must not change.**
+  Current explicit array `labels`: `logos`/Logo, `items`/Câu hỏi (faq),
+  `items`/Mục (featureGrid), `slides`/Ảnh trình chiếu (heroCarousel — the array
+  `label` was 'Slide' and was changed to 'Ảnh trình chiếu' too, so the form and
+  its rows agree; the BLOCK label "Hero nhiều slide" is untouched), `groups`/
+  Nhóm + `rows`/Dòng (pricingTable), `steps`/Bước (processSteps), `bullets`/Mục
+  (servicePair), `items`/Nhận xét (testimonials), `sections`/Nhóm sản phẩm +
+  `columns`/Cột + `rows`/Dòng + `cells`/Ô (tokenMatrix), `headerItems`/Mục menu
+  + `footerLinks`/Liên kết (navigation).
+
+- **`SEO > Panel` in the list-view column selector — fixed the same way.**
+  `seo.panel` is a data-less `ui` field, but Payload's `combineFieldLabel` util
+  joined the parent group's label with the field's auto-derived name label
+  ("panel") and listed it as a column pill. `UIField` renders no label of its
+  own, so the fix is `admin: { disableListColumn: true }` on the field
+  (`ColumnSelector` filters on `field.admin.disableListColumn`) — not a `label`.
+
+- **Known English strings that CANNOT be fixed from this config** (all verified
+  against the installed packages, 2026-10-01; none are `t()`-translatable):
+
+  | string | where it shows | source |
+  | --- | --- | --- |
+  | `MIME Type`, `Thumbnail URL`, `URL` | Media list header + column selector | `payload/dist/uploads/getBaseFields.js` — hardcoded `label:` on the auto-added upload fields (the sibling `filename`/`filesize`/`width`/`height` DO use `t('upload:…')`) |
+  | `Copy URL` | media edit view copy tooltip | `@payloadcms/ui/dist/elements/FileDetails/FileMeta` passes `defaultMessage="Copy URL"` to `CopyToClipboard`, which prefers `defaultMessage` over `t('general:copy')` |
+  | `Drag to move`, `Add block`, `Insert Paragraph`, `Edit link`, `Remove link` | Lexical editor aria-labels | hardcoded in `@payloadcms/richtext-lexical/dist/lexical/plugins/**` |
+  | `Responsive` | Live Preview device dropdown | `@payloadcms/ui/dist/providers/LivePreview/index.js` — hardcoded `label: 'Responsive'` |
+  | `Notifications alt+T` | empty toast live-region aria-label | `sonner@1.7.4` (bundled by Payload's Toaster) builds it as `` `${label} ${shortcut}` ``; `Toaster` accepts a `label` prop but Payload does not pass one |
+  | `alt="yas"` | account avatar `<img>` | literal `alt: "yas"` in `@payloadcms/ui/dist/graphics/Account/Gravatar/index.js` — an upstream bug |
+
+  Deliberately left in English because they are the standard term in Vietnamese
+  software / a proper noun / an acronym: `Slug`, `Icon`, `Hotline`, `Logo`,
+  `Email`, `Menu`, `SEO`, `URL`, `API Key`, `GA4 Measurement ID`, `Referrer`,
+  `MIME`, and the `utm_source`/`utm_medium`/`utm_campaign` query-param names.
+  `sameAs` (Authors) is the schema.org property name, and its admin
+  `description` already tells the editor what to enter.
 - **`SITE_ENV` is a build arg**, not a runtime knob — prerendered `robots.ts`
   and metadata bake it at build (spec §6.5; mechanism detailed in the Docker
   section below). Verify staging `noindex` against the built image, never

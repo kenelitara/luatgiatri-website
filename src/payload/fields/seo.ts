@@ -15,6 +15,14 @@ export const seoField: Field = {
       name: 'panel',
       type: 'ui',
       admin: {
+        // Presentation-only field — never a list column. Without this it appears
+        // in the list view's column selector as "SEO > Panel", because the
+        // `combineFieldLabel` util joins the parent group's label with the
+        // field's own (auto-derived, English) label ("panel"). UIField renders
+        // no label of its own, so hiding it from the selector is the clean fix
+        // (verified: UIField.admin.disableListColumn exists in payload 3.90.2,
+        // and ColumnSelector filters on `field.admin.disableListColumn`).
+        disableListColumn: true,
         components: {
           // Alias form (`@/…`) rather than a leading-slash path: payload.config.ts
           // lives at the project root, so admin.importMap.baseDir defaults to the

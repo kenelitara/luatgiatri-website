@@ -19,6 +19,7 @@ export const Testimonials: Block = {
       name: 'items',
       type: 'array',
       label: 'Nhận xét',
+      labels: { singular: 'Nhận xét', plural: 'Nhận xét' },
       required: true,
       fields: [
         { name: 'quote', type: 'textarea', label: 'Lời nhận xét', required: true },

@@ -16,6 +16,7 @@ export const ServicePair: Block = {
       name: 'bullets',
       type: 'array',
       label: 'Danh sách (dấu tích)',
+      labels: { singular: 'Mục', plural: 'Mục' },
       fields: [{ name: 'item', type: 'text', label: 'Mục', required: true }],
     },
     { name: 'reverse', type: 'checkbox', label: 'Ảnh bên phải', defaultValue: false },
