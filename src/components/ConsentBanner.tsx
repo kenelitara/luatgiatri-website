@@ -2,14 +2,51 @@
 
 import { useEffect, useState } from 'react'
 
+// GA4 sets cookies, so under Nghị định 13 (spec §9) nothing may load before the
+// visitor consents: this banner asks, and the gtag scripts are injected only
+// after "Đồng ý" — no consent, no script.
+//
+// `ga4Id` is a BUILD-TIME constant. `process.env.NEXT_PUBLIC_*` is inlined by
+// `pnpm build` (see the Task 12 note in AGENTS.md), so changing the measurement
+// id needs a rebuild — editing it in the admin does nothing.
+//
+// The `getElementById('ga4-script')` guard makes the injection idempotent, which
+// is what keeps React StrictMode's double-invoked mount effect from loading GA4
+// twice. The markup, the `lg_consent` key and the `ga4-script` element id are
+// fixed by the plan — Task 14's Playwright test asserts them; do not rename.
+
 const KEY = 'lg_consent'
+
+// Storage is not always available: when site data is blocked (sandboxed
+// iframes/webviews, storage disabled) `window.localStorage` throws
+// `SecurityError`. This runs in a passive effect, React 19 does not swallow
+// effect errors, and the layout has no error boundary — so an unguarded read
+// would unmount the root and blank the entire public site. Consent simply
+// degrades to in-memory for the session instead: an analytics banner must never
+// be able to break the site.
+function readConsent(): 'accepted' | 'declined' | null {
+  try {
+    const saved = window.localStorage.getItem(KEY)
+    return saved === 'accepted' || saved === 'declined' ? saved : null
+  } catch {
+    return null
+  }
+}
+
+function writeConsent(v: 'accepted' | 'declined') {
+  try {
+    window.localStorage.setItem(KEY, v)
+  } catch {
+    // In-memory only for this session — the banner still dismisses on click.
+  }
+}
 
 export function ConsentBanner({ ga4Id }: { ga4Id?: string }) {
   const [state, setState] = useState<'unset' | 'accepted' | 'declined'>('unset')
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(KEY)
-    if (saved === 'accepted' || saved === 'declined') setState(saved)
+    const saved = readConsent()
+    if (saved) setState(saved)
   }, [])
 
   useEffect(() => {
@@ -28,7 +65,7 @@ export function ConsentBanner({ ga4Id }: { ga4Id?: string }) {
   if (!ga4Id || state !== 'unset') return null
 
   const decide = (v: 'accepted' | 'declined') => {
-    window.localStorage.setItem(KEY, v)
+    writeConsent(v)
     setState(v)
   }
 
