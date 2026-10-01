@@ -195,6 +195,16 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
 - Heading law (spec §6.4): one `<h1>` per page, rendered from
   `Pages.primaryHeading`; block components start at `<h2>`, never skip levels.
   The Playwright test `heading-discipline.spec.ts` fails the build otherwise.
+- **Lexical fixture nodes (Task 20 seeding):** the richtext-lexical feature
+  validation (installed dist, `features/lists/shared/validate.js`) requires
+  `tag: 'ul'|'ol'` on `list` nodes and a finite `value` (number) on `listitem`
+  nodes — the lean paragraph/text shape alone is not enough once lists are
+  involved. Seeded fixtures therefore carry
+  `{type:'list', version:0, listType, tag, children:[{type:'listitem',
+  version:0, value:0, children:[paragraph…]}]}`. Also: seeded pages need
+  `_status: 'published'` (drafts are on) or Task 21's published-only
+  `getPage()` finds nothing, and the Payload DB pool keeps tsx scripts alive —
+  call `process.exit()` at the end of seed scripts.
 - No Redis, no worker, no SMTP in this project. When email/notification lands
   (or the AI crawler feature), revisit — that changes §3.9 of the spec.
 
