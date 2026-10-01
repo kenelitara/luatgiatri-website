@@ -1257,6 +1257,7 @@
                       "type": "listitem",
                       "version": 0,
                       "value": 0,
+                      "indent": 0,
                       "children": [
                         {
                           "type": "paragraph",
@@ -1275,6 +1276,7 @@
                       "type": "listitem",
                       "version": 0,
                       "value": 0,
+                      "indent": 0,
                       "children": [
                         {
                           "type": "paragraph",
@@ -1293,6 +1295,7 @@
                       "type": "listitem",
                       "version": 0,
                       "value": 0,
+                      "indent": 0,
                       "children": [
                         {
                           "type": "paragraph",
@@ -1320,6 +1323,7 @@
                               "type": "listitem",
                               "version": 0,
                               "value": 0,
+                              "indent": 0,
                               "children": [
                                 {
                                   "type": "paragraph",
@@ -1338,6 +1342,7 @@
                               "type": "listitem",
                               "version": 0,
                               "value": 0,
+                              "indent": 0,
                               "children": [
                                 {
                                   "type": "paragraph",
@@ -1413,6 +1418,7 @@
                       "type": "listitem",
                       "version": 0,
                       "value": 0,
+                      "indent": 0,
                       "children": [
                         {
                           "type": "paragraph",
@@ -1431,6 +1437,7 @@
                       "type": "listitem",
                       "version": 0,
                       "value": 0,
+                      "indent": 0,
                       "children": [
                         {
                           "type": "paragraph",

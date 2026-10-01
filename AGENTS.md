@@ -341,6 +341,25 @@ Task 12 — consent banner gating GA4.
 - **Admin UI is Vietnamese** (`i18n.supportedLanguages: { vi }`). Every new
   collection/field/block label is written in Vietnamese. Content `localization`
   is NOT enabled and must not be enabled (single-locale site, spec §5.7).
+- **Overriding Payload's own Vietnamese strings — `i18n.translations`.** The
+  `vi` language pack ships one untranslated string: `general.collections`
+  = `'Collections'`, which renders as the "Collections" group heading in the
+  admin nav/dashboard (`@payloadcms/translations/dist/languages/vi.js`; the
+  sibling `general.allCollections` is already `'Tất cả Bộ sưu tập'`, so
+  `'Bộ sưu tập'` is the consistent term). `payload.config.ts`'s `i18n` block
+  carries `translations: { vi: { general: { collections: 'Bộ sưu tập' } } }`.
+  The shape is `Partial<{ [lang]: <full translations object> }>` on
+  `I18nOptions`, but the config type is `I18nOptions<{} | DefaultTranslationsObject>`
+  so a nested partial typechecks; at runtime `initI18n`'s `initTFunction`
+  deep-merges it OVER the language pack (`deepMergeSimple(pack, config.translations[lang])`),
+  so only the overridden leaf is needed. Add further overrides the same way.
+  A scan of `vi.js` (587 string leaves) found only 11 values that are pure
+  ASCII: the English ones user-visible in chrome are `general.collections`
+  (fixed), `fields.block` "Block", `fields.blocks` "blocks",
+  `fields.blockType` "Block Type", `authentication.apiKey` "API Key", and
+  `general.email` "Email"/`general.menu` "Menu" (both normal in Vietnamese
+  software) — the rest are diacritic-free Vietnamese (`Sai`, `Xem`, `trong`,
+  `giao nhau`). Left as-is pending a conscious decision.
 - **`SITE_ENV` is a build arg**, not a runtime knob — prerendered `robots.ts`
   and metadata bake it at build (spec §6.5; mechanism detailed in the Docker
   section below). Verify staging `noindex` against the built image, never
@@ -371,10 +390,21 @@ Task 12 — consent banner gating GA4.
   nodes — the lean paragraph/text shape alone is not enough once lists are
   involved. Seeded fixtures therefore carry
   `{type:'list', version:0, listType, tag, children:[{type:'listitem',
-version:0, value:0, children:[paragraph…]}]}`. Also: seeded pages need
-  `_status: 'published'` (drafts are on) or Task 21's published-only
-  `getPage()` finds nothing, and the Payload DB pool keeps tsx scripts alive —
-  call `process.exit()` at the end of seed scripts.
+version:0, value:0, indent:0, children:[paragraph…]}]}`. **`listitem.indent` is
+  MANDATORY and must be the NUMBER `0` — never the string `'0'`.** `@lexical/list`'s
+  `ListItemNode.updateFromJSON` → `ElementNode.updateFromJSON` calls
+  `setIndent(serializedNode.indent)`, and `ListItemNode.setIndent` throws
+  `Invalid indent value.` unless `typeof indent === 'number'`. Omitting it
+  breaks the ADMIN editor (Payload's error boundary replaces the field with
+  "Something went wrong") while the PUBLIC site still renders the same lists
+  correctly — the HTML/JSX converters never call `setIndent` — which is exactly
+  why the M2 gate missed it. Ground truth (2026-10-01), from round-tripping a
+  bulleted list through the admin editor and reading the stored JSON back, the
+  editor emits e.g. `{type:'listitem', value:1, format:'', indent:0, version:1,
+  children:[…], direction:null}` — `indent:0` (a number) is the load-bearing
+  part. Also: seeded pages need `_status: 'published'` (drafts are on) or Task
+  21's published-only `getPage()` finds nothing, and the Payload DB pool keeps
+  tsx scripts alive — call `process.exit()` at the end of seed scripts.
 - **Lexical bold = `format: 1`; `bold: true` is silently ignored.** A bold run
   must be serialized as the bitfield `"format": 1` (`NodeFormat.IS_BOLD` in
   `@payloadcms/richtext-lexical/dist/lexical/utils/nodeFormat.js`). Both the
@@ -721,22 +751,35 @@ The review's three must-fixes all landed; re-verified against a fresh
   is genuinely fixed; the pill case is unexplained and is recorded rather than
   asserted.
 
-### 6. PRE-EXISTING BUG found while verifying (NOT caused by the theming)
+### 6. PRE-EXISTING BUG found while verifying (NOT caused by the theming) — FIXED
 
-**`Error: Invalid indent value.` breaks the rich-text editor on 4 of the 10
-seeded pages.** `@lexical/list`'s `ListItemNode.updateFromJSON` calls
-`setIndent()` with the stored value; a `listitem` node with **no `indent`
-property** throws and Payload's error boundary replaces the editor with
-"Something went wrong: Invalid indent value." Confirmed by REST: every
-`listitem` in the seeded content serialises as
-`{type, value, version, children}` — no `indent`. Affected (draft + published):
-`chu-ky-so-token` (7), `dich-vu-ke-toan` (27), `thanh-lap-doanh-nghiep-tron-goi`
-(5), `chinh-sach-bao-mat` (11) — in `richText` block bodies AND in `faq`
-`items[].answer` (the FAQ answers are the wider source). Lexical wants
-`indent: '0'` (a STRING) on list items; the seed fixtures (Task 20) never set
-it, which is the same class of gap the `tag`/`value` note above records.
-This is a data/seed bug — fix by adding `indent: '0'` to the fixtures and
-patching existing rows — and is independent of the admin theme work.
+**`Error: Invalid indent value.` broke the rich-text editor on the seeded
+pages.** `@lexical/list`'s `ListItemNode.updateFromJSON` feeds the stored
+`indent` to `setIndent()`, which throws unless it is a **number**; the
+hand-authored seed fixtures (Task 20) wrote `listitem` nodes as
+`{type, value, version, children}` with no `indent` at all, and the DB rows
+mirrored them. Fixed 2026-10-01: `indent: 0` (the NUMBER — an earlier version
+of this note wrongly said the string `'0'`) was added to all **50** `listitem`
+nodes across the four affected fixtures, and backfilled into **all four DB
+tables** — the live content tables AND their `_pages_v_*` version mirrors — by
+the idempotent `scripts/fix-lexical-indent.ts` (`pnpm fix:lexical-indent`,
+which only rewrites rows whose listitems lack a numeric `indent`). Affected
+fixtures/rows: `chinh-sach-bao-mat` (11), `chu-ky-so-token` (7),
+`dich-vu-ke-toan` (27), `thanh-lap-doanh-nghiep-tron-goi` (5).
+
+**Mount nuance (measured 2026-10-01 against a `next start` build):** in the
+page edit view only `richText` BLOCK bodies mount a Lexical editor — the
+`faq` `items[].answer` rich-text fields are stored in the RSC payload but their
+editor does not render (the answer label is never in the visible DOM; toggling
+every collapsible/array-row control, incl. the array's own "Hiển thị toàn bộ",
+did not mount it). So the FAQ nodes never actually crashed the edit view; the
+real edit-view crash was `chinh-sach-bao-mat` and `dich-vu-ke-toan` via their
+richText block bodies — reproduced by re-stripping `indent` (the prod build
+then throws the minified `Minified Lexical error #117`) and confirmed gone once
+it is restored. The FAQ rows were patched anyway (and the fixtures fixed) so
+any path that does parse them — a version restore, or a future UI that mounts
+the field — stays clean. The front end was never affected either way (the
+converters ignore `indent`).
 
 ### 7. Not done / deliberately skipped
 
