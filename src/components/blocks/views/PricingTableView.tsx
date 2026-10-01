@@ -19,7 +19,7 @@ export function PricingTableView({ block }: { block: PricingTableBlock }) {
                 </th>
                 {threeCols ? (
                   <th scope="col" className="py-2 pr-4 font-semibold">
-                    Hạn hạn mức
+                    Thời hạn
                   </th>
                 ) : null}
                 <th scope="col" className="py-2 font-semibold">

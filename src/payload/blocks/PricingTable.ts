@@ -13,7 +13,7 @@ export const PricingTable: Block = {
       defaultValue: 'service-fee',
       options: [
         { label: 'Dịch vụ — Phí', value: 'service-fee' },
-        { label: 'Dịch vụ — Hạn hạn mức — Phí', value: 'service-term-fee' },
+        { label: 'Dịch vụ — Thời hạn — Phí', value: 'service-term-fee' },
       ],
       admin: { description: 'service-term-fee dùng cho ma trận chữ ký số (spec §5.5)' },
     },
@@ -30,7 +30,7 @@ export const PricingTable: Block = {
           required: true,
           fields: [
             { name: 'service', type: 'text', label: 'Dịch vụ', required: true },
-            { name: 'term', type: 'text', label: 'Hạn hạn mức (1 năm / 2 năm…)' },
+            { name: 'term', type: 'text', label: 'Thời hạn (1 năm / 2 năm…)' },
             { name: 'fee', type: 'text', label: 'Phí', required: true },
           ],
         },
