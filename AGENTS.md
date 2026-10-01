@@ -129,6 +129,26 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   template sets it; without it the `payload` CLI cannot load
   `payload.config.ts` as ESM (full failure chain in Project-specific
   gotchas above). Non-negotiable.
+- **Collection-level `admin.livePreview` (Task 12)** —
+  `admin.livePreview: { url }` on a collection alone enables Live Preview
+  for it (root-level `admin.livePreview.collections: string[]` is optional;
+  verified in `@payloadcms/ui/dist/utilities/handleLivePreview.js`). BUT a
+  plain string `url` is used verbatim as the preview iframe `src` — 3.90.2
+  has NO `{field}` placeholder interpolation (the plan's
+  `url: '/tin-tuc/{slug}'` would literally 404). Per-doc URLs must be
+  functions: `url: ({ data }) => (data?.slug ? `/tin-tuc/${data.slug}` : null)`.
+  Posts uses the function form; until Task 21 adds the front-end route, the
+  preview iframe 404s (accepted for M2).
+- **`defaultSortBy` does NOT exist in 3.90.2** (Payload 2 API — zero hits
+  across installed `payload/dist`). Dropped from the Authors collection in
+  Task 12; admin list-view ordering is per-user preference or request-level
+  `sort` only.
+- **First `richText` field requires `pnpm generate:importmap` (Task 12)** —
+  Posts added the project's first `richText` field and dev served the edit
+  view with `getFromImportMap: PayloadComponent not found` for
+  `@payloadcms/richtext-lexical/rsc#RscEntryLexicalField` until the
+  importMap was regenerated. Run that command after adding field types with
+  admin components; the auto-regeneration does not pick them up mid-dev-session.
 
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 

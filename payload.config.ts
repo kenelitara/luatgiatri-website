@@ -5,6 +5,10 @@ import { vi } from '@payloadcms/translations/languages/vi'
 import sharp from 'sharp'
 import { Users } from './src/payload/collections/Users'
 import { Media } from './src/payload/collections/Media'
+import { Authors } from './src/payload/collections/Authors'
+import { Categories } from './src/payload/collections/Categories'
+import { Tags } from './src/payload/collections/Tags'
+import { Posts } from './src/payload/collections/Posts'
 import { SiteSettings } from './src/payload/globals/SiteSettings'
 import { Navigation } from './src/payload/globals/Navigation'
 
@@ -18,7 +22,7 @@ export default buildConfig({
     user: Users.slug,
     meta: { titleSuffix: ' — Quản trị Luật Gia Trí' },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Authors, Categories, Tags, Posts],
   globals: [SiteSettings, Navigation],
   editor: lexicalEditor(),
   sharp,
