@@ -272,6 +272,18 @@ and the `v3.90.2` website template, 2026-10-01.
   `_status: 'published'` (drafts are on) or Task 21's published-only
   `getPage()` finds nothing, and the Payload DB pool keeps tsx scripts alive —
   call `process.exit()` at the end of seed scripts.
+- **Lexical bold = `format: 1`; `bold: true` is silently ignored.** A bold run
+  must be serialized as the bitfield `"format": 1` (`NodeFormat.IS_BOLD` in
+  `@payloadcms/richtext-lexical/dist/lexical/utils/nodeFormat.js`). Both the
+  JSX and HTML text converters
+  (`.../converters/lexicalToJSX|lexicalToHtml/.../converters/text.js`) read
+  `node.format` and never a `bold` property, so a `"bold": true` node emits
+  plain text with no `<strong>` — a silent no-op. Every M2 fixture originally
+  carried the inert form and rendered its "bold paragraph" section headings as
+  body text; the M3 Task 7 follow-up converted all 14 runs across the 7 M2
+  fixtures, plus the 9 `chinh-sach-bao-mat` headings, to `format: 1`. Author
+  new fixtures with `"format": 1`, and verify with
+  `curl -s http://localhost:3100/<slug>/ | grep -c '<strong>'`.
 - No Redis, no worker, no SMTP in this project. When email/notification lands
   (or the AI crawler feature), revisit — that changes §3.9 of the spec.
 

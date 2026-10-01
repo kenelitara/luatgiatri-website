@@ -79,7 +79,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "Mô tả dịch vụ kế toán thuế",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -438,7 +438,7 @@
                               "type": "text",
                               "version": 0,
                               "text": "Chính xác:",
-                              "bold": true
+                              "format": 1
                             },
                             {
                               "type": "text",
@@ -462,7 +462,7 @@
                               "type": "text",
                               "version": 0,
                               "text": "Đầy đủ:",
-                              "bold": true
+                              "format": 1
                             },
                             {
                               "type": "text",
@@ -486,7 +486,7 @@
                               "type": "text",
                               "version": 0,
                               "text": "Kịp thời:",
-                              "bold": true
+                              "format": 1
                             },
                             {
                               "type": "text",
@@ -925,7 +925,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "Khách Hàng Của Chúng Tôi",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },

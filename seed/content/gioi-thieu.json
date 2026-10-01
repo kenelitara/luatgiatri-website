@@ -23,7 +23,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "Đồng hành pháp lý vững chắc cùng doanh nghiệp",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -113,7 +113,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "Chúng tôi mang đến giá trị gì?",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -125,7 +125,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "Là sự tận tâm và trách nhiệm",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },

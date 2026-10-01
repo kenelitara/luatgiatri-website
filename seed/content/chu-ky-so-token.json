@@ -1388,7 +1388,7 @@
                       "type": "text",
                       "version": 0,
                       "text": "Lưu ý: Lệ phí môn bài của Doanh nghiệp mới thành lập sẽ được miễn trong năm đầu tiên.",
-                      "bold": true
+                      "format": 1
                     }
                   ]
                 },
@@ -1589,7 +1589,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "Khách Hàng Của Chúng Tôi",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
