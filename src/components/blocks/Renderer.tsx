@@ -1,7 +1,14 @@
 import { Fragment } from 'react'
 import { RichText } from '@payloadcms/richtext-lexical/react'
 
+import { HeroCarousel } from '@/components/HeroCarousel'
+import { CtaBannerView } from './views/CtaBannerView'
+import { FeatureGridView } from './views/FeatureGridView'
 import { Heading } from './Heading'
+import { HeroView } from './views/HeroView'
+import { NewsPreviewView } from './views/NewsPreviewView'
+import { RichTextView } from './views/RichTextView'
+import { ServicePairView } from './views/ServicePairView'
 import type { Page } from '@/payload-types'
 
 type Block = NonNullable<Page['layout']>[number]
@@ -23,51 +30,33 @@ export function Renderer({ blocks }: { blocks: Block[] }) {
 
 function renderBlock(block: Block): React.ReactNode {
   switch (block.blockType) {
+    case 'hero':
+      return <HeroView block={block} />
     case 'richText':
-      return (
-        <section className="prose">
-          <RichText data={block.body} />
-        </section>
-      )
+      return <RichTextView block={block} />
     case 'servicePair':
-      return (
-        <section className="grid md:grid-cols-2 gap-8">
-          <div>
-            {block.image && (
-              <img
-                src={typeof block.image === 'object' ? (block.image.url ?? '') : ''}
-                alt={typeof block.image === 'object' ? block.image.alt : ''}
-              />
-            )}
-          </div>
-          <div>
-            <Heading>{block.heading}</Heading>
-            <div className="prose">
-              <RichText data={block.body} />
-            </div>
-            <ul>
-              {block.bullets?.map((b, j) => (
-                <li key={j}>✔ {b.item}</li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )
+      return <ServicePairView block={block} />
     case 'featureGrid':
-      return (
-        <section>
-          {block.heading ? <Heading>{block.heading}</Heading> : null}
-          <div className="grid md:grid-cols-3 gap-6">
-            {block.items?.map((item, j) => (
-              <div key={j}>
-                <Heading level={3}>{item.title}</Heading>
-                <p>{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )
+      return <FeatureGridView block={block} />
+    case 'ctaBanner':
+      return <CtaBannerView block={block} />
+    case 'newsPreview':
+      return <NewsPreviewView block={block} />
+    case 'heroCarousel': {
+      const slides = (block.slides ?? []).map((s) => ({
+        image: typeof s.image === 'object' && s.image !== null ? s.image : { url: '', alt: '' },
+        headline: s.headline,
+        subheadline: s.subheadline,
+        ctaLabel: s.ctaLabel,
+        ctaHref: s.ctaHref,
+      }))
+      return slides.length ? (
+        <HeroCarousel slides={slides} intervalMs={block.intervalMs ?? 6000} />
+      ) : null
+    }
     case 'faq':
+      // Kept inline until Task 19 extracts FaqView — the Renderer heading
+      // tests assert this markup renders (regression guard).
       return (
         <section>
           <Heading>{block.heading}</Heading>
@@ -82,7 +71,7 @@ function renderBlock(block: Block): React.ReactNode {
         </section>
       )
     default:
-      // Remaining blocks get full components in Tasks 18–19. Until then
+      // Remaining blocks get full components in Task 19. Until then
       // render nothing rather than wrong markup — never emit untested
       // structure for content blocks.
       return null
