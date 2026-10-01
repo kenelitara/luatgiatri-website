@@ -56,7 +56,11 @@ function renderBlock(block: Block): React.ReactNode {
         ctaHref: s.ctaHref,
       }))
       return slides.length ? (
-        <HeroCarousel slides={slides} intervalMs={block.intervalMs ?? 6000} />
+        <HeroCarousel
+          slides={slides}
+          intervalMs={block.intervalMs ?? 6000}
+          showOverlay={block.showOverlay ?? false}
+        />
       ) : null
     }
     case 'faq':

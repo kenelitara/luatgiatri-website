@@ -19,5 +19,15 @@ export const HeroCarousel: Block = {
       ],
     },
     { name: 'intervalMs', type: 'number', label: 'Tự chuyển sau (ms)', defaultValue: 6000 },
+    {
+      name: 'showOverlay',
+      type: 'checkbox',
+      label: 'Phủ tiêu đề lên ảnh (chỉ khi ảnh KHÔNG đã có chữ)',
+      defaultValue: false,
+      admin: {
+        description:
+          'Banner cũ trên site đã chứa sẵn chữ trong ảnh — để tắt (mặc định) cho các banner đó, tránh chữ chồng chữ. Bật khi ảnh là ảnh nền trơn và cần phủ tiêu đề.',
+      },
+    },
   ],
 }

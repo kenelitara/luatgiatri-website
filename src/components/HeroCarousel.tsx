@@ -17,13 +17,21 @@ export type HeroSlide = {
  * server-rendered into the DOM and stay mounted — inactive slides are hidden
  * with opacity + inert, so every slide's copy is in the HTML for crawlers.
  * With one slide it renders a static hero (no dots, no autoplay, no controls).
+ *
+ * `showOverlay` (default false): the legacy banners already carry their own
+ * headline/design baked into the image, so overlaying our own text + a dark
+ * scrim would double the text and dim the artwork. Off by default means the
+ * banner shows as designed; still the slide copy is present in the DOM for
+ * crawlers (visually-hidden heading), so SEO and accessibility are unaffected.
  */
 export function HeroCarousel({
   slides,
   intervalMs = 6000,
+  showOverlay = false,
 }: {
   slides: HeroSlide[]
   intervalMs?: number
+  showOverlay?: boolean
 }) {
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(true)
@@ -61,21 +69,29 @@ export function HeroCarousel({
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-brand-950/55" />
-            <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-4 text-white">
-              <h2 className="max-w-2xl text-hero font-bold">{slide.headline}</h2>
-              {slide.subheadline ? (
-                <p className="mt-3 max-w-xl text-lg">{slide.subheadline}</p>
-              ) : null}
-              {slide.ctaHref && slide.ctaLabel ? (
-                <Link
-                  href={slide.ctaHref}
-                  className="mt-6 w-fit rounded bg-gold-500 px-6 py-3 font-semibold text-brand-950 hover:bg-gold-400"
-                >
-                  {slide.ctaLabel}
-                </Link>
-              ) : null}
-            </div>
+            {showOverlay ? (
+              <>
+                <div className="absolute inset-0 bg-brand-950/55" />
+                <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-4 text-white">
+                  <h2 className="max-w-2xl text-hero font-bold">{slide.headline}</h2>
+                  {slide.subheadline ? (
+                    <p className="mt-3 max-w-xl text-lg">{slide.subheadline}</p>
+                  ) : null}
+                  {slide.ctaHref && slide.ctaLabel ? (
+                    <Link
+                      href={slide.ctaHref}
+                      className="mt-6 w-fit rounded bg-gold-500 px-6 py-3 font-semibold text-brand-950 hover:bg-gold-400"
+                    >
+                      {slide.ctaLabel}
+                    </Link>
+                  ) : null}
+                </div>
+              </>
+            ) : (
+              /* banner already carries its text: keep the copy in the DOM for
+                 crawlers, visually hidden (heading law: h2, never h1) */
+              <h2 className="sr-only">{slide.headline}</h2>
+            )}
           </div>
         )
       })}

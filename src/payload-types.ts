@@ -423,6 +423,10 @@ export interface Page {
           id?: string | null;
         }[];
         intervalMs?: number | null;
+        /**
+         * Banner cũ trên site đã chứa sẵn chữ trong ảnh — để tắt (mặc định) cho các banner đó, tránh chữ chồng chữ. Bật khi ảnh là ảnh nền trơn và cần phủ tiêu đề.
+         */
+        showOverlay?: boolean | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'heroCarousel';
@@ -989,6 +993,7 @@ export interface PagesSelect<T extends boolean = true> {
                     id?: T;
                   };
               intervalMs?: T;
+              showOverlay?: T;
               id?: T;
               blockName?: T;
             };
