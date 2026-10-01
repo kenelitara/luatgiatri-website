@@ -27,7 +27,19 @@ if (
 export default buildConfig({
   admin: {
     user: Users.slug,
-    meta: { titleSuffix: ' — Quản trị Luật Gia Trí' },
+    meta: {
+      titleSuffix: ' — Quản trị Luật Gia Trí',
+      // Admin tab icon. `admin.meta` is spread into
+      // @payloadcms/next's generateMetadata(), where `icons` REPLACES
+      // Payload's default favicon pair (verified in
+      // node_modules/@payloadcms/next/dist/utilities/meta.js: `const icons =
+      // incomingMetadata.icons || [payloadFaviconDark, payloadFaviconLight]`).
+      // `/icon.svg` is the committed brand asset (src/app/icon.svg) that the
+      // public site's file-convention favicon already uses; generateMetadata
+      // sets `metadataBase` from config.serverURL, so the root-relative URL
+      // resolves to an absolute one. Shape per Next's Metadata['icons'].
+      icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/icon.svg' }],
+    },
   },
   collections: [Users, Media, Authors, Categories, Tags, Posts, Redirects, Leads, Pages],
   globals: [SiteSettings, Navigation],

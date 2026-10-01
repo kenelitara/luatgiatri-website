@@ -1,5 +1,167 @@
 /* Custom Payload admin styles. */
 
+/* ==========================================================================
+   BRAND THEME — design tokens
+   ==========================================================================
+
+   HOW THE PAYLOAD ADMIN GETS ITS COLOURS (verified against the compiled admin
+   bundle, 2026-10-01 — see AGENTS.md):
+
+     html[data-theme='light'] { --theme-elevation-N: var(--color-base-N) }
+     html[data-theme='dark']  { --theme-elevation-N: var(--color-base-(1000-N)) }
+     --theme-bg / --theme-text / --theme-input-bg / --theme-border-color
+        are all aliases of --theme-elevation-*, which in turn ALL alias
+        --color-base-*. The success/warning/error families are separate ramps
+        (--color-success-*, ...) used for status pills, focus rings and toasts.
+
+   So the SINGLE highest-leverage lever is `--color-base-*`. Retinting that one
+   neutral ramp re-skins the entire admin — sidebar, tables, inputs, borders,
+   text, dark mode included — and unlike per-component overrides it does not
+   depend on Payload's internal class names, so it survives upgrades.
+
+   CASCADE: this file is unlayered and imported after @payloadcms/next/css.
+   Unlayered declarations outrank layered ones at the same origin, and that
+   comparison happens BEFORE specificity — so a plain :root here beats
+   Payload's `@layer payload-default` `html[data-theme=...]` rules. No
+   !important is needed (same mechanism the --font-serif override below uses).
+
+   PALETTE (client-supplied, 2026-10-01):
+     primary    #F29F67 peach      #1E1E2C navy
+     supporting #3B8FF3 blue       #34B1AA teal       #E0B50F gold
+
+   Ramps are generated in OKLCH: each family reuses Payload's ORIGINAL
+   lightness curve (so contrast behaviour is unchanged and every ramp is
+   strictly monotonic 50->950) with the brand hue and a chroma profile that
+   peaks mid-scale. Each brand hex is pinned at the stop of matching lightness
+   so the exact client colour really is in the system:
+     peach  -> -300, teal -> -400, gold -> -300, blue -> -450, navy -> base-900
+
+   Like the public site's #ffd700 (see AGENTS.md), the light brand colours fail
+   WCAG as text on white — peach on white is 2.1:1 — so they are FILL and
+   accent colours only. Use the -700 stop for brand-coloured text (peach-700 on
+   white is 7.8:1) and the -100/-150 stops for tinted pill backgrounds.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Neutral ramp tinted toward the navy #1E1E2C (hue 284deg). This is the
+     workhorse: it is what makes the admin stop looking default-gray. */
+  --color-base-0: #ffffff;
+  --color-base-50: #f4f5fa;
+  --color-base-100: #eaeaf1;
+  --color-base-150: #dcdce5;
+  --color-base-200: #cfcfd9;
+  --color-base-250: #c2c2cd;
+  --color-base-300: #b3b4c1;
+  --color-base-350: #a6a7b5;
+  --color-base-400: #9899a7;
+  --color-base-450: #8b8c9a;
+  --color-base-500: #7e7f8c;
+  --color-base-550: #71717d;
+  --color-base-600: #64646e;
+  --color-base-650: #56565e;
+  --color-base-700: #494950;
+  --color-base-750: #3b3c40;
+  --color-base-800: #2f2f32;
+  --color-base-850: #222224;
+  --color-base-900: #1e1e2c; /* = brand navy, exact */
+  --color-base-950: #131320;
+  --color-base-1000: #0b0b14;
+
+  /* Peach — the primary interactive accent (active nav, indicators, charts).
+     Fill only; peach-700 is the text-safe stop. */
+  --color-peach-50: #fff0e8;
+  --color-peach-100: #ffe6d6;
+  --color-peach-150: #ffcfb1;
+  --color-peach-200: #fac4a2;
+  --color-peach-250: #f4b68f;
+  --color-peach-300: #f29f67; /* = brand peach, exact */
+  --color-peach-350: #e29765;
+  --color-peach-400: #d68852;
+  --color-peach-450: #c77943;
+  --color-peach-500: #b66c38;
+  --color-peach-550: #a56131;
+  --color-peach-600: #93582e;
+  --color-peach-650: #824f2d;
+  --color-peach-700: #72482c;
+  --color-peach-750: #62402a;
+  --color-peach-800: #543928;
+  --color-peach-850: #443124;
+  --color-peach-900: #34271e;
+  --color-peach-950: #251d18;
+
+  /* Teal — doubles as Payload's `success` family, which is ALSO the focus-ring
+     colour (`--theme-success-500`), so focus states come out on-brand. */
+  --color-success-50: #d8fcf9;
+  --color-success-100: #c8f4f0;
+  --color-success-150: #afe8e3;
+  --color-success-200: #9aded9;
+  --color-success-250: #80d2cc;
+  --color-success-300: #64c6bf;
+  --color-success-350: #4cbab3;
+  --color-success-400: #34b1aa; /* = brand teal, exact */
+  --color-success-450: #1b9d96;
+  --color-success-500: #0f908a;
+  --color-success-550: #12817b;
+  --color-success-600: #187470;
+  --color-success-650: #1f6662;
+  --color-success-700: #225c58;
+  --color-success-750: #244f4c;
+  --color-success-800: #234441;
+  --color-success-850: #213937;
+  --color-success-900: #1d2c2b;
+  --color-success-950: #172221;
+
+  /* Gold — Payload's `warning` family (draft/unsaved states). */
+  --color-warning-50: #fff3d1;
+  --color-warning-100: #fbebba;
+  --color-warning-150: #f0d998;
+  --color-warning-200: #e9cf84;
+  --color-warning-250: #e1c369;
+  --color-warning-300: #e0b50f; /* = brand gold, exact */
+  --color-warning-350: #cda61e;
+  --color-warning-400: #be9908;
+  --color-warning-450: #ad8b07;
+  --color-warning-500: #9d7e06;
+  --color-warning-550: #8d7105;
+  --color-warning-600: #7f6502;
+  --color-warning-650: #715b07;
+  --color-warning-700: #665105;
+  --color-warning-750: #58470e;
+  --color-warning-800: #4c3f15;
+  --color-warning-850: #3e3518;
+  --color-warning-900: #302a17;
+  --color-warning-950: #231f13;
+
+  /* Blue — the link/info accent. */
+  --color-blue-50: #ecf4ff;
+  --color-blue-100: #dcebff;
+  --color-blue-150: #c4ddfe;
+  --color-blue-200: #b0d2fe;
+  --color-blue-250: #97c4fe;
+  --color-blue-300: #7eb6fc;
+  --color-blue-350: #64a8fe;
+  --color-blue-400: #4699fd;
+  --color-blue-450: #3b8ff3; /* = brand blue, exact */
+  --color-blue-500: #2e7dda;
+  --color-blue-550: #2a70c3;
+  --color-blue-600: #2966af;
+  --color-blue-650: #295a96;
+  --color-blue-700: #295285;
+  --color-blue-750: #28476f;
+  --color-blue-800: #253e5d;
+  --color-blue-850: #22354c;
+  --color-blue-900: #1d2a3a;
+  --color-blue-950: #18202b;
+
+  /* error stays Payload's red: the client palette has no red, and a red that
+     reads as an error is worth more here than palette purity. */
+}
+
+/* Light-mode body text in the brand navy rather than pure black. Scoped to the
+   light theme so dark mode keeps its own light-on-dark text token. */
+html[data-theme='light'] {
+  --theme-text: var(--color-base-900);
+}
+
 /* Vietnamese-safe serif token.
  *
  * Payload styles the rich-text editor with `font-family: var(--font-serif)` —
@@ -24,4 +186,341 @@
  * src/app/(payload)/layout.tsx, so the public site is unaffected. */
 :root {
   --font-serif: 'Times New Roman', 'Liberation Serif', 'Noto Serif', 'DejaVu Serif', Georgia, serif;
+}
+
+/* ==========================================================================
+   BRAND THEME — component polish (dashboard look)
+   ==========================================================================
+
+   Everything below is built ON the token layer above; none of it redefines a
+   `--color-*` stop, `--font-serif`, or the light-mode `--theme-text` override.
+
+   FRAGILITY WARNING — read before upgrading Payload.
+   This section (unlike the token layer) depends on Payload's INTERNAL admin
+   class names: `.nav__link`, `.nav__link-indicator`, `.nav-group__label`,
+   `.btn--style-primary/secondary`, `.card`, `.table`, `.collapsible`,
+   `.pill--style-*`, `.template-default`, `.login__*`, `.field-type`.
+   These are private to @payloadcms/ui and are NOT part of its public API, so a
+   Payload upgrade can rename them and every rule here will silently stop
+   applying — the admin keeps working, it just reverts to the stock look. The
+   class names used here were read off the LIVE admin DOM and the compiled
+   admin stylesheet (node_modules/@payloadcms/next/dist/prod/styles.css) on
+   payload@3.90.2, 2026-10-01. After any Payload bump, re-verify them against
+   the served DOM (see AGENTS.md, "Admin theming").
+
+   THEME-AWARE TOKENS ONLY, WHERE IT MATTERS:
+   `--color-*` stops are FIXED (one light ramp); `--theme-elevation-*` changes
+   meaning in dark mode — light is a straight alias
+   (`--theme-elevation-N` = `--color-base-N`), dark is an explicit hand-written
+   remap in @payloadcms/ui/dist/scss/colors.scss (0→900, 50→850, 100→800,
+   … 400→450, 550→350, … 900→0; no 500 remap — it is the fixed pivot), and the
+   success/warning/error families are reversed there too.
+   Anything that must stay legible in both themes is written with `--theme-*` /
+   `--theme-elevation-*`, never a bare `--color-base-*`. Exceptions are
+   deliberate and noted inline (the peach pill, the white card, the light-mode
+   navy button) — those are light-theme-specific by design.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   0. Radius + shadow scales
+   Payload ships --style-radius-s/m/l = 3/4/8px. The dashboard reference uses
+   noticeably softer corners. -s is the high-leverage one: every field input,
+   select and button hardcodes `border-radius: var(--style-radius-s)`;
+   -m drives .card / .collapsible; -l drives the larger surfaces.
+   The shadow pair is a theme-aware custom property so the same rule works in
+   dark mode (a #10101c shadow is invisible on a near-black canvas).
+   -------------------------------------------------------------------------- */
+:root {
+  --style-radius-s: 8px;
+  --style-radius-m: 8px;
+  --style-radius-l: 12px;
+  --admin-shadow-card: 0 1px 2px rgba(16, 16, 28, 0.06);
+  --admin-shadow-pop: 0 8px 24px rgba(16, 16, 28, 0.08);
+}
+html[data-theme='dark'] {
+  --admin-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --admin-shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   1. Canvas / card contrast  (the highest-value change)
+   Payload's light theme sets `--theme-bg: var(--theme-elevation-0)` (= #fff)
+   AND paints .card with `background: var(--theme-elevation-50)`. That is the
+   INVERSE of the reference: the canvas is white and the cards are light grey,
+   so nothing separates and the whole admin reads flat.
+   Fix: tint the CANVAS (--theme-bg, which is what .template-default /
+   .template-default__wrap paint) to base-50 and lift the cards back to white.
+   .card is the only surface that needs the flip — tables and the doc form sit
+   directly on the canvas and are handled in §5 / §6.
+   Both rules are scoped to the light theme so dark mode keeps Payload's own
+   (already correct) dark-elevation cards.
+   -------------------------------------------------------------------------- */
+html[data-theme='light'] {
+  --theme-bg: var(--color-base-50);
+}
+html[data-theme='light'] .card {
+  background: var(--theme-elevation-0);
+}
+/* On hover the stock card goes to elevation-50 — which is now exactly the
+   canvas colour, so the card would visually sink into the page. Use the next
+   step down instead so the hover still reads as "raised". */
+html[data-theme='light'] .card--has-onclick:hover {
+  background: var(--theme-elevation-100);
+}
+
+/* --------------------------------------------------------------------------
+   2. Sidebar / nav
+   Reference: white rail, uppercase letterspaced section labels, and the active
+   item as a PEACH PILL (peach-100 fill, peach-700 text) — not Payload's 2px
+   left indicator bar.
+   The active item is marked by `a.nav__link:has(.nav__link-indicator)`
+   (verified in the live DOM — Payload does NOT add an `.active` class in
+   3.90.2); the indicator div is hidden and the whole link becomes the pill.
+   -------------------------------------------------------------------------- */
+html[data-theme='light'] .nav {
+  background: var(--theme-elevation-0);
+}
+
+/* Section labels ("Collections", "Cấu hình chung (globals)", …). The text is
+   Payload's own i18n/default label — only its presentation changes here. */
+.nav-group__label {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--theme-elevation-500);
+}
+
+/* Every nav row becomes a pill so hover and active share one silhouette.
+   Payload's stock link is `padding-inline-end: 30px` + no start padding, which
+   would make an asymmetric background; the shorthand below normalises it. */
+.nav a.nav__link {
+  border-radius: 8px;
+  padding: 7px 12px;
+  transition: background-color 0.12s linear, color 0.12s linear;
+}
+/* Stock Payload underlines nav links on hover; the reference uses a tinted
+   block instead. */
+.nav a.nav__link:hover,
+.nav a.nav__link:focus-visible {
+  text-decoration: none;
+  background: var(--theme-elevation-100);
+  color: var(--theme-elevation-900);
+}
+/* Active item = peach pill. Peach stops are FIXED (not theme-flipped) on
+   purpose: the pill is a brand mark, and peach-100/peach-700 read correctly on
+   both the white light rail and the near-black dark rail. */
+.nav__link:has(.nav__link-indicator) {
+  background: var(--color-peach-100);
+  color: var(--color-peach-700);
+  font-weight: 600;
+  border-radius: 8px;
+}
+/* The 2px indicator bar is replaced by the pill above. */
+.nav__link .nav__link-indicator {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. Buttons
+   Payload paints the primary button with --theme-elevation-800, which in this
+   palette is #2f2f32 (near-black grey), not the brand navy. Light theme gets
+   the exact navy (base-900 = #1e1e2c) with white text; dark theme is left
+   alone because there Payload's own inverted button (light chip + dark text)
+   is what keeps contrast on the near-black canvas.
+   -------------------------------------------------------------------------- */
+html[data-theme='light'] .btn--style-primary {
+  --bg-color: var(--color-base-900);
+  --color: #ffffff;
+  --hover-bg: var(--color-base-950);
+  --hover-color: #ffffff;
+}
+/* Secondary/outline: hairline base-200 border + navy label, per the brief
+   (stock is a full-strength elevation-800 border, which reads as a second
+   solid button). */
+.btn--style-secondary {
+  --color: var(--theme-elevation-900);
+  --btn-border: 1px solid var(--theme-elevation-200);
+  --hover-color: var(--theme-elevation-900);
+  --hover-btn-border: 1px solid var(--theme-elevation-300);
+  --hover-bg: var(--theme-elevation-50);
+}
+/* "Tạo mới" and the other pill-styled buttons. Stock is a solid base-150
+   block; redrawn as the same outlined chip as the .pill controls in §4. */
+.btn--style-pill {
+  --bg-color: var(--theme-elevation-0);
+  --color: var(--theme-elevation-850);
+  --hover-color: var(--theme-elevation-900);
+  --hover-bg: var(--theme-elevation-50);
+  --btn-border: 1px solid var(--theme-elevation-200);
+  --hover-btn-border: 1px solid var(--theme-elevation-300);
+}
+
+/* --------------------------------------------------------------------------
+   4. Cards, panels, collapsibles (blocks / array rows)
+   Hairline base-150 border + the brand's soft, low-opacity shadow. Radius
+   comes from --style-radius-m (§0).
+   In light mode the collapsibles (each layout BLOCK and each array row) are
+   lifted to white as well — otherwise they would be transparent boxes sitting
+   on the new grey canvas and the layout field would read as one grey mass.
+   -------------------------------------------------------------------------- */
+.card,
+.collapsible {
+  border-color: var(--theme-elevation-150);
+  box-shadow: var(--admin-shadow-card);
+}
+html[data-theme='light'] .collapsible {
+  background: var(--theme-elevation-0);
+}
+
+/* The document edit column becomes the form's white "sheet" — the same
+   canvas/card contrast as §1, applied to the form. Payload already gives the
+   column its own padding + a hairline right border against the sidebar, so no
+   spacing is changed here. */
+html[data-theme='light'] .document-fields__edit {
+  background: var(--theme-elevation-0);
+  border-left: 1px solid var(--theme-elevation-150);
+  border-right: 1px solid var(--theme-elevation-150);
+  box-shadow: var(--admin-shadow-card);
+}
+
+/* Neutral control chips ("Hiển thị cột", "Bộ lọc", version-status tags, …).
+   Stock is a solid base-150 block; the reference draws secondary controls as
+   hairline-outlined surfaces, so they are re-drawn as outlined chips. */
+.pill--style-light {
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-elevation-200);
+  color: var(--theme-elevation-850);
+  border-radius: 8px;
+}
+.pill--style-light.pill--has-action:hover,
+.pill--style-light.pill--has-action:active {
+  background: var(--theme-elevation-50);
+  border-color: var(--theme-elevation-300);
+}
+
+/* --------------------------------------------------------------------------
+   5. Tables / list rows
+   Reference: white table surface, uppercase small-caps header tinted base-50,
+   hairline base-150 row separators, base-50 hover. Payload's stock list is a
+   full-bleed zebra (odd rows base-50, no separators, no hover) which on the
+   new grey canvas would be grey-on-grey stripes.
+   .collection-list .table is the full-width element (it deliberately bleeds by
+   --gutter-h on both sides via `width: calc(100% + …)` / `left: -…`); zeroing
+   its start padding turns that bleed into the card's own edges.
+   -------------------------------------------------------------------------- */
+html[data-theme='light'] .collection-list .table {
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: var(--style-radius-m);
+  box-shadow: var(--admin-shadow-card);
+  padding-left: 0;
+}
+
+/* Drop the zebra: rows are white, separated by a hairline, and highlight on
+   hover. Borders go on the cells, not the <tr>, so this works whether or not
+   the table is border-collapse. */
+.table tbody tr:nth-child(odd) {
+  background: transparent;
+}
+.table tbody td {
+  border-bottom: 1px solid var(--theme-elevation-150);
+}
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table tbody tr:hover {
+  background: var(--theme-elevation-50);
+}
+
+.table thead {
+  background: var(--theme-elevation-50);
+}
+.table thead th {
+  color: var(--theme-elevation-500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   6. Inputs / selects / textareas
+   Radius arrives via --style-radius-s (§0 — every `.field-type.* input` rule
+   hardcodes it). Only the border is nudged to the brief's base-200; focus
+   styling (the teal --theme-success-* ring Payload puts on checkbox/radio
+   focus) is deliberately NOT touched.
+   -------------------------------------------------------------------------- */
+.field-type input:not([type='checkbox']):not([type='radio']):not([type='submit']),
+.field-type textarea,
+.react-select .rs__control {
+  border-color: var(--theme-elevation-200);
+}
+
+/* --------------------------------------------------------------------------
+   7. Status pills (draft / published / pending)
+   Payload's stock pill for these is `background: --theme-success-150` /
+   `--theme-warning-150`. The brief's pattern is the -100 fill with the -800
+   text stop (both verified ≥8.7:1), so the fill moves one step lighter.
+   Written with the `--theme-*` aliases rather than the raw `--color-*` stops:
+   the success/warning families are REVERSED in dark mode (colors.scss maps
+   `--theme-success-100` to `--color-success-900` under
+   `html[data-theme='dark']`), so the same declaration yields the light
+   teal/gold tint on the light canvas and the correct dark-teal/dark-gold tint
+   on the navy dark canvas. Success is the brand teal, warning the brand gold.
+   Rounded-full, per the reference's "Done" / "Due tomorrow" tags.
+   -------------------------------------------------------------------------- */
+.pill--style-success {
+  background: var(--theme-success-100);
+  color: var(--theme-success-800);
+}
+.pill--style-warning {
+  background: var(--theme-warning-100);
+  color: var(--theme-warning-800);
+}
+.doc-controls__status .pill,
+.pill--style-success,
+.pill--style-warning,
+.pill--style-error {
+  border-radius: 999px;
+}
+
+/* --------------------------------------------------------------------------
+   8. Login screen (/admin/login)
+   Stock Payload: white page, Payload's own wordmark, a 3px-radius grey button.
+   Here: tinted canvas, the GT brand mark, and the form as a floating white
+   card — the same canvas/card contrast as §1.
+   The wordmark is Payload's built-in `.graphic-logo` SVG; it is hidden and the
+   committed brand asset (src/app/icon.svg → served at /icon.svg, verified 200
+   with content-type image/svg+xml) is drawn as a background image. Pure CSS —
+   no admin component was restructured.
+   -------------------------------------------------------------------------- */
+html[data-theme='light'] .template-minimal {
+  background-color: var(--theme-bg);
+}
+html[data-theme='light'] .login__form {
+  background: var(--color-base-0);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: var(--style-radius-l);
+  box-shadow: var(--admin-shadow-pop);
+  padding: 32px 28px;
+}
+.login__brand .graphic-logo {
+  display: none;
+}
+.login__brand::before {
+  content: '';
+  display: block;
+  width: 96px;
+  height: 96px;
+  background: url('/icon.svg') center / contain no-repeat;
+}
+/* Peach CTA on the login card only: the system-wide primary is the navy
+   button above, but the login is the one screen the whole firm sees, so it
+   carries the brand accent. Navy text on peach-300 is ~7.4:1. */
+html[data-theme='light'] .login__form .btn--style-primary {
+  --bg-color: var(--color-peach-300);
+  --color: var(--color-base-900);
+  --hover-bg: var(--color-peach-400);
+  --hover-color: var(--color-base-900);
 }

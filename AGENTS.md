@@ -561,6 +561,150 @@ version:0, value:0, children:[paragraph…]}]}`. Also: seeded pages need
   therefore reproduces the header logo with no manual admin step; the firm can
   still replace it in the admin (Thông tin website → Logo).
 
+## Admin theming — brand palette + dashboard polish (2026-10-01)
+
+`src/app/(payload)/custom.scss` is the ONLY admin stylesheet other than
+`@payloadcms/next/css` (imported by `src/app/(payload)/layout.tsx`). It has two
+layers, and only the second one is upgrade-fragile.
+
+### 1. The token layer (upgrade-proof) — already in the file
+
+How the admin gets its colours, verified against the compiled admin bundle:
+
+```
+@payloadcms/next/dist/prod/styles.css  (the served admin CSS)
+  :root                 { --color-base-N: … ; --color-success-N: … ; … }
+  :root                 { --theme-elevation-N: var(--color-base-N) }        ← light
+  html[data-theme=dark] { --theme-elevation-N: <explicit remap> }           ← dark
+  :root                 { --theme-bg: var(--theme-elevation-0)
+                          --theme-input-bg: var(--theme-elevation-0)
+                          --theme-text: var(--theme-elevation-800)
+                          --theme-border-color: var(--theme-elevation-150) }
+```
+
+- **Light is a straight alias** (`--theme-elevation-N` → `--color-base-N`).
+- **Dark is an explicit hand-written remap, NOT a mirror.** Measured
+  (`@payloadcms/ui/dist/scss/colors.scss`): `0→900, 50→850, 100→800, 150→750,
+  200→700, 250→650, 300→600, 350→550, 400→450, 450→400, 550→350, 600→300,
+  650→250, 700→200, 750→150, 800→100, 850→50, 900→0, 950→0, 1000→0`. There is
+  **no `--theme-elevation-500` remap**, so 500 is the fixed pivot. Consequence:
+  in dark the canvas (`--theme-bg` = elevation-0) is `--color-base-900` —
+  i.e. **the dark admin canvas is the brand navy `#1e1e2c`**.
+- **The success / warning / error families are ALSO reversed in dark**
+  (`--theme-success-100` → `--color-success-900`). Any status colour that must
+  look right in both themes has to be written with `--theme-*`, not with a raw
+  `--color-*` stop.
+- **Cascade:** `custom.scss` is unlayered and imported after
+  `@payloadcms/next/css`. Unlayered declarations beat layered ones at the same
+  origin, and that comparison happens BEFORE specificity — so a plain `:root`
+  / `html[data-theme='light']` rule in custom.scss overrides Payload's
+  `@layer payload-default` `html[data-theme=…]` rules with **no `!important`**.
+  Same mechanism the `--font-serif` fix uses.
+- The `--color-*` runs are OKLCH-generated brand ramps, pinned so each client
+  hex sits at the matching-lightness stop (peach→300, teal→400, gold→300,
+  blue→450, navy→base-900). Treat them as frozen.
+
+### 2. The canvas / card contrast — the inversion nobody expects
+
+Payload's light theme paints `--theme-bg` (the canvas: `.template-default`,
+`.template-default__wrap`) **white** and paints `.card` with
+`background: var(--theme-elevation-50)` — light grey. Default Payload is
+therefore GREY CARDS ON A WHITE CANVAS: the exact inverse of the
+StarAdmin-style reference in `docs/admin-template.png`. Evidence
+(`@payloadcms/next/dist/prod/styles.css`):
+
+```
+.template-default { background-color: var(--theme-bg) }   /* = elevation-0 = #fff */
+.card { background: var(--theme-elevation-50); … }        /* = #f4f5fa */
+```
+
+Fix (light theme only):
+
+```scss
+html[data-theme='light'] { --theme-bg: var(--color-base-50); }   /* canvas → grey */
+html[data-theme='light'] .card { background: var(--theme-elevation-0); }  /* cards → white */
+```
+
+Dark mode already separates correctly (cards at elevation-50 = `--color-base-850`
+sit above the elevation-0 canvas) and is deliberately left alone.
+
+### 3. The component layer (FRAGILE — depends on Payload internals)
+
+The rest of custom.scss targets Payload 3.90.2's PRIVATE admin class names.
+They are not API; a Payload bump can rename them and the rules silently stop
+applying (the admin keeps working, it just reverts to the stock look).
+Class names were read off the live admin DOM + `prod/styles.css`; re-verify
+against the served DOM after any Payload upgrade. What is overridden and why:
+
+| selector | why |
+| --- | --- |
+| `:root` `--style-radius-s/m/l` = 8/8/12px | every `.field-type.* input` and `.btn` hardcodes `border-radius: var(--style-radius-s)`; `.card`/`.collapsible` use `-m`. One lever, soft corners everywhere. |
+| `html[data-theme='light'] .nav` → white | reference has a white rail beside a grey canvas; `.nav` is otherwise transparent over `--theme-bg`. |
+| `.nav-group__label` uppercase + letterspaced + `--theme-elevation-500` | section labels. |
+| `.nav a.nav__link` → 8px pill, `padding: 7px 12px`; `:hover` → `--theme-elevation-100` | the stock link is `padding-inline-end: 30px` with no start padding, so a background would be lopsided; stock also underlines on hover. |
+| `.nav__link:has(.nav__link-indicator)` → peach pill | **the active nav item is marked by the presence of a `.nav__link-indicator` child, not an `.active` class** — 3.90.2 renders `a.nav__link` with a `<div class="nav__link-indicator">` inside. The 2px bar is hidden and the whole link becomes the peach pill (`--color-peach-100` / `-700`, fixed stops on purpose so the pill reads on both rails). |
+| `html[data-theme='light'] .btn--style-primary` → navy | stock is `--theme-elevation-800` = `#2f2f32` (near-black grey), not the brand navy. Dark keeps Payload's inverted (light chip + dark text) button. |
+| `.btn--style-secondary`, `.btn--style-pill` → hairline `--theme-elevation-200` outline | stock secondary uses a full-strength elevation-800 border; `.btn--style-pill` ("Tạo mới"…) is a solid base-150 block. |
+| `html[data-theme='light'] .collection-list .table` → white card | the list table sits directly on the canvas. `.collection-list .table` deliberately bleeds (`width: calc(100% + var(--gutter-h)*2)`, `left: calc(var(--gutter-h)*-1)`, `padding-left: var(--gutter-h)`) — zeroing only `padding-left` turns the bleed into the card's own edges. |
+| `.table tbody tr:nth-child(odd)` → transparent; `.table tbody td` → `border-bottom: 1px solid --theme-elevation-150`; `tr:hover` → elevation-50; `thead` → elevation-50 + uppercase 11px/600 `--theme-elevation-500` | stock is a full-bleed zebra with no hover and no separators, which on the new grey canvas reads as grey-on-grey stripes. Borders go on the `td` so it works regardless of `border-collapse`. |
+| `.pill--style-light` → white outlined chip, 8px | the neutral control chip ("Hiển thị cột", "Bộ lọc", version tags) is a solid base-150 block by default. |
+| `.pill--style-success` / `--warning` → `--theme-success-100` / `--theme-warning-100` fill + `-800` text, `border-radius: 999px` | the brief's status-pill pattern (light theme: teal-100/teal-800 = 8.94:1; dark resolves to teal-900/teal-200 = 9.55:1 via the family reversal). |
+| `html[data-theme='light'] .collapsible`, `… .document-fields__edit` → white | each layout BLOCK / array row and the document form column are transparent by default, so they would be grey boxes floating on the grey canvas. |
+| `.field-type input…`, `.field-type textarea`, `.react-select .rs__control` → border `--theme-elevation-200` | radius arrives from `--style-radius-s`; focus styling (the teal ring) is deliberately NOT touched. |
+| `.login__*` | `.login__brand .graphic-logo` (Payload's wordmark) is hidden and `::before` draws `url('/icon.svg')` — the committed brand mark, served at `/icon.svg`, verified 200 `image/svg+xml`. `.login__form` becomes the white card; the login CTA is peach (`--color-peach-300` + navy text) while every other primary button stays navy. `.template-minimal` gets `background-color: var(--theme-bg)` because its stock `--theme-bg-color` is **undefined** in 3.90.2. |
+
+### 4. Admin favicon / Open Graph (`payload.config.ts`)
+
+`admin.meta` is spread into `@payloadcms/next`'s `generateMetadata()`
+(`dist/utilities/meta.js`), where `icons` **replaces** the default favicon pair:
+`const icons = incomingMetadata.icons || [payloadFaviconDark, payloadFaviconLight]`.
+`payload.config.ts` therefore sets
+`icons: [{ rel: 'icon', type: 'image/svg+xml', url: '/icon.svg' }]` — the served
+admin HTML now carries `<link rel="icon" href="/icon.svg" type="image/svg+xml"/>`
+and no `payload-favicon-*`. `generateMetadata` also sets `metadataBase` from
+`config.serverURL`, so the root-relative URL resolves absolutely.
+Do NOT set `admin.meta.description` — the per-view metadata already supplies a
+Vietnamese description and `admin.meta` is spread AFTER it, so it would
+override every admin page with one static string.
+
+### 5. How this was verified (2026-10-01)
+
+- Item 1: on `<html>`, `--color-base-900` → `rgb(30, 30, 44)`, `--color-base-50`
+  → `rgb(244, 245, 250)` (dev :3000, computed).
+- Screenshots (untracked) in `docs/admin-shots/` — login, dashboard light,
+  collection list, document edit, dashboard dark, editor Vietnamese, collection
+  list dark — captured against a real `pnpm build && next start -p 3100`.
+- Console: **zero** errors/warnings on login, dashboard (both themes), list,
+  edit and while typing into the rich-text editor.
+- Vietnamese: `.editor-container` / `.ContentEditable__root` still compute
+  `font-family: "Times New Roman", "Liberation Serif", …` (the §--font-serif
+  fix is untouched). Verified with pre-composed input
+  (`ă`=U+0103, `ế`=U+1EBF, `ệ`=U+1EC7, `ữ`=U+1EEF, `ợ`=U+1EE3 …) typed live
+  into the editor.
+
+### 6. PRE-EXISTING BUG found while verifying (NOT caused by the theming)
+
+**`Error: Invalid indent value.` breaks the rich-text editor on 4 of the 10
+seeded pages.** `@lexical/list`'s `ListItemNode.updateFromJSON` calls
+`setIndent()` with the stored value; a `listitem` node with **no `indent`
+property** throws and Payload's error boundary replaces the editor with
+"Something went wrong: Invalid indent value." Confirmed by REST: every
+`listitem` in the seeded content serialises as
+`{type, value, version, children}` — no `indent`. Affected (draft + published):
+`chu-ky-so-token` (7), `dich-vu-ke-toan` (27), `thanh-lap-doanh-nghiep-tron-goi`
+(5), `chinh-sach-bao-mat` (11) — in `richText` block bodies AND in `faq`
+`items[].answer` (the FAQ answers are the wider source). Lexical wants
+`indent: '0'` (a STRING) on list items; the seed fixtures (Task 20) never set
+it, which is the same class of gap the `tag`/`value` note above records.
+This is a data/seed bug — fix by adding `indent: '0'` to the fixtures and
+patching existing rows — and is independent of the admin theme work.
+
+### 7. Not done / deliberately skipped
+
+- `.document-fields__sidebar-wrap` (the right-hand Slug/meta column) is left on
+  the canvas rather than carded — it holds single fields and carding it made the
+  form look like two competing sheets.
+
 ## UI notes — favicon & admin fonts (2026-10-01)
 
 - **Favicon = `src/app/icon.svg`** (Next file convention → `<link rel="icon">`
@@ -570,9 +714,10 @@ version:0, value:0, children:[paragraph…]}]}`. Also: seeded pages need
   monogram** (`<g id="brand-mark">`, copied byte-identical) in a square
   transparent `viewBox`: the wordmark + tagline are illegible at 16px, and a
   brand-navy plate would hide the navy `#002147` half of the monogram. `/admin`
-  keeps Payload's own default favicon — the site icon does not reach it
-  (Payload's `RootLayout` renders its own `<html>`); override with
-  `admin.meta.icons` in `payload.config.ts` if that ever matters.
+  served Payload's own default favicon until 2026-10-01 — the site icon does
+  not reach it automatically (Payload's `RootLayout` renders its own `<html>`);
+  it is now set explicitly via `admin.meta.icons` in `payload.config.ts` (see
+  "Admin theming" §4 above).
 - **The admin rich-text editor renders with `--font-serif`, and that stack
   started with Georgia — which has no Vietnamese glyphs.** Payload styles
   `.rich-text-lexical .editor-container` (and the version-diff view) with
