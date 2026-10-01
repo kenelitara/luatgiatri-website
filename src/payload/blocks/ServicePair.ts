@@ -3,6 +3,8 @@ import type { Block } from 'payload'
 export const ServicePair: Block = {
   slug: 'servicePair',
   labels: { singular: 'Dịch vụ 2 cột (ảnh + chữ)', plural: 'Dịch vụ 2 cột' },
+  imageURL: '/block-thumbnails/servicePair.svg',
+  imageAltText: 'Hai cột: ảnh bên cạnh đoạn mô tả dịch vụ và danh sách',
   fields: [
     { name: 'image', type: 'upload', label: 'Ảnh', relationTo: 'media', required: true },
     { name: 'heading', type: 'text', label: 'Tiêu đề', required: true },

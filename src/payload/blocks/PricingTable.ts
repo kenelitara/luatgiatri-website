@@ -3,6 +3,8 @@ import type { Block } from 'payload'
 export const PricingTable: Block = {
   slug: 'pricingTable',
   labels: { singular: 'Bảng giá', plural: 'Bảng giá' },
+  imageURL: '/block-thumbnails/pricingTable.svg',
+  imageAltText: 'Bảng giá dạng bảng có cột phí, chia theo nhóm',
   fields: [
     { name: 'heading', type: 'text', label: 'Tiêu đề', required: true },
     {

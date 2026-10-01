@@ -627,6 +627,106 @@ version:0, value:0, indent:0, children:[paragraph…]}]}`. **`listitem.indent` i
 - No Redis, no worker, no SMTP in this project. When email/notification lands
   (or the AI crawler feature), revisit — that changes §3.9 of the spec.
 
+## Adding a new block (Pages.layout) — the client asked
+
+The "Bố cục" field on a Page is a Payload `blocks` field. **The `blocks` array
+in `src/payload/collections/Pages.ts` IS the picker's contents AND its order** —
+there is no separate registry to keep in sync, and `Renderer` switches on the
+same `blockType` slugs. Changing the order of the array changes the order of the
+drawer; removing an entry makes that block unpickable (existing data keeps its
+rows but the block type disappears from the add menu).
+
+Where each piece lives:
+
+| piece | file | what it controls |
+| --- | --- | --- |
+| the picker's list + order | `src/payload/collections/Pages.ts` → `layout.blocks` | imports each block config and lists it |
+| a block's NAME, form, thumbnail | `src/payload/blocks/<Name>.ts` | `labels.singular`/`labels.plural` are the visible name; `fields` is the editor form; `imageURL`/`imageAltText` is the picker thumbnail |
+| the public view | `src/components/blocks/views/<Name>View.tsx` | the server component that renders the block |
+| the dispatcher | `src/components/blocks/Renderer.tsx` | `switch (block.blockType)` → the view (default → `null`) |
+| generated types | `src/payload-types.ts` | written by `pnpm generate:types` |
+| DB schema | `src/migrations/*.ts` | written by `pnpm payload migrate:create` |
+
+The block's `slug` (in its config) — **not the file name** — is what `blockType`
+stores and what `Renderer` matches.
+
+### Steps to add a NEW block type, in order
+
+1. **Create the block config** — `src/payload/blocks/<Name>.ts`:
+   `export const <Name>: Block = { slug: '<slug>', labels: { singular: '…',
+   plural: '…' }, imageURL: '/block-thumbnails/<slug>.svg', imageAltText: '…',
+   fields: [ … ] }`. Labels are Vietnamese (the admin is `vi`).
+2. **Register it** — import it and append it to the `layout.blocks` array in
+   `src/payload/collections/Pages.ts`. Skipping this is the classic "my block
+   never appears" bug: the config can load fine and still not be pickable.
+3. **Create the front-end view** — `src/components/blocks/views/<Name>View.tsx`.
+   Emit headings through `Heading` (`src/components/blocks/Heading.tsx`); a
+   block renders `<h2>`/`<h3>` **only** — never `<h1>` (the page shell owns the
+   single `<h1>` from `Pages.primaryHeading`; `heading-discipline.spec.ts` fails
+   the build otherwise, spec §6.4).
+4. **Add its case to the Renderer** — `src/components/blocks/Renderer.tsx`,
+   `case '<slug>': return <Name>View block={block} />`. The `default` branch
+   returns `null`, so a block with no case renders **nothing, silently**.
+5. **Run `pnpm generate:types`** — regenerates `src/payload-types.ts` so the
+   block's fields appear in `Page['layout']` and steps 3–4 typecheck.
+6. **Create + run a migration if the block adds DB columns** (it always does if
+   it has any `fields`). `push: false` (Task 8b) means **migrations are the only
+   way a schema change lands**, in every environment:
+   - `pnpm payload migrate:create add_<slug>` → writes
+     `src/migrations/<timestamp>_add_<slug>.ts` (the name arg is `args[1]`;
+     verified in `payload/dist/bin/migrate.js`)
+   - `pnpm payload migrate` against the dev DB. On a pre-`push: false` DB this
+     shows the dev-mode "data loss" prompt — answer `y` (documented dev path).
+   A blocks field materialises **one table per block slug plus a version
+   mirror**: e.g. `formEmbed` created `pages_blocks_form_embed` AND
+   `_pages_v_blocks_form_embed` (migration `20261001_105457`). Nested arrays add
+   further tables (`pages_blocks_<slug>_<field>`).
+7. **Add a thumbnail** (below) — the picker shows a wireframe, not just a name.
+
+Run `pnpm generate:importmap` too **only if** the block introduces a field type
+whose admin component is not already in the importMap (the first `richText` did;
+`blocks`, `select`, `text`, `array`, `upload`, `relationship` did not — core
+field components resolve inside `@payloadcms/ui`).
+
+### Block thumbnails (picker previews) — the convention
+
+The block picker renders each block as a `ThumbnailCard` whose image is a plain
+**`<img src alt>` — not `next/image`** (`@payloadcms/ui/dist/fields/Blocks/
+BlockSelector/index.js`). `imageURL`/`imageAltText` on the block config feed it.
+Conventions established 2026-10-01 (the M4 admin-UX pass):
+
+- Files live in `public/block-thumbnails/<slug>.svg` — SVG is crisp at any size,
+  tiny, and `public/` ships to the runner (`.dockerignore` does not exclude it).
+- **`viewBox="0 0 480 320"` (3:2).** The picker's container is
+  `aspect-ratio: 3/2` with `overflow: hidden` and
+  `img { width:100%; height:100%; object-fit: cover }`
+  (`.../BlockSelector/index.scss`), so a wider image (e.g. 16:9) is **cropped**.
+  Match 3:2 or the wireframe loses its edges. The picker renders it ~198×132 CSS.
+- One shared palette so the 15 read as a family: frame bg `#F4F5FA`, placeholder
+  fill `#E3E6EE`, structural grey `#C4C9D6`, text bars `#B4BAC8`, heading bars
+  `#3A3A4A`, and the single brand accent peach `#F29F67` used sparingly for the
+  interactive element only (button / active dot / chevron). Corner radius 8,
+  stroke 2, **no text** (Vietnamese at that size is illegible).
+- Each wireframe shows the block's REAL shape — read the block config **and** its
+  view before drawing, because several differ from their name (e.g. `pricingTable`
+  renders grouped tables with a fee column, not price cards; `processSteps` is a
+  vertical numbered list; `teamGrid` is 2-column cards with a round avatar, not a
+  row of circles).
+
+To add one for a new block: create `public/block-thumbnails/<slug>.svg` to that
+template and set `imageURL: '/block-thumbnails/<slug>.svg'` + a Vietnamese
+`imageAltText` (it becomes the `<img>` alt) on the block config.
+
+**Gotcha — `imageURL`/`imageAltText` are deprecated (but still work).** The
+installed `payload@3.90.2` types mark both `@deprecated Use admin.images
+instead` (`payload/dist/fields/config/types.d.ts`), and the picker prefers the
+new field when present (`thumbnailURL = admin?.images?.thumbnail ?? imageURL`).
+The modern equivalent is `admin: { images: { thumbnail: { url, alt } } }` —
+identical rendering, no deprecation, accepted as a string or `{url, alt}`.
+`admin.images.icon` is a different slot (20×20 square, for Lexical block menus).
+These 15 use `imageURL`/`imageAltText`; **migrating them to
+`admin.images.thumbnail` is the low-risk follow-up before any Payload bump.**
+
 ## Docker stack (M1, Task 5)
 
 - **Dev must not pay for a production build.** `docker-compose.yml` builds the

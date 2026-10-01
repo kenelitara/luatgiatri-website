@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" width="480" height="320" role="img">
+  <rect width="480" height="320" fill="#F4F5FA"/>
+  <rect x="24" y="26" width="180" height="16" rx="4" fill="#3A3A4A"/>
+  <g transform="translate(24,66)">
+    <rect width="204" height="104" rx="8" fill="#FFFFFF" stroke="#C4C9D6" stroke-width="2"/>
+    <circle cx="46" cy="46" r="26" fill="#E3E6EE"/>
+    <circle cx="46" cy="38" r="8" fill="#C4C9D6"/>
+    <path d="M30 66 A16 16 0 0 1 62 66 Z" fill="#C4C9D6"/>
+    <rect x="86" y="32" width="90" height="11" rx="4" fill="#3A3A4A"/>
+    <rect x="86" y="52" width="64" height="8" rx="4" fill="#B4BAC8"/>
+    <rect x="20" y="84" width="164" height="7" rx="4" fill="#B4BAC8"/>
+  </g>
+  <g transform="translate(252,66)">
+    <rect width="204" height="104" rx="8" fill="#FFFFFF" stroke="#C4C9D6" stroke-width="2"/>
+    <circle cx="46" cy="46" r="26" fill="#E3E6EE"/>
+    <circle cx="46" cy="38" r="8" fill="#C4C9D6"/>
+    <path d="M30 66 A16 16 0 0 1 62 66 Z" fill="#C4C9D6"/>
+    <rect x="86" y="32" width="90" height="11" rx="4" fill="#3A3A4A"/>
+    <rect x="86" y="52" width="64" height="8" rx="4" fill="#B4BAC8"/>
+    <rect x="20" y="84" width="164" height="7" rx="4" fill="#B4BAC8"/>
+  </g>
+  <g transform="translate(24,182)">
+    <rect width="204" height="104" rx="8" fill="#FFFFFF" stroke="#C4C9D6" stroke-width="2"/>
+    <circle cx="46" cy="46" r="26" fill="#E3E6EE"/>
+    <circle cx="46" cy="38" r="8" fill="#C4C9D6"/>
+    <path d="M30 66 A16 16 0 0 1 62 66 Z" fill="#C4C9D6"/>
+    <rect x="86" y="32" width="90" height="11" rx="4" fill="#3A3A4A"/>
+    <rect x="86" y="52" width="64" height="8" rx="4" fill="#B4BAC8"/>
+    <rect x="20" y="84" width="164" height="7" rx="4" fill="#B4BAC8"/>
+  </g>
+  <g transform="translate(252,182)">
+    <rect width="204" height="104" rx="8" fill="#FFFFFF" stroke="#C4C9D6" stroke-width="2"/>
+    <circle cx="46" cy="46" r="26" fill="#E3E6EE"/>
+    <circle cx="46" cy="38" r="8" fill="#C4C9D6"/>
+    <path d="M30 66 A16 16 0 0 1 62 66 Z" fill="#C4C9D6"/>
+    <rect x="86" y="32" width="90" height="11" rx="4" fill="#3A3A4A"/>
+    <rect x="86" y="52" width="64" height="8" rx="4" fill="#B4BAC8"/>
+    <rect x="20" y="84" width="164" height="7" rx="4" fill="#B4BAC8"/>
+  </g>
+</svg>

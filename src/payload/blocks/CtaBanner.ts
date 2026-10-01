@@ -3,6 +3,8 @@ import type { Block } from 'payload'
 export const CtaBanner: Block = {
   slug: 'ctaBanner',
   labels: { singular: 'Khối CTA', plural: 'Khối CTA' },
+  imageURL: '/block-thumbnails/ctaBanner.svg',
+  imageAltText: 'Dải kêu gọi hành động nổi bật có tiêu đề và nút',
   fields: [
     { name: 'eyebrow', type: 'text', label: 'Chú thích trên tiêu đề' },
     { name: 'heading', type: 'text', label: 'Tiêu đề', required: true },

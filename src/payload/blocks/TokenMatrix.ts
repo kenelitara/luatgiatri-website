@@ -3,6 +3,8 @@ import type { Block } from 'payload'
 export const TokenMatrix: Block = {
   slug: 'tokenMatrix',
   labels: { singular: 'Ma trận chữ ký số', plural: 'Ma trận chữ ký số' },
+  imageURL: '/block-thumbnails/tokenMatrix.svg',
+  imageAltText: 'Bảng ma trận chữ ký số nhiều cột phí và cột tổng',
   fields: [
     { name: 'heading', type: 'text', label: 'Tiêu đề', required: true },
     {
