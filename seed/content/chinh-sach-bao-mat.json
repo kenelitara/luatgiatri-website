@@ -1,0 +1,528 @@
+{
+  "title": "Chính sách bảo mật",
+  "slug": "chinh-sach-bao-mat",
+  "primaryHeading": "Chính sách bảo mật",
+  "seo": {
+    "metaDescription": "Chính sách bảo mật của Luật Gia Trí: cách chúng tôi thu thập, sử dụng, lưu trữ và bảo vệ dữ liệu cá nhân của bạn theo Nghị định 13/2023/NĐ-CP."
+  },
+  "layout": [
+    {
+      "blockType": "richText",
+      "body": {
+        "root": {
+          "type": "root",
+          "version": 0,
+          "children": [
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chính sách bảo mật này giải thích cách Công ty Luật Gia Trí thu thập, sử dụng và bảo vệ thông tin cá nhân của bạn khi bạn truy cập và sử dụng website luatgiatri.com. Chính sách được soạn theo cấu trúc của Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "1. Mục đích và phạm vi",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chính sách này áp dụng cho toàn bộ website luatgiatri.com và mọi thông tin cá nhân mà chúng tôi thu thập thông qua website, bao gồm biểu mẫu liên hệ. Chính sách nêu rõ những thông tin chúng tôi thu thập, mục đích xử lý, thời gian lưu trữ, các bên có thể tiếp nhận thông tin và quyền của bạn đối với dữ liệu cá nhân của mình."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "2. Thông tin chúng tôi thu thập",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Khi bạn gửi biểu mẫu liên hệ trên website, chúng tôi thu thập: họ và tên, số điện thoại, địa chỉ email và nội dung tin nhắn bạn cung cấp."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Ngoài ra, khi bạn truy cập website, chúng tôi có thể thu thập một số dữ liệu kỹ thuật phục vụ việc vận hành và đo lường: địa chỉ IP, địa chỉ trang giới thiệu (referrer) và các tham số tiếp thị (UTM) dùng để nhận biết nguồn truy cập. Địa chỉ IP chỉ được lưu dưới dạng băm có thêm chuỗi muối (salted hash), không bao giờ lưu địa chỉ IP thô."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chúng tôi không thu thập các loại dữ liệu cá nhân nhạy cảm ngoài những thông tin nêu trên."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "3. Mục đích xử lý",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Thông tin bạn cung cấp được sử dụng để:"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "version": 0,
+              "listType": "bullet",
+              "tag": "ul",
+              "children": [
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Phản hồi yêu cầu và giải đáp thắc mắc của bạn;"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Tư vấn và gửi báo giá dịch vụ pháp lý, kế toán theo yêu cầu;"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Cải thiện nội dung và trải nghiệm sử dụng website."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "4. Cơ sở pháp lý và sự đồng ý",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Việc xử lý dữ liệu cá nhân của bạn dựa trên sự đồng ý của bạn. Khi gửi biểu mẫu liên hệ, bạn đánh dấu vào ô đồng ý để xác nhận rằng bạn đã đọc Chính sách này và đồng ý cho chúng tôi xử lý thông tin bạn cung cấp."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Bạn có quyền rút lại sự đồng ý bất kỳ lúc nào bằng cách liên hệ với chúng tôi theo thông tin ở mục 8. Việc rút lại sự đồng ý không ảnh hưởng đến tính hợp pháp của việc xử lý đã thực hiện trước đó."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "5. Thời gian lưu trữ",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Thông tin cá nhân của bạn được lưu trữ trong khoảng thời gian cần thiết để phục vụ quan hệ liên hệ và cung cấp dịch vụ, sau đó sẽ được xóa theo yêu cầu của bạn. Bạn có thể yêu cầu xóa dữ liệu bất kỳ lúc nào theo mục 8."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "6. Chia sẻ với bên thứ ba",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Chúng tôi không bán, cho thuê hoặc trao đổi dữ liệu cá nhân của bạn cho bất kỳ bên thứ ba nào."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Nếu chức năng đo lường truy cập được bật, website sử dụng Google Analytics. Google Analytics chỉ được kích hoạt sau khi bạn đồng ý thông qua biểu ngữ cookie (cookie banner) trên website; nếu bạn không đồng ý, công cụ này không chạy."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "7. Quyền của bạn",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Theo Nghị định 13/2023/NĐ-CP, bạn có các quyền sau đối với dữ liệu cá nhân của mình:"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "version": 0,
+              "listType": "bullet",
+              "tag": "ul",
+              "children": [
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Quyền được biết và truy cập dữ liệu cá nhân của mình;"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Quyền chỉnh sửa, cập nhật thông tin không chính xác;"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Quyền yêu cầu xóa dữ liệu cá nhân;"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Quyền rút lại sự đồng ý;"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Quyền khiếu nại, tố cáo hoặc khởi kiện theo quy định pháp luật."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Để thực hiện các quyền trên, vui lòng liên hệ với chúng tôi theo thông tin ở mục 8."
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "8. Liên hệ",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Mọi yêu cầu liên quan đến dữ liệu cá nhân, vui lòng liên hệ:"
+                }
+              ]
+            },
+            {
+              "type": "list",
+              "version": 0,
+              "listType": "bullet",
+              "tag": "ul",
+              "children": [
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Hotline: 0919088119"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Email: luatsu@luatgiatri.com"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listitem",
+                  "version": 0,
+                  "value": 0,
+                  "children": [
+                    {
+                      "type": "paragraph",
+                      "version": 0,
+                      "children": [
+                        {
+                          "type": "text",
+                          "version": 0,
+                          "text": "Địa chỉ: 54/16 Đường số 2, quận Bình Tân, TP.HCM"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "9. Ngày cập nhật",
+                  "bold": true
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "Cập nhật lần cuối: tháng 10 năm 2026"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "version": 0,
+              "children": [
+                {
+                  "type": "text",
+                  "version": 0,
+                  "text": "【Nội dung chính sách này được soạn theo cấu trúc chuẩn của Nghị định 13/2023/NĐ-CP nhưng CHƯA được công ty luật rà soát chính thức. Vui lòng xác nhận trước khi công bố.】"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "_status": "published"
+}

@@ -155,6 +155,11 @@
   "headingRewording": {
     "why": "primaryHeading is authored SEO H1 copy (spec §6.4/§6.9), not ported body text; the M2 capture lifted the WordPress page titles, which embed the brand — the brand belongs in the title suffix, not the H1"
   },
+  "privacyPolicy": {
+    "status": "draft-for-legal-review",
+    "note": "Nội dung Chính sách bảo mật được soạn theo cấu trúc chuẩn Nghị định 13/2023/NĐ-CP nhưng CHƯA được công ty luật rà soát. Cần xác nhận trước khi công bố.",
+    "reviewMarkerInPage": true
+  },
   "deferred": [
     {
       "page": "global",
