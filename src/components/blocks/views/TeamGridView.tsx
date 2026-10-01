@@ -7,7 +7,7 @@ type TeamGridBlock = Extract<NonNullable<Page['layout']>[number], { blockType: '
 export function TeamGridView({ block }: { block: TeamGridBlock }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-section">
-      <Heading>{block.heading}</Heading>
+      {block.heading ? <Heading>{block.heading}</Heading> : null}
       <div className="grid gap-6 md:grid-cols-2">
         {block.members?.map((member, i) => {
           const author = typeof member === 'object' ? member : null

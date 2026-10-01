@@ -7,7 +7,7 @@ export function TestimonialsView({ block }: { block: TestimonialsBlock }) {
   return (
     <section className="bg-brand-50 py-section">
       <div className="mx-auto max-w-6xl px-4">
-        <Heading>{block.heading}</Heading>
+        {block.heading ? <Heading>{block.heading}</Heading> : null}
         <div className="grid gap-6 md:grid-cols-2">
           {block.items?.map((item, i) => (
             <figure key={i} className="rounded bg-white p-6 shadow-sm">

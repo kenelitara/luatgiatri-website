@@ -7,7 +7,7 @@ export function PricingTableView({ block }: { block: PricingTableBlock }) {
   const threeCols = block.columns === 'service-term-fee'
   return (
     <section className="mx-auto max-w-4xl px-4 py-section">
-      <Heading>{block.heading}</Heading>
+      {block.heading ? <Heading>{block.heading}</Heading> : null}
       {block.groups?.map((group, gi) => (
         <div key={gi} className="mb-8">
           {group.title ? <Heading level={3}>{group.title}</Heading> : null}
