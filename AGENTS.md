@@ -603,6 +603,11 @@ How the admin gets its colours, verified against the compiled admin bundle:
 - The `--color-*` runs are OKLCH-generated brand ramps, pinned so each client
   hex sits at the matching-lightness stop (peach→300, teal→400, gold→300,
   blue→450, navy→base-900). Treat them as frozen.
+- **`--color-blue-*` is defined but UNCONSUMED** — nothing in custom.scss and
+  nothing in Payload's own admin CSS references it today. It stays: the client
+  supplied blue as a supporting colour and the ramp is part of the frozen token
+  layer. It is not dead code to be deleted, and it is not a bug that it does not
+  paint anything yet.
 
 ### 2. The canvas / card contrast — the inversion nobody expects
 
@@ -640,18 +645,21 @@ against the served DOM after any Payload upgrade. What is overridden and why:
 | --- | --- |
 | `:root` `--style-radius-s/m/l` = 8/8/12px | every `.field-type.* input` and `.btn` hardcodes `border-radius: var(--style-radius-s)`; `.card`/`.collapsible` use `-m`. One lever, soft corners everywhere. |
 | `html[data-theme='light'] .nav` → white | reference has a white rail beside a grey canvas; `.nav` is otherwise transparent over `--theme-bg`. |
-| `.nav-group__label` uppercase + letterspaced + `--theme-elevation-500` | section labels. |
-| `.nav a.nav__link` → 8px pill, `padding: 7px 12px`; `:hover` → `--theme-elevation-100` | the stock link is `padding-inline-end: 30px` with no start padding, so a background would be lopsided; stock also underlines on hover. |
+| `.nav-group__label` uppercase + letterspaced + `--theme-elevation-600` | section labels. Stock uses elevation-500, which measures ≈4.78:1 on the rail's own rail colour in DARK (just under 4.5:1) — 600 clears 4.5:1 in all four cases (light rail 5.85:1, grey canvas 5.37:1, dark rail 8.00:1, dark hover 7.73:1) with no light-mode regression. |
+| `.nav__link` → 8px pill, `padding: 7px 12px` (ELEMENT-AGNOSTIC — no `a` in the selector); `:hover` scoped `a.nav__link:not(:has(.nav__link-indicator))` → `--theme-elevation-100` | the stock link is `padding-inline-end: 30px` with no start padding, so a background would be lopsided; stock also underlines on hover. **The `a` had to be dropped:** 3.90.2 renders the CURRENT page as `<div class="nav__link">` (a plain `div`, only other pages get `<Link>`→`a`), so an `a.nav__link` selector skipped exactly the one row that needs the pill geometry — its text stayed 30px off. The `:not(:has(...))` on the hover rule is equally load-bearing: `a.nav__link:hover` (0,3,1) would out-rank `.nav__link:has(…)` (0,2,0) and repaint the active pill on hover. |
 | `.nav__link:has(.nav__link-indicator)` → peach pill | **the active nav item is marked by the presence of a `.nav__link-indicator` child, not an `.active` class** — 3.90.2 renders `a.nav__link` with a `<div class="nav__link-indicator">` inside. The 2px bar is hidden and the whole link becomes the peach pill (`--color-peach-100` / `-700`, fixed stops on purpose so the pill reads on both rails). |
-| `html[data-theme='light'] .btn--style-primary` → navy | stock is `--theme-elevation-800` = `#2f2f32` (near-black grey), not the brand navy. Dark keeps Payload's inverted (light chip + dark text) button. |
-| `.btn--style-secondary`, `.btn--style-pill` → hairline `--theme-elevation-200` outline | stock secondary uses a full-strength elevation-800 border; `.btn--style-pill` ("Tạo mới"…) is a solid base-150 block. |
+| `html[data-theme='light'] .btn--style-primary:not(.btn--disabled)` → navy | stock is `--theme-elevation-800` = `#2f2f32` (near-black grey), not the brand navy. Dark keeps Payload's inverted (light chip + dark text) button. |
+| `.btn--style-secondary:not(.btn--disabled)`, `.btn--style-pill:not(.btn--disabled)` → hairline `--theme-elevation-200` outline | stock secondary uses a full-strength elevation-800 border; `.btn--style-pill` ("Tạo mới"…) is a solid base-150 block. |
+| **`:not(.btn--disabled)` on all four button overrides** | Load-bearing, not decoration. Payload's `.btn` drives its whole state machine through custom properties (`.btn { color: var(--color); background-color: var(--bg-color) }`, `.btn--style-primary { --bg-color: …800 }`, `.btn--style-primary.btn--disabled { --bg-color: …200; --color: …800 }`). A plain `html[data-theme='light'] .btn--style-primary { --bg-color: navy }` therefore wins the cascade over the `.btn--disabled` block and the disabled state NEVER APPLIES — a disabled Publish / Save-draft looks fully enabled. Gating on `:not(.btn--disabled)` lets the disabled values through untouched. Do NOT re-declare the disabled values here (that would re-create the same trap from the other side); do NOT reach for `!important`. Modifier name verified in `@payloadcms/ui` `Button/index.js`: `disabled && \`${baseClass}--disabled\``. |
 | `html[data-theme='light'] .collection-list .table` → white card | the list table sits directly on the canvas. `.collection-list .table` deliberately bleeds (`width: calc(100% + var(--gutter-h)*2)`, `left: calc(var(--gutter-h)*-1)`, `padding-left: var(--gutter-h)`) — zeroing only `padding-left` turns the bleed into the card's own edges. |
-| `.table tbody tr:nth-child(odd)` → transparent; `.table tbody td` → `border-bottom: 1px solid --theme-elevation-150`; `tr:hover` → elevation-50; `thead` → elevation-50 + uppercase 11px/600 `--theme-elevation-500` | stock is a full-bleed zebra with no hover and no separators, which on the new grey canvas reads as grey-on-grey stripes. Borders go on the `td` so it works regardless of `border-collapse`. |
+| `.table tbody tr:nth-child(odd)` → transparent; `.table tbody td` → `border-bottom: 1px solid --theme-elevation-150`; `tr:hover` → elevation-50; `thead` → elevation-50 + uppercase 11px/600 `--theme-elevation-600` (same contrast reasoning as `.nav-group__label` above: 500 dips to ≈4.78:1 in dark; 600 clears 4.5:1 in all four light/dark × tinted/plain combinations) | stock is a full-bleed zebra with no hover and no separators, which on the new grey canvas reads as grey-on-grey stripes. Borders go on the `td` so it works regardless of `border-collapse`. |
 | `.pill--style-light` → white outlined chip, 8px | the neutral control chip ("Hiển thị cột", "Bộ lọc", version tags) is a solid base-150 block by default. |
 | `.pill--style-success` / `--warning` → `--theme-success-100` / `--theme-warning-100` fill + `-800` text, `border-radius: 999px` | the brief's status-pill pattern (light theme: teal-100/teal-800 = 8.94:1; dark resolves to teal-900/teal-200 = 9.55:1 via the family reversal). |
 | `html[data-theme='light'] .collapsible`, `… .document-fields__edit` → white | each layout BLOCK / array row and the document form column are transparent by default, so they would be grey boxes floating on the grey canvas. |
 | `.field-type input…`, `.field-type textarea`, `.react-select .rs__control` → border `--theme-elevation-200` | radius arrives from `--style-radius-s`; focus styling (the teal ring) is deliberately NOT touched. |
-| `.login__*` | `.login__brand .graphic-logo` (Payload's wordmark) is hidden and `::before` draws `url('/icon.svg')` — the committed brand mark, served at `/icon.svg`, verified 200 `image/svg+xml`. `.login__form` becomes the white card; the login CTA is peach (`--color-peach-300` + navy text) while every other primary button stays navy. `.template-minimal` gets `background-color: var(--theme-bg)` because its stock `--theme-bg-color` is **undefined** in 3.90.2. |
+| `.login__*` | `.login__form` becomes the white card (light) / elevation-50 card (dark); the login CTA is peach (`--color-peach-300` + navy text) while every other primary button stays navy, and it carries the same `:not(.btn--disabled)` guard as the other primaries. |
+| `.admin-brand` plate + `payload.config.ts` `admin.components.graphics.Logo` | The brand mark is NOT a CSS hack any more. It is registered as `admin.components.graphics.Logo: '@/components/admin/AdminBrand#AdminBrand'` — the PUBLIC hook (Payload's `elements/Logo/index.js` does `RenderServerComponent({ Component: CustomLogo, Fallback: PayloadLogo })`) — and `AdminBrand.tsx` renders `<img src="/icon.svg">` on a light rounded plate (`.admin-brand`: white `--color-base-0`, `--color-base-150` hairline, `--admin-shadow-card`). **Why a plate:** the monogram is brand navy `#002147` + gold; navy measures 1.02:1 against the dark canvas, so on the dark login only the gold fragment was visible. On the plate navy is 16.05:1 in BOTH themes. The earlier `.login__brand .graphic-logo { display: none }` + `::before { background: url('/icon.svg') }` hack was removed. Runs `pnpm generate:importmap` (its entry is in `src/app/(payload)/admin/importMap.js`). |
+| `.template-minimal { background-color: var(--theme-bg) }` | Partly an upstream Payload bug: `.template-minimal` (the login/logout/verify shell) references `--theme-bg-color`, which 3.90.2 **never defines** (one occurrence in the compiled CSS — a usage, no declaration). Declaring it makes the shell's background explicit and deterministic. NOTE: the reviewer's report of a near-black dark login was NOT reproducible — `html { background: var(--theme-bg) }` is present in the compiled CSS, so the dark canvas was already `rgb(30,30,44)`. This rule is belt-and-braces, not the fix for an invisible brand mark. |
 
 ### 4. Admin favicon / Open Graph (`payload.config.ts`)
 
@@ -681,6 +689,37 @@ override every admin page with one static string.
   fix is untouched). Verified with pre-composed input
   (`ă`=U+0103, `ế`=U+1EBF, `ệ`=U+1EC7, `ữ`=U+1EEF, `ợ`=U+1EE3 …) typed live
   into the editor.
+
+### 5b. Re-verification after the CSS review (2026-10-01)
+
+The review's three must-fixes all landed; re-verified against a fresh
+`pnpm build && next start -p 3100` (not dev).
+
+- **Disabled buttons (computed, light).** Default state of a doc with no unsaved
+  changes: primary Publish/Save `--bg-color` → `#cfcfd9`, `--color` → `#2f2f32`,
+  computed `background-color: rgb(207, 207, 217)` / `color: rgb(47, 47, 50)`;
+  secondary (Save draft) `color`/`border-color: rgb(207, 207, 217)`. After typing
+  into `#field-title` (dirty form): primary `--bg-color` → `#1e1e2c`,
+  `--color` → `#fff`, computed `background-color: rgb(30, 30, 44)`; secondary
+  `color: rgb(30, 30, 44)`. Dark disabled: primary `rgb(73, 73, 80)` on
+  `rgb(234, 234, 241)`. The two states are visually distinct
+  (`13-disabled-buttons-light.png` vs `13b-buttons-enabled-light.png`).
+- **Nav alignment.** All 11 `.nav__link` rows report the same `labelLeft: 32`
+  (distinct set `[32]`), box 20→254, `padding: 12px/12px`, `border-radius: 8px`;
+  the current-page row (a `<div>`) gets the identical peach pill. Both themes
+  (`11-nav-active-light.png`, `11-nav-active-dark.png`).
+- **Dark login.** `.template-minimal` and `html` both compute
+  `rgb(30, 30, 44)`; the plate is `rgb(255, 255, 255)` with a
+  `1px rgb(220, 220, 229)` border and `.graphic-logo` is gone
+  (`12-login-dark.png`).
+- **Console:** 0 errors / 0 warnings on the served login and edit views.
+- **Known anomaly (not over-claimed):** toggling `btn--disabled` on the
+  "Tạo mới" pill by hand in the DOM flips its `--bg-color` (`#fff` →
+  `#dcdce5`, proving the `:not()` gate works) but the computed
+  `background-color` stayed `rgb(255,255,255)` in that synthetic mutation. The
+  real Publish / Save-draft buttons track `--bg-color` correctly, so the defect
+  is genuinely fixed; the pill case is unexplained and is recorded rather than
+  asserted.
 
 ### 6. PRE-EXISTING BUG found while verifying (NOT caused by the theming)
 

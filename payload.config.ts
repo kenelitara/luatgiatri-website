@@ -27,6 +27,19 @@ if (
 export default buildConfig({
   admin: {
     user: Users.slug,
+    // Brand mark in the admin's logo slots (login / logout / verify).
+    // `admin.components.graphics.Logo` is the public hook — @payloadcms/next's
+    // elements/Logo/index.js renders it in place of Payload's own wordmark
+    // (RenderServerComponent with Fallback: PayloadLogo). Alias form for the
+    // same reason as the SeoPanel registration: payload.config.ts sits at the
+    // repo root, so importMap.baseDir is the root and a leading-slash path
+    // would resolve to <root>/components/… instead of src/components/…. Run
+    // `pnpm generate:importmap` after changing this.
+    components: {
+      graphics: {
+        Logo: '@/components/admin/AdminBrand#AdminBrand',
+      },
+    },
     meta: {
       titleSuffix: ' — Quản trị Luật Gia Trí',
       // Admin tab icon. `admin.meta` is spread into
@@ -63,6 +76,21 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { vi },
     fallbackLanguage: 'vi',
+    // Payload's own `vi` locale ships `general.collections` as the untranslated
+    // English string 'Collections' (node_modules/@payloadcms/translations/dist/
+    // languages/vi.js) — it renders as the "Collections" group heading in the
+    // admin nav and dashboard. The sibling key `general.allCollections` is
+    // already 'Tất cả Bộ sưu tập', so 'Bộ sưu tập' is the internally consistent
+    // term. These values are deep-merged OVER the language pack (initTFunction
+    // → deepMergeSimple in @payloadcms/translations), so only the overridden
+    // key is needed; the rest of the pack is untouched.
+    translations: {
+      vi: {
+        general: {
+          collections: 'Bộ sưu tập',
+        },
+      },
+    },
   },
   telemetry: false,
 })

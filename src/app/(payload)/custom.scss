@@ -4,42 +4,33 @@
    BRAND THEME — design tokens
    ==========================================================================
 
-   HOW THE PAYLOAD ADMIN GETS ITS COLOURS (verified against the compiled admin
-   bundle, 2026-10-01 — see AGENTS.md):
+   HOW THE ADMIN GETS ITS COLOURS — the `--color-base-*` → `--theme-elevation-*`
+   → `--theme-*` alias chain, the light/dark remap and the unlayered-cascade
+   rule that lets this file win — is documented ONCE, in AGENTS.md
+   ("Admin theming" §1). Read that before changing anything here; do not
+   re-describe the mechanism in this file (the copy drifts).
 
-     html[data-theme='light'] { --theme-elevation-N: var(--color-base-N) }
-     html[data-theme='dark']  { --theme-elevation-N: var(--color-base-(1000-N)) }
-     --theme-bg / --theme-text / --theme-input-bg / --theme-border-color
-        are all aliases of --theme-elevation-*, which in turn ALL alias
-        --color-base-*. The success/warning/error families are separate ramps
-        (--color-success-*, ...) used for status pills, focus rings and toasts.
-
-   So the SINGLE highest-leverage lever is `--color-base-*`. Retinting that one
-   neutral ramp re-skins the entire admin — sidebar, tables, inputs, borders,
-   text, dark mode included — and unlike per-component overrides it does not
-   depend on Payload's internal class names, so it survives upgrades.
-
-   CASCADE: this file is unlayered and imported after @payloadcms/next/css.
-   Unlayered declarations outrank layered ones at the same origin, and that
-   comparison happens BEFORE specificity — so a plain :root here beats
-   Payload's `@layer payload-default` `html[data-theme=...]` rules. No
-   !important is needed (same mechanism the --font-serif override below uses).
+   Short version: `--color-base-*` is the single highest-leverage lever
+   (retinting that one neutral ramp re-skins sidebar, tables, inputs, borders,
+   text and dark mode), and it survives Payload upgrades because it does not
+   depend on Payload's internal class names. The `--color-*` runs below are
+   OKLCH-generated brand ramps, pinned so each client hex sits at the stop of
+   matching lightness (peach→300, teal→400, gold→300, blue→450, navy→base-900);
+   treat them as frozen.
 
    PALETTE (client-supplied, 2026-10-01):
      primary    #F29F67 peach      #1E1E2C navy
      supporting #3B8FF3 blue       #34B1AA teal       #E0B50F gold
 
-   Ramps are generated in OKLCH: each family reuses Payload's ORIGINAL
-   lightness curve (so contrast behaviour is unchanged and every ramp is
-   strictly monotonic 50->950) with the brand hue and a chroma profile that
-   peaks mid-scale. Each brand hex is pinned at the stop of matching lightness
-   so the exact client colour really is in the system:
-     peach  -> -300, teal -> -400, gold -> -300, blue -> -450, navy -> base-900
-
    Like the public site's #ffd700 (see AGENTS.md), the light brand colours fail
    WCAG as text on white — peach on white is 2.1:1 — so they are FILL and
    accent colours only. Use the -700 stop for brand-coloured text (peach-700 on
    white is 7.8:1) and the -100/-150 stops for tinted pill backgrounds.
+
+   NOTE — `--color-blue-*` (the link/info accent) is deliberately UNCONSUMED:
+   nothing in this file or in Payload's admin CSS references it today. It is
+   kept because the client supplied blue as a supporting colour and the ramp is
+   part of the frozen token layer — it is not dead code to be deleted.
    -------------------------------------------------------------------------- */
 :root {
   /* Neutral ramp tinted toward the navy #1E1E2C (hue 284deg). This is the
@@ -208,17 +199,12 @@ html[data-theme='light'] {
    payload@3.90.2, 2026-10-01. After any Payload bump, re-verify them against
    the served DOM (see AGENTS.md, "Admin theming").
 
-   THEME-AWARE TOKENS ONLY, WHERE IT MATTERS:
-   `--color-*` stops are FIXED (one light ramp); `--theme-elevation-*` changes
-   meaning in dark mode — light is a straight alias
-   (`--theme-elevation-N` = `--color-base-N`), dark is an explicit hand-written
-   remap in @payloadcms/ui/dist/scss/colors.scss (0→900, 50→850, 100→800,
-   … 400→450, 550→350, … 900→0; no 500 remap — it is the fixed pivot), and the
-   success/warning/error families are reversed there too.
-   Anything that must stay legible in both themes is written with `--theme-*` /
-   `--theme-elevation-*`, never a bare `--color-base-*`. Exceptions are
-   deliberate and noted inline (the peach pill, the white card, the light-mode
-   navy button) — those are light-theme-specific by design.
+   THEME-AWARE TOKENS WHERE IT MATTERS: anything that must stay legible in
+   both themes is written with `--theme-*` / `--theme-elevation-*`, never a
+   bare `--color-base-*` (the two ramps mean different things in dark mode —
+   see AGENTS.md "Admin theming" §1). Exceptions are deliberate and noted
+   inline (the peach pill, the white card, the light-mode navy button) — those
+   are light-theme-specific by design.
    -------------------------------------------------------------------------- */
 
 /* --------------------------------------------------------------------------
@@ -261,11 +247,25 @@ html[data-theme='light'] {
 html[data-theme='light'] .card {
   background: var(--theme-elevation-0);
 }
-/* On hover the stock card goes to elevation-50 — which is now exactly the
-   canvas colour, so the card would visually sink into the page. Use the next
-   step down instead so the hover still reads as "raised". */
+/* Hover must read as a LIFT, not a press. Stock Payload darkens the card to
+   elevation-50 — which is now exactly the canvas colour — and elevation-100
+   (the obvious "fix") is darker still than the white card, so either one looks
+   pressed-in. Instead: keep the card white and raise it — bigger shadow,
+   a slightly darker hairline, and a 1px lift. */
+html[data-theme='light'] .card--has-onclick {
+  transition:
+    border-color 0.12s linear,
+    box-shadow 0.12s linear,
+    background-color 0.12s linear,
+    transform 0.12s linear;
+}
 html[data-theme='light'] .card--has-onclick:hover {
-  background: var(--theme-elevation-100);
+  background: var(--theme-elevation-0);
+  border-color: var(--theme-elevation-200);
+  box-shadow:
+    0 6px 16px rgba(16, 16, 28, 0.1),
+    0 1px 2px rgba(16, 16, 28, 0.06);
+  transform: translateY(-1px);
 }
 
 /* --------------------------------------------------------------------------
@@ -273,48 +273,63 @@ html[data-theme='light'] .card--has-onclick:hover {
    Reference: white rail, uppercase letterspaced section labels, and the active
    item as a PEACH PILL (peach-100 fill, peach-700 text) — not Payload's 2px
    left indicator bar.
-   The active item is marked by `a.nav__link:has(.nav__link-indicator)`
+   The active item is marked by `.nav__link:has(.nav__link-indicator)`
    (verified in the live DOM — Payload does NOT add an `.active` class in
    3.90.2); the indicator div is hidden and the whole link becomes the pill.
+   No `a` in that selector on purpose — the current page renders the row as a
+   plain `<div class="nav__link">`, not an anchor (see the note further down).
    -------------------------------------------------------------------------- */
 html[data-theme='light'] .nav {
   background: var(--theme-elevation-0);
 }
 
 /* Section labels ("Collections", "Cấu hình chung (globals)", …). The text is
-   Payload's own i18n/default label — only its presentation changes here. */
+   Payload's own i18n/default label — only its presentation changes here.
+   Colour is elevation-600, NOT the stock elevation-400 / the obvious 500:
+   at 11px these labels need 4.5:1, and elevation-500 measures 3.96:1 on white /
+   3.64:1 on the tinted table header / 4.78:1 on the dark rail. elevation-600
+   clears all four cases (5.85 / 5.37 / 8.00 / 7.73). */
 .nav-group__label {
   text-transform: uppercase;
   letter-spacing: 0.09em;
   font-size: 11px;
   font-weight: 600;
-  color: var(--theme-elevation-500);
+  color: var(--theme-elevation-600);
 }
 
 /* Every nav row becomes a pill so hover and active share one silhouette.
-   Payload's stock link is `padding-inline-end: 30px` + no start padding, which
-   would make an asymmetric background; the shorthand below normalises it. */
-.nav a.nav__link {
+   Deliberately NOT `.nav a.nav__link`: the CURRENT page's row is rendered as
+   a `<div class="nav__link">`, not an `<a>` — @payloadcms/next's
+   elements/Nav/index.client.js does `if (pathname === href) return <div
+   className="nav__link">`. An `a`-qualified rule therefore skips exactly the
+   one row that shows the peach background, leaving it with the stock
+   `padding-inline-end: 30px` and a label ~12px out of line with its siblings.
+   Keep this selector element-agnostic. */
+.nav__link {
   border-radius: 8px;
   padding: 7px 12px;
   transition: background-color 0.12s linear, color 0.12s linear;
 }
 /* Stock Payload underlines nav links on hover; the reference uses a tinted
-   block instead. */
-.nav a.nav__link:hover,
-.nav a.nav__link:focus-visible {
+   block instead. Scoped with :not(:has(.nav__link-indicator)) because the
+   active row must keep its peach pill — when the user is on a sub-route (e.g.
+   /admin/collections/pages/10) the active row IS an `<a>`, and this rule
+   (specificity 0,4,1 once :not() is counted) would otherwise out-rank
+   `.nav__link:has(.nav__link-indicator)` (0,2,0) and repaint the pill grey. */
+.nav a.nav__link:not(:has(.nav__link-indicator)):hover,
+.nav a.nav__link:not(:has(.nav__link-indicator)):focus-visible {
   text-decoration: none;
   background: var(--theme-elevation-100);
   color: var(--theme-elevation-900);
 }
 /* Active item = peach pill. Peach stops are FIXED (not theme-flipped) on
    purpose: the pill is a brand mark, and peach-100/peach-700 read correctly on
-   both the white light rail and the near-black dark rail. */
+   both the white light rail and the near-black dark rail. Padding/radius come
+   from the element-agnostic `.nav__link` rule above. */
 .nav__link:has(.nav__link-indicator) {
   background: var(--color-peach-100);
   color: var(--color-peach-700);
   font-weight: 600;
-  border-radius: 8px;
 }
 /* The 2px indicator bar is replaced by the pill above. */
 .nav__link .nav__link-indicator {
@@ -328,8 +343,27 @@ html[data-theme='light'] .nav {
    the exact navy (base-900 = #1e1e2c) with white text; dark theme is left
    alone because there Payload's own inverted button (light chip + dark text)
    is what keeps contrast on the near-black canvas.
+
+   THE `:not(.btn--disabled)` IS LOAD-BEARING — do not remove it.
+   Payload implements the disabled state by re-declaring THESE SAME custom
+   properties on a `--disabled` modifier, inside `@layer payload-default`:
+     .btn--style-primary.btn--disabled { --bg-color: var(--theme-elevation-200);
+                                         --color: var(--theme-elevation-800) }
+   (Button/index.js adds `disabled && \`${baseClass}--disabled\``.) Because
+   everything in this file is unlayered, an override that sets `--bg-color` on
+   the unconditional `.btn--style-*` selector wins over Payload's layered
+   `--disabled` rule and the disabled values never apply — the button renders
+   as if enabled but does nothing. `:not(.btn--disabled)` simply makes our
+   override not match when disabled, so Payload owns that state again.
+   Do NOT "fix" this by out-specificity-ing the disabled rule or by
+   re-declaring the disabled values here — letting Payload own the disabled
+   state is the point, and it keeps working across upgrades.
+   Affected in practice: SaveDraftButton (secondary) and the pill buttons are
+   broken in BOTH themes, PublishButton/SaveButton (primary) in light — and
+   `disabled` is computed from "no unsaved changes", so the DEFAULT state of an
+   existing document is what regresses.
    -------------------------------------------------------------------------- */
-html[data-theme='light'] .btn--style-primary {
+html[data-theme='light'] .btn--style-primary:not(.btn--disabled) {
   --bg-color: var(--color-base-900);
   --color: #ffffff;
   --hover-bg: var(--color-base-950);
@@ -338,7 +372,7 @@ html[data-theme='light'] .btn--style-primary {
 /* Secondary/outline: hairline base-200 border + navy label, per the brief
    (stock is a full-strength elevation-800 border, which reads as a second
    solid button). */
-.btn--style-secondary {
+.btn--style-secondary:not(.btn--disabled) {
   --color: var(--theme-elevation-900);
   --btn-border: 1px solid var(--theme-elevation-200);
   --hover-color: var(--theme-elevation-900);
@@ -347,7 +381,7 @@ html[data-theme='light'] .btn--style-primary {
 }
 /* "Tạo mới" and the other pill-styled buttons. Stock is a solid base-150
    block; redrawn as the same outlined chip as the .pill controls in §4. */
-.btn--style-pill {
+.btn--style-pill:not(.btn--disabled) {
   --bg-color: var(--theme-elevation-0);
   --color: var(--theme-elevation-850);
   --hover-color: var(--theme-elevation-900);
@@ -436,8 +470,12 @@ html[data-theme='light'] .collection-list .table {
 .table thead {
   background: var(--theme-elevation-50);
 }
+/* Colour is elevation-600, not the stock elevation-400 / the obvious 500: at
+   11px these headers need 4.5:1 and elevation-500 lands at 3.96:1 on the white
+   card, 3.64:1 on the elevation-50 header tint and 4.78:1 in dark. -600 clears
+   all four (5.85 / 5.37 / 8.00 / 7.73). */
 .table thead th {
-  color: var(--theme-elevation-500);
+  color: var(--theme-elevation-600);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-size: 11px;
@@ -490,35 +528,72 @@ html[data-theme='light'] .collection-list .table {
    Stock Payload: white page, Payload's own wordmark, a 3px-radius grey button.
    Here: tinted canvas, the GT brand mark, and the form as a floating white
    card — the same canvas/card contrast as §1.
-   The wordmark is Payload's built-in `.graphic-logo` SVG; it is hidden and the
-   committed brand asset (src/app/icon.svg → served at /icon.svg, verified 200
-   with content-type image/svg+xml) is drawn as a background image. Pure CSS —
-   no admin component was restructured.
+
+   The brand mark is NOT a CSS background hack any more. Payload 3.90.2 reads
+   `admin.components.graphics.Logo` and renders that component in place of its
+   own `PayloadLogo` (@payloadcms/next/dist/elements/Logo/index.js:
+   `RenderServerComponent({ Component: CustomLogo, Fallback: PayloadLogo })`),
+   which is the public hook; the project registers
+   `@/components/admin/AdminBrand#AdminBrand` there. This removed a dependency
+   on `.graphic-logo` (a private class) and, more importantly, let us put the
+   mark on a light plate — the monogram is brand navy #002147, which is
+   1.02:1 against the dark canvas, so on a dark login only the gold fragment
+   used to show.
    -------------------------------------------------------------------------- */
-html[data-theme='light'] .template-minimal {
+/* Payload's stock `.template-minimal` sets `background-color:
+   var(--theme-bg-color)` — a variable that is DEFINED NOWHERE in the installed
+   package (it appears exactly once in the compiled CSS, as this usage). The
+   declaration is therefore invalid at computed-value time and the element ends
+   up transparent; today the canvas is only right because `html` carries
+   `background: var(--theme-bg)` and shows through. That is an upstream Payload
+   bug we are not fixing upstream — this declaration makes the login canvas
+   deterministic instead of relying on the html fallback. Unscoped on purpose:
+   `--theme-bg` is the tinted grey in light and the brand navy #1e1e2c in dark,
+   which is what the rest of the dark admin uses. */
+.template-minimal {
   background-color: var(--theme-bg);
 }
-html[data-theme='light'] .login__form {
-  background: var(--color-base-0);
+/* The form as a floating card in BOTH themes (stock Payload has no card at
+   all, so a light-only treatment made the dark login look unstyled). Light
+   gets the reference's white card; dark gets one step up from the canvas
+   (elevation-50 = --color-base-850 on the navy elevation-0). */
+.login__form {
   border: 1px solid var(--theme-elevation-150);
   border-radius: var(--style-radius-l);
   box-shadow: var(--admin-shadow-pop);
   padding: 32px 28px;
 }
-.login__brand .graphic-logo {
-  display: none;
+html[data-theme='light'] .login__form {
+  background: var(--color-base-0);
 }
-.login__brand::before {
-  content: '';
+html[data-theme='dark'] .login__form {
+  background: var(--theme-elevation-50);
+}
+/* Light plate behind the brand mark. Fixed `--color-*` stops on purpose — the
+   plate must stay light in BOTH themes so the navy monogram stays legible
+   (navy on white = 16.05:1). Rendered by
+   src/components/admin/AdminBrand.tsx. */
+.admin-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 18px;
+  background: var(--color-base-0);
+  border: 1px solid var(--color-base-150);
+  box-shadow: var(--admin-shadow-card);
+}
+.admin-brand img {
   display: block;
-  width: 96px;
-  height: 96px;
-  background: url('/icon.svg') center / contain no-repeat;
+  width: 72px;
+  height: 72px;
 }
 /* Peach CTA on the login card only: the system-wide primary is the navy
    button above, but the login is the one screen the whole firm sees, so it
-   carries the brand accent. Navy text on peach-300 is ~7.4:1. */
-html[data-theme='light'] .login__form .btn--style-primary {
+   carries the brand accent. Navy text on peach-300 is ~7.4:1.
+   `:not(.btn--disabled)` for the same reason as §3 — the login submit is
+   disabled while a submission is in flight. */
+html[data-theme='light'] .login__form .btn--style-primary:not(.btn--disabled) {
   --bg-color: var(--color-peach-300);
   --color: var(--color-base-900);
   --hover-bg: var(--color-peach-400);
