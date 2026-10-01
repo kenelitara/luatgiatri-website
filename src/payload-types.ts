@@ -395,7 +395,7 @@ export interface Page {
   id: number;
   title: string;
   /**
-   * Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7).
+   * Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem.
    */
   slug: string;
   /**
