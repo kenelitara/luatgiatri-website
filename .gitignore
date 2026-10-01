@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Environment + secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Runtime data (project-private; never commit DB or upload contents)
+var/
+data/db/
+data/uploads/
+*.log
+logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# Claude Code local overrides
+.claude/settings.local.json

@@ -1,0 +1,45 @@
+services:
+  app:
+    build: .
+    image: luatgiatri-website:latest
+    restart: unless-stopped
+    env_file: .env
+    # Universal rule 12: Docker Desktop defaults StopTimeout to 1 s; a plain
+    # `docker stop` would SIGKILL a container still serving a response.
+    stop_grace_period: 60s
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [internal, proxy]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      com.elitara.project: "luatgiatri-website"
+      com.elitara.role: "web"
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env
+    stop_grace_period: 60s
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks: [internal]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  internal:
+  proxy:
+    external: true

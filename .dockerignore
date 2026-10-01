@@ -1,0 +1,38 @@
+# Source control + tooling
+.git/
+.github/
+.gitignore
+.dockerignore
+
+# Dependencies + build (rebuilt inside image)
+node_modules/
+.pnpm-store/
+dist/
+build/
+.next/
+out/
+
+# Env + secrets (passed in at runtime, never baked)
+.env
+.env.local
+.env.*.local
+
+# Tests + docs (not needed in runtime image)
+tests/
+test-results/
+playwright-report/
+coverage/
+docs/
+*.md
+!README.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Claude Code config
+.claude/
+AGENTS.md
+CLAUDE.md
