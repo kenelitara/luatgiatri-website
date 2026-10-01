@@ -32,7 +32,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "1. Mục đích và phạm vi",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -55,7 +55,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "2. Thông tin chúng tôi thu thập",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -100,7 +100,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "3. Mục đích xử lý",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -185,7 +185,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "4. Cơ sở pháp lý và sự đồng ý",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -219,7 +219,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "5. Thời gian lưu trữ",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -242,7 +242,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "6. Chia sẻ với bên thứ ba",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -276,7 +276,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "7. Quyền của bạn",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -408,7 +408,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "8. Liên hệ",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },
@@ -493,7 +493,7 @@
                   "type": "text",
                   "version": 0,
                   "text": "9. Ngày cập nhật",
-                  "bold": true
+                  "format": 1
                 }
               ]
             },

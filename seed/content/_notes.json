@@ -124,7 +124,7 @@
     {
       "page": "all",
       "topic": "heading demotion inside richText",
-      "detail": "Per spec §6.4 the Heading component is the only h2/h3 emitter in blocks, so section headings that fall inside richText bodies (e.g. \"Mô tả dịch vụ kế toán thuế\", stats-section h2s, gioi-thieu h2 pairs) are stored as bold paragraphs in the Lexical body instead of heading nodes. Text is verbatim."
+      "detail": "Per spec §6.4 the Heading component is the only h2/h3 emitter in blocks, so section headings that fall inside richText bodies (e.g. \"Mô tả dịch vụ kế toán thuế\", stats-section h2s, gioi-thieu h2 pairs) are stored as bold paragraphs in the Lexical body instead of heading nodes. Text is verbatim. ACCURACY NOTE (M3 Task 7): Lexical serializes a bold run as the bitfield \"format\": 1 (NodeFormat.IS_BOLD); both the JSX and HTML converters read node.format and IGNORE a \"bold\": true property, so the \"bold\": true form carried by the M2 fixtures renders as plain text. chinh-sach-bao-mat uses \"format\": 1 and is the first fixture whose bold actually renders as <strong> (verified: the nine section headings)."
     },
     {
       "page": "all",
