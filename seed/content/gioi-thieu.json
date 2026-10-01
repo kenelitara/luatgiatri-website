@@ -1,7 +1,7 @@
 {
   "title": "Giới thiệu - Luật Gia Trí",
   "slug": "gioi-thieu",
-  "primaryHeading": "Giới thiệu - Luật Gia Trí",
+  "primaryHeading": "Giới thiệu về Luật Gia Trí",
   "layout": [
     {
       "blockType": "servicePair",
@@ -168,10 +168,7 @@
     {
       "blockType": "teamGrid",
       "heading": "Chuyên gia của chúng tôi",
-      "membersBySlug": [
-        "nguyen-minh-tri",
-        "le-thanh-hoa"
-      ]
+      "membersBySlug": ["nguyen-minh-tri", "le-thanh-hoa"]
     }
   ],
   "_status": "published"

@@ -54,7 +54,12 @@ export function buildMetadata(input: MetadataInput): Metadata {
 
   const canonical = input.canonicalOverride ?? absolute(input.path)
   const image = absoluteOrNull(input.ogImage) ?? absoluteOrNull(input.defaultOgImage)
-  const title = input.branded === false ? input.title : `${input.title} | ${brand}`
+  // The brand must never appear twice: skip the suffix when the title already
+  // names it (an explicit `branded: false` is then redundant but harmless).
+  const title =
+    input.branded === false || input.title.includes(brand)
+      ? input.title
+      : `${input.title} | ${brand}`
 
   return {
     title,

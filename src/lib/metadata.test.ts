@@ -110,8 +110,22 @@ describe('buildMetadata (spec §6.1)', () => {
     process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
     const unbranded = buildMetadata({ title: 'Luật Gia Trí', path: '/', branded: false })
     expect(unbranded.title).toBe('Luật Gia Trí')
-    const branded = buildMetadata({ title: 'Luật Gia Trí', path: '/' })
-    expect(branded.title).toBe('Luật Gia Trí | Luật Gia Trí')
+    const branded = buildMetadata({ title: 'Giới thiệu', path: '/gioi-thieu/' })
+    expect(branded.title).toBe('Giới thiệu | Luật Gia Trí')
+  })
+
+  it('never doubles the brand when the title already names it', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    const m = buildMetadata({ title: 'Giới thiệu - Luật Gia Trí', path: '/gioi-thieu/' })
+    expect(m.title).toBe('Giới thiệu - Luật Gia Trí')
+    // a custom brand is respected the same way
+    const custom = buildMetadata({
+      title: 'X | Công ty ABC',
+      path: '/x/',
+      brandName: 'Công ty ABC',
+    })
+    expect(custom.title).toBe('X | Công ty ABC')
   })
 
   it('passes protocol-relative image URLs through with https:', () => {
