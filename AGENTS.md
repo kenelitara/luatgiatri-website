@@ -297,6 +297,37 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   applied and recorded the migration cleanly; see the dev-mode prompt note
   under "migrate service" in the Docker section).
 
+## M2 gate findings (Task 24, 2026-10-01)
+
+- **`seed.ts` now provisions the whole stack, not just pages.** A wiped DB
+  previously lost the admin user, the 2 Authors, the news category and BOTH
+  globals (all hand-created in the admin). Task 24 extended `scripts/seed.ts`
+  with idempotent upserts that run BEFORE the page loop (teamGrid resolves
+  author slugs): the admin user (only when `users` is empty, password from
+  `DEV_ADMIN_PASSWORD` in .env — gitignored), Authors by slug, Category by
+  slug, and the Navigation + SiteSettings globals. Re-running over a populated
+  DB creates no duplicates; the 9 pages follow.
+- **The dev DB is a BIND MOUNT — `docker compose down -v` does NOT wipe it.**
+  Clean state = `rm -rf ./data/db` (RELATIVE path only, from the project root —
+  the Git Bash path-mangling memory forbids absolute-path `rm`), then
+  `docker compose up -d db`.
+- **`_media-map.json` holds media ids valid only for the DB that created
+  them.** After a wipe, delete the map and re-run `pnpm seed:media` so the 13
+  images re-upload and the map is regenerated before `pnpm seed`.
+- **Fresh-DB `pnpm payload migrate` is non-interactive** — a never-dev-pushed
+  DB has no `batch: -1` record, so there is no "data loss" prompt. Gate run:
+  all 6 migrations applied cleanly with no `y` pipe.
+- **`Pages.layout` registers 14 blocks, not 13.** The spec §5.5 / Task 14
+  figure of "13 attorneyshere-pattern blocks" predates the Task 23
+  `TokenMatrix` addition (and Hero + HeroCarousel are two distinct blocks).
+  The admin create-view check verified all 14 labels.
+- **Admin-in-Vietnamese is programmatic-verifiable** (spec §5.7, criterion 6):
+  REST-login (`POST /api/users/login`), fetch `/admin` and
+  `/admin/collections/pages/create` with the `payload-token` cookie, and assert
+  the Vietnamese strings are present in the served HTML/RSC payload. The nav
+  labels are the collection/global `labels.plural`; the block labels are the
+  block `labels`.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
