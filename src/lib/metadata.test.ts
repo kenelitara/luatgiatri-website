@@ -114,6 +114,13 @@ describe('buildMetadata (spec §6.1)', () => {
     expect(branded.title).toBe('Giới thiệu | Luật Gia Trí')
   })
 
+  it('branded: false emits a brand-free title verbatim', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    const m = buildMetadata({ title: 'Giới thiệu', path: '/x/', branded: false })
+    expect(m.title).toBe('Giới thiệu')
+  })
+
   it('never doubles the brand when the title already names it', () => {
     process.env.SITE_ENV = 'production'
     process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
