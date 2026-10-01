@@ -280,6 +280,23 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   Docker Desktop defaults StopTimeout to 1 s, and a plain `docker stop`
   would SIGKILL a container still serving a response (workspace rule 12).
 
+## Token matrix decision (spec §5.5)
+
+- Decision: dedicated TokenMatrix block (the spec §5.5 contingency), NOT the
+  existing pricingTable.
+- Why: every raw row carries three fee columns (Token / Dịch vụ / Duy trì)
+  plus a computed total (Tổng₫) per term — 4 values spanning fee types per
+  row, one of them a total — which the three-field (service, term?, fee) row
+  cannot carry without mangling; the 15 structures × 7 provider tabs also
+  vary in term count (NCCA has a 4-năm group) that a fixed column mode
+  cannot express.
+- Checked against seed/raw/chu-ky-so-token.html on 2026-10-01.
+- Migration: `src/migrations/20261001_081342.ts` (run after the running dev
+  server had already dev-pushed the tables — dropped the dev-pushed
+  `*token_matrix*` tables first, then `echo y | pnpm payload migrate`
+  applied and recorded the migration cleanly; see the dev-mode prompt note
+  under "migrate service" in the Docker section).
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

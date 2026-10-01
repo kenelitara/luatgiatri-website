@@ -513,6 +513,28 @@ export interface Page {
         blockType: 'pricingTable';
       }
     | {
+        heading: string;
+        sections: {
+          title: string;
+          columns: {
+            label: string;
+            id?: string | null;
+          }[];
+          rows: {
+            cells: {
+              value: string;
+              id?: string | null;
+            }[];
+            id?: string | null;
+          }[];
+          id?: string | null;
+        }[];
+        note?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'tokenMatrix';
+      }
+    | {
         heading?: string | null;
         items: {
           question: string;
@@ -1024,6 +1046,37 @@ export interface PagesSelect<T extends boolean = true> {
                           service?: T;
                           term?: T;
                           fee?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              note?: T;
+              id?: T;
+              blockName?: T;
+            };
+        tokenMatrix?:
+          | T
+          | {
+              heading?: T;
+              sections?:
+                | T
+                | {
+                    title?: T;
+                    columns?:
+                      | T
+                      | {
+                          label?: T;
+                          id?: T;
+                        };
+                    rows?:
+                      | T
+                      | {
+                          cells?:
+                            | T
+                            | {
+                                value?: T;
+                                id?: T;
+                              };
                           id?: T;
                         };
                     id?: T;

@@ -13,6 +13,7 @@ import { RichTextView } from './views/RichTextView'
 import { ServicePairView } from './views/ServicePairView'
 import { TeamGridView } from './views/TeamGridView'
 import { TestimonialsView } from './views/TestimonialsView'
+import { TokenMatrixView } from './views/TokenMatrixView'
 import type { Page } from '@/payload-types'
 
 type Block = NonNullable<Page['layout']>[number]
@@ -62,6 +63,8 @@ function renderBlock(block: Block): React.ReactNode {
       return <FaqView block={block} />
     case 'pricingTable':
       return <PricingTableView block={block} />
+    case 'tokenMatrix':
+      return <TokenMatrixView block={block} />
     case 'testimonials':
       return <TestimonialsView block={block} />
     case 'customerLogoStrip':
@@ -71,7 +74,7 @@ function renderBlock(block: Block): React.ReactNode {
     case 'processSteps':
       return <ProcessStepsView block={block} />
     default:
-      // All 13 block types have views; this guards against future blocks
+      // All 14 block types have views; this guards against future blocks
       // shipping untested markup — never emit structure for a block type
       // with no view.
       return null

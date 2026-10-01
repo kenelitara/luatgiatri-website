@@ -8,6 +8,7 @@ import { RichText } from '../blocks/RichText'
 import { ServicePair } from '../blocks/ServicePair'
 import { FeatureGrid } from '../blocks/FeatureGrid'
 import { PricingTable } from '../blocks/PricingTable'
+import { TokenMatrix } from '../blocks/TokenMatrix'
 import { Faq } from '../blocks/Faq'
 import { Testimonials } from '../blocks/Testimonials'
 import { CustomerLogoStrip } from '../blocks/CustomerLogoStrip'
@@ -73,6 +74,7 @@ export const Pages: CollectionConfig = {
         ServicePair,
         FeatureGrid,
         PricingTable,
+        TokenMatrix,
         Faq,
         Testimonials,
         CustomerLogoStrip,

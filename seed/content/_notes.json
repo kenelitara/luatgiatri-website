@@ -135,13 +135,22 @@
       "page": "all",
       "topic": "_status",
       "detail": "Fixtures carry \"_status\": \"published\" so the draft-enabled Pages records are queryable by Task 21's published-only getPage()."
-    }
-  ],
-  "deferred": [
+    },
     {
       "page": "chu-ky-so-token",
-      "topic": "pricing matrix",
-      "detail": "Raw has 7 provider tabs (FPT, VINA, NCCA, CA2-CA, VIETTEL, VNPT, EASY-CA) × 15 mgp-price-table structures (Đăng ký mới / Token / Dịch vụ / Duy trì / Tổng₫ per 1-2-3 năm). Per task plan, the matrix is DEFERRED to Task 23 — only non-pricing content is ported here. serviceMeta.fromPrice left null until Task 23."
+      "topic": "token pricing matrix (Task 23, spec §5.5)",
+      "detail": "Raw rows carry THREE fee columns (Token / Dịch vụ / Duy trì) plus a computed total (Tổng₫) per 1-2-3 (NCCA: 4) năm term — the pricingTable (service, term?, fee) row cannot carry one raw row, so the dedicated tokenMatrix block was created (the spec §5.5 contingency). 15 sections = 7 provider tabs (FPT, VINA, NCCA, CA2-CA, VIETTEL, VNPT, EASY-CA); FPT has two variants (enterprise + \"Dành cho khách hàng cá nhân\", from the raw button label); 46 term rows. Column geometry mirrors the raw header exactly: [section h3 (Đăng ký mới/Gia hạn), Token, Dịch vụ, Duy trì, Tổng₫]. Extraction was programmatic (cheerio in temp tooling outside the repo, Task 20 discipline); 65 empty raw cells are ported as \"–\" placeholders (required text fields reject empty strings), the remaining 274 values byte-verbatim, verified programmatically. The repeated \"* Đơn giá đã bao gồm VAT\" row (after every table) is carried once in tokenMatrix.note."
+    },
+    {
+      "page": "chu-ky-so-token",
+      "topic": "Gia hạn tables third term label",
+      "detail": "Every Gia hạn table's third term group is labeled \"1 năm\" on the live site (evidently meant \"3 năm\" — fees continue the 3-year progression). Ported byte-verbatim, not corrected; flagged for the client to fix in the admin."
+    },
+    {
+      "page": "chu-ky-so-token",
+      "topic": "serviceMeta.fromPrice",
+      "detail": "\"1.089.000\" — the cheapest Đăng ký mới total in the matrix (FPT, khách hàng cá nhân, 1 năm); value byte-verbatim from the raw Tổng column."
     }
-  ]
+  ],
+  "deferred": []
 }
