@@ -7,9 +7,13 @@ import {
   buildPersonSchema,
   buildServiceSchema,
   buildWebSiteSchema,
+  legalServiceId,
+  type SettingsLike,
 } from './jsonld'
 
-const settings = {
+const BASE = 'https://luatgiatri.com'
+
+const settings: SettingsLike = {
   brandName: 'Luật Gia Trí',
   hotline: '0919088119',
   email: 'luatsu@luatgiatri.com',
@@ -26,13 +30,14 @@ const settings = {
     youtube: null,
     googleBusinessProfile: null,
   },
-  defaultOgImage: { url: '/api/media/file/og.png', alt: 'OG' },
-} as never
+  openingHours: 'Mo-Fr 08:00-17:30',
+}
 
 describe('jsonld builders (spec §6.3)', () => {
-  it('legalService carries the correct NAP + sameAs', () => {
-    const s = buildLegalServiceSchema(settings, 'https://luatgiatri.com')
+  it('legalService carries the NAP, the sitewide @id, areaServed, openingHours + sameAs', () => {
+    const s = buildLegalServiceSchema(settings, BASE)
     expect(s['@type']).toBe('LegalService')
+    expect(s['@id']).toBe('https://luatgiatri.com/#legalservice')
     expect(s.name).toBe('Luật Gia Trí')
     expect(s.telephone).toBe('0919088119')
     expect(s.address).toMatchObject({
@@ -40,18 +45,39 @@ describe('jsonld builders (spec §6.3)', () => {
       addressLocality: 'TP.HCM',
       addressRegion: 'Bình Tân',
     })
+    expect(s.areaServed).toMatchObject({ '@type': 'City', name: 'TP.HCM' })
+    expect(s.openingHours).toBe('Mo-Fr 08:00-17:30')
     expect(s.sameAs).toContain('https://facebook.com/x')
   })
 
+  it('legalService emits logo/image/priceRange only when the firm has set them', () => {
+    const bare = buildLegalServiceSchema(settings, BASE)
+    expect(bare.logo).toBeUndefined()
+    expect(bare.image).toBeUndefined()
+    expect(bare.priceRange).toBeUndefined()
+
+    const withLogo = buildLegalServiceSchema(
+      {
+        ...settings,
+        logo: { url: '/api/media/file/logo.png', alt: 'Logo' },
+        priceRange: '500.000đ - 20.000.000đ',
+      },
+      BASE,
+    )
+    expect(withLogo.logo).toBe('https://luatgiatri.com/api/media/file/logo.png')
+    expect(withLogo.image).toBe('https://luatgiatri.com/api/media/file/logo.png')
+    expect(withLogo.priceRange).toBe('500.000đ - 20.000.000đ')
+  })
+
   it('webSite carries SearchAction pointing at /tim-kiem/', () => {
-    const s = buildWebSiteSchema('https://luatgiatri.com', 'Luật Gia Trí')
+    const s = buildWebSiteSchema(BASE, 'Luật Gia Trí')
     expect(s.name).toBe('Luật Gia Trí')
     expect(s.potentialAction).toMatchObject({
       '@type': 'SearchAction',
       target: { urlTemplate: 'https://luatgiatri.com/tim-kiem/?q={search_term_string}' },
     })
     // the brand comes from the caller, never a literal (spec §6.1)
-    const custom = buildWebSiteSchema('https://luatgiatri.com', 'Công ty ABC')
+    const custom = buildWebSiteSchema(BASE, 'Công ty ABC')
     expect(custom.name).toBe('Công ty ABC')
   })
 
@@ -61,7 +87,7 @@ describe('jsonld builders (spec §6.3)', () => {
         { name: 'Trang chủ', path: '/' },
         { name: 'Giới thiệu', path: '/gioi-thieu/' },
       ],
-      'https://luatgiatri.com',
+      BASE,
     )
     expect(s.itemListElement).toHaveLength(2)
     expect(s.itemListElement[1]).toMatchObject({
@@ -89,7 +115,7 @@ describe('jsonld builders (spec §6.3)', () => {
     expect(s.mainEntity[0]).toMatchObject({ '@type': 'Question', name: 'Bao lâu?' })
   })
 
-  it('article links the author Person and the publisher', () => {
+  it('article links the author Person (context-free) and the publisher', () => {
     const s = buildArticleSchema({
       headline: 'Tin A',
       description: 'Mô tả',
@@ -100,15 +126,40 @@ describe('jsonld builders (spec §6.3)', () => {
       publisher: 'Luật Gia Trí',
     })
     expect(s.author).toMatchObject({ '@type': 'Person', name: 'Nguyễn Minh Trí' })
+    // only top-level nodes carry @context
+    expect(s.author).not.toHaveProperty('@context')
     expect(s.publisher).toMatchObject({ '@type': 'Organization', name: 'Luật Gia Trí' })
   })
 
-  it('person carries credentials for E-E-A-T', () => {
+  it('article accepts @id references so every page describes one entity (§6.9)', () => {
+    const id = legalServiceId(BASE)
+    expect(id).toBe('https://luatgiatri.com/#legalservice')
+    const ref = buildArticleSchema({
+      headline: 'Tin A',
+      url: 'https://luatgiatri.com/tin-tuc/a/',
+      author: { '@id': id },
+      publisher: { '@id': id },
+    })
+    expect(ref.author).toEqual({ '@id': 'https://luatgiatri.com/#legalservice' })
+    expect(ref.publisher).toEqual({ '@id': 'https://luatgiatri.com/#legalservice' })
+    // a bare name still builds the full node
+    const byName = buildArticleSchema({
+      headline: 'Tin A',
+      url: 'https://luatgiatri.com/tin-tuc/a/',
+      author: 'Nguyễn Minh Trí',
+      publisher: 'Luật Gia Trí',
+    })
+    expect(byName.author).toMatchObject({ '@type': 'Person', name: 'Nguyễn Minh Trí' })
+    expect(byName.publisher).toMatchObject({ '@type': 'Organization', name: 'Luật Gia Trí' })
+  })
+
+  it('person carries credentials for E-E-A-T and its own @context', () => {
     const s = buildPersonSchema({ name: 'Nguyễn Minh Trí', credentials: 'CCCH 123' })
+    expect(s['@context']).toBe('https://schema.org')
     expect(s).toMatchObject({
       '@type': 'Person',
       name: 'Nguyễn Minh Trí',
-      hasCredential: 'CCCH 123',
+      hasCredential: { '@type': 'EducationalOccupationalCredential', name: 'CCCH 123' },
     })
   })
 })
