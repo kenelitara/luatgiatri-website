@@ -7,9 +7,7 @@ const lexical = (text: string) => ({
   root: {
     type: 'root',
     version: 0,
-    children: [
-      { type: 'paragraph', version: 0, children: [{ type: 'text', version: 0, text }] },
-    ],
+    children: [{ type: 'paragraph', version: 0, children: [{ type: 'text', version: 0, text }] }],
   },
 })
 

@@ -4,7 +4,12 @@ export const Testimonials: Block = {
   slug: 'testimonials',
   labels: { singular: 'Khách hàng nói gì', plural: 'Khách hàng nói gì' },
   fields: [
-    { name: 'heading', type: 'text', label: 'Tiêu đề', defaultValue: 'Khách Hàng Của Luật Gia Trí' },
+    {
+      name: 'heading',
+      type: 'text',
+      label: 'Tiêu đề',
+      defaultValue: 'Khách Hàng Của Luật Gia Trí',
+    },
     {
       name: 'items',
       type: 'array',

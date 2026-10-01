@@ -1,10 +1,10 @@
-// Evaluated at build time: SITE_ENV is a build arg, not a runtime switch. Staging images ship Disallow: /.
 import type { MetadataRoute } from 'next'
+import { getBaseUrl, isStaging } from '@/lib/site-env'
 
-const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'https://luatgiatri.com'
-
+// Evaluated at build time: SITE_ENV is a build arg, not a runtime switch.
+// Staging images ship Disallow: /.
 export default function robots(): MetadataRoute.Robots {
-  if (process.env.SITE_ENV === 'staging') {
+  if (isStaging()) {
     return {
       rules: [{ userAgent: '*', disallow: '/' }],
     }
@@ -20,6 +20,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin', '/api/'],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${getBaseUrl()}/sitemap.xml`,
   }
 }

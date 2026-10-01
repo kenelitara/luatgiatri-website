@@ -13,7 +13,12 @@ export const Redirects: CollectionConfig = {
   },
   fields: [
     { name: 'from', type: 'text', label: 'Từ đường dẫn cũ', required: true, unique: true },
-    { name: 'to', type: 'text', label: 'Đến đường dẫn mới', admin: { description: 'Bỏ trống nếu chọn 410' } },
+    {
+      name: 'to',
+      type: 'text',
+      label: 'Đến đường dẫn mới',
+      admin: { description: 'Bỏ trống nếu chọn 410' },
+    },
     {
       name: 'type',
       type: 'select',

@@ -16,7 +16,11 @@ import { SiteSettings } from './src/payload/globals/SiteSettings'
 import { Navigation } from './src/payload/globals/Navigation'
 
 const secret = process.env.PAYLOAD_SECRET
-if (!secret && process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE !== 'phase-production-build') {
+if (
+  !secret &&
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PHASE !== 'phase-production-build'
+) {
   throw new Error('PAYLOAD_SECRET must be set in production')
 }
 

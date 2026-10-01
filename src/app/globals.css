@@ -1,4 +1,26 @@
-/* Stub — real design tokens arrive with M2 (Tailwind setup, Task 16).
-   The `@import "tailwindcss"` line is added when tailwindcss is installed;
-   importing it before the package exists breaks Turbopack (module-not-found
-   500s on every page importing this file). */
+@import 'tailwindcss';
+
+@theme {
+  /* deep-blue scale — anchored on the client's #002147 */
+  --color-brand-950: #001226;
+  --color-brand-900: #002147; /* client deep blue (anchor) */
+  --color-brand-800: #1a3a5c;
+  --color-brand-700: #2c4d70;
+  --color-brand-600: #40618a;
+  --color-brand-100: #e3eaf2;
+  --color-brand-50: #f4f7fa;
+  /* gold scale — anchored on the client's #ffd700 */
+  --color-gold-700: #8a7200; /* gold text on light bg — WCAG-safe step */
+  --color-gold-600: #b89600;
+  --color-gold-500: #ffd700; /* client yellow/gold (anchor) — bg/highlight only, not text-on-white */
+  --color-gold-400: #ffe44d;
+  --color-gold-100: #fff8d6;
+  --font-sans: var(--font-be-vietnam-pro), system-ui, sans-serif;
+  --text-hero: 3.5rem;
+  --text-hero--line-height: 1.1;
+  --spacing-section: 4rem;
+}
+
+.prose {
+  max-width: 65ch;
+}

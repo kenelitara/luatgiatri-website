@@ -19,20 +19,23 @@
     "capture": "node scripts/capture-content.mjs",
     "seed": "tsx scripts/seed.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.90.2",
     "@payloadcms/next": "3.90.2",
     "@payloadcms/richtext-lexical": "3.90.2",
     "@payloadcms/translations": "3.90.2",
+    "@tailwindcss/postcss": "4.3.3",
     "graphql": "^16.14.2",
     "next": "16.3.6",
     "payload": "3.90.2",
     "pg": "^8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "sharp": "0.35.5"
+    "sharp": "0.35.5",
+    "tailwindcss": "4.3.3"
   },
   "devDependencies": {
     "@types/node": "^22",
@@ -40,6 +43,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.1",
+    "prettier": "^3.9.9",
     "tsx": "^4.22.4",
     "typescript": "^5",
     "vitest": "^5.0.3"

@@ -32,14 +32,23 @@ function renderBlock(block: Block): React.ReactNode {
     case 'servicePair':
       return (
         <section className="grid md:grid-cols-2 gap-8">
-          <div>{block.image && <img src={typeof block.image === 'object' ? block.image.url ?? '' : ''} alt={typeof block.image === 'object' ? block.image.alt : ''} />}</div>
+          <div>
+            {block.image && (
+              <img
+                src={typeof block.image === 'object' ? (block.image.url ?? '') : ''}
+                alt={typeof block.image === 'object' ? block.image.alt : ''}
+              />
+            )}
+          </div>
           <div>
             <Heading>{block.heading}</Heading>
             <div className="prose">
               <RichText data={block.body} />
             </div>
             <ul>
-              {block.bullets?.map((b, j) => <li key={j}>✔ {b.item}</li>)}
+              {block.bullets?.map((b, j) => (
+                <li key={j}>✔ {b.item}</li>
+              ))}
             </ul>
           </div>
         </section>

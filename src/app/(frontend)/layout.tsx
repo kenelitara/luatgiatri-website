@@ -1,21 +1,33 @@
+import { Be_Vietnam_Pro } from 'next/font/google'
 import type { Metadata } from 'next'
+import { Footer } from '@/components/chrome/Footer'
+import { Header } from '@/components/chrome/Header'
+import { TopBar } from '@/components/chrome/TopBar'
+import { getBaseUrl, isStaging } from '@/lib/site-env'
 import '../globals.css'
 
-const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'https://luatgiatri.com'
+const sans = Be_Vietnam_Pro({
+  subsets: ['latin', 'vietnamese'], // vietnamese subset is REQUIRED (spec §6.8)
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-be-vietnam-pro',
+})
 
 export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
+  metadataBase: new URL(getBaseUrl()),
   title: { default: 'Luật Gia Trí', template: '%s | Luật Gia Trí' },
-  robots:
-    process.env.SITE_ENV === 'staging'
-      ? { index: false, follow: false }
-      : { index: true, follow: true },
+  robots: isStaging() ? { index: false, follow: false } : { index: true, follow: true },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi">
-      <body>{children}</body>
+    <html lang="vi" className={sans.variable}>
+      <body className="font-sans text-brand-950">
+        <TopBar />
+        <Header />
+        <main>{children}</main>
+        <Footer />
+      </body>
     </html>
   )
 }

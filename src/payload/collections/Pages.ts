@@ -46,7 +46,9 @@ export const Pages: CollectionConfig = {
           'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7).',
       },
       hooks: {
-        beforeValidate: [({ value, data }) => (value ? value : slugify((data?.title as string) ?? ''))],
+        beforeValidate: [
+          ({ value, data }) => (value ? value : slugify((data?.title as string) ?? '')),
+        ],
       },
     },
     {

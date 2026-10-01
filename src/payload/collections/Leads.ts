@@ -39,7 +39,12 @@ export const Leads: CollectionConfig = {
       fields: [
         { name: 'consentedAt', type: 'date', label: 'Thời điểm đồng ý', required: true },
         { name: 'consentVersion', type: 'text', label: 'Phiên bản văn bản đồng ý', required: true },
-        { name: 'ipHash', type: 'text', label: 'Băm IP (SHA-256 + muối)', admin: { description: 'Không lưu IP thô' } },
+        {
+          name: 'ipHash',
+          type: 'text',
+          label: 'Băm IP (SHA-256 + muối)',
+          admin: { description: 'Không lưu IP thô' },
+        },
       ],
     },
     {
