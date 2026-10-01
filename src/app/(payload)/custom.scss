@@ -392,37 +392,37 @@ html[data-theme='light'] .nav {
   -webkit-mask-position: center;
 }
 #nav-users::before { /* Người dùng */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M16%2021v-2a4%204%200%200%200-4-4H6a4%204%200%200%200-4%204v2'/%3E%3Ccircle%20cx='9'%20cy='7'%20r='4'/%3E%3Cpath%20d='M22%2021v-2a4%204%200%200%200-3-3.87'/%3E%3Cpath%20d='M16%203.13a4%204%200%200%201%200%207.75'/%3E%3C/svg%3E");
 }
 #nav-media::before { /* Tệp media */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2' ry='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20width='18'%20height='18'%20x='3'%20y='3'%20rx='2'%20ry='2'/%3E%3Ccircle%20cx='9'%20cy='9'%20r='2'/%3E%3Cpath%20d='m21%2015-3.086-3.086a2%202%200%200%200-2.828%200L6%2021'/%3E%3C/svg%3E");
 }
 #nav-authors::before { /* Tác giả */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M21.174%206.812a1%201%200%200%200-3.986-3.987L3.842%2016.174a2%202%200%200%200-.5.83l-1.321%204.352a.5.5%200%200%200%20.623.622l4.353-1.32a2%202%200%200%200%20.83-.497z'/%3E%3Cpath%20d='m15%205%204%204'/%3E%3C/svg%3E");
 }
 #nav-categories::before { /* Chuyên mục */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M20%2020a2%202%200%200%200%202-2V8a2%202%200%200%200-2-2h-7.9a2%202%200%200%201-1.69-.9L9.6%203.9A2%202%200%200%200%207.93%203H4a2%202%200%200%200-2%202v13a2%202%200%200%200%202%202Z'/%3E%3C/svg%3E");
 }
 #nav-tags::before { /* Thẻ */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/%3E%3Ccircle cx='7.5' cy='7.5' r='.5' fill='%23000'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M12.586%202.586A2%202%200%200%200%2011.172%202H4a2%202%200%200%200-2%202v7.172a2%202%200%200%200%20.586%201.414l8.704%208.704a2.426%202.426%200%200%200%203.42%200l6.58-6.58a2.426%202.426%200%200%200%200-3.42z'/%3E%3Ccircle%20cx='7.5'%20cy='7.5'%20r='.5'%20fill='%23000'/%3E%3C/svg%3E");
 }
 #nav-posts::before { /* Bài viết */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M15%202H6a2%202%200%200%200-2%202v16a2%202%200%200%200%202%202h12a2%202%200%200%200%202-2V7Z'/%3E%3Cpath%20d='M14%202v4a2%202%200%200%200%202%202h4'/%3E%3Cpath%20d='M10%209H8'/%3E%3Cpath%20d='M16%2013H8'/%3E%3Cpath%20d='M16%2017H8'/%3E%3C/svg%3E");
 }
 #nav-redirects::before { /* Chuyển hướng */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m16 3 4 4-4 4'/%3E%3Cpath d='M20 7H4'/%3E%3Cpath d='m8 21-4-4 4-4'/%3E%3Cpath d='M4 17h16'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='m16%203%204%204-4%204'/%3E%3Cpath%20d='M20%207H4'/%3E%3Cpath%20d='m8%2021-4-4%204-4'/%3E%3Cpath%20d='M4%2017h16'/%3E%3C/svg%3E");
 }
 #nav-leads::before { /* Hộp thư liên hệ */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-6l-2 3h-4l-2-3H2'/%3E%3Cpath d='M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M22%2012h-6l-2%203h-4l-2-3H2'/%3E%3Cpath%20d='M5.45%205.11%202%2012v6a2%202%200%200%200%202%202h16a2%202%200%200%200%202-2v-6l-3.45-6.89A2%202%200%200%200%2016.76%204H7.24a2%202%200%200%200-1.79%201.11z'/%3E%3C/svg%3E");
 }
 #nav-pages::before { /* Trang */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z'/%3E%3Cpath d='m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65'/%3E%3Cpath d='m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='m12.83%202.18a2%202%200%200%200-1.66%200L2.6%206.08a1%201%200%200%200%200%201.83l8.58%203.91a2%202%200%200%200%201.66%200l8.58-3.9a1%201%200%200%200%200-1.83Z'/%3E%3Cpath%20d='m22%2017.65-9.17%204.16a2%202%200%200%201-1.66%200L2%2017.65'/%3E%3Cpath%20d='m22%2012.65-9.17%204.16a2%202%200%200%201-1.66%200L2%2012.65'/%3E%3C/svg%3E");
 }
 #nav-global-site-settings::before { /* Thông tin website */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M12.22%202h-.44a2%202%200%200%200-2%202v.18a2%202%200%200%201-1%201.73l-.43.25a2%202%200%200%201-2%200l-.15-.08a2%202%200%200%200-2.73.73l-.22.38a2%202%200%200%200%20.73%202.73l.15.1a2%202%200%200%201%201%201.72v.51a2%202%200%200%201-1%201.74l-.15.09a2%202%200%200%200-.73%202.73l.22.38a2%202%200%200%200%202.73.73l.15-.08a2%202%200%200%201%202%200l.43.25a2%202%200%200%201%201%201.73V20a2%202%200%200%200%202%202h.44a2%202%200%200%200%202-2v-.18a2%202%200%200%201%201-1.73l.43-.25a2%202%200%200%201%202%200l.15.08a2%202%200%200%200%202.73-.73l.22-.39a2%202%200%200%200-.73-2.73l-.15-.08a2%202%200%200%201-1-1.74v-.5a2%202%200%200%201%201-1.74l.15-.09a2%202%200%200%200%20.73-2.73l-.22-.38a2%202%200%200%200-2.73-.73l-.15.08a2%202%200%200%201-2%200l-.43-.25a2%202%200%200%201-1-1.73V4a2%202%200%200%200-2-2z'/%3E%3Ccircle%20cx='12'%20cy='12'%20r='3'/%3E%3C/svg%3E");
 }
 #nav-global-navigation::before { /* Menu điều hướng */
-  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h13'/%3E%3Cpath d='M8 12h13'/%3E%3Cpath d='M8 18h13'/%3E%3Cpath d='M3 6h.01'/%3E%3Cpath d='M3 12h.01'/%3E%3Cpath d='M3 18h.01'/%3E%3C/svg%3E");
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M8%206h13'/%3E%3Cpath%20d='M8%2012h13'/%3E%3Cpath%20d='M8%2018h13'/%3E%3Cpath%20d='M3%206h.01'/%3E%3Cpath%20d='M3%2012h.01'/%3E%3Cpath%20d='M3%2018h.01'/%3E%3C/svg%3E");
 }
 
 /* --------------------------------------------------------------------------
@@ -477,6 +477,123 @@ html[data-theme='light'] .btn--style-primary:not(.btn--disabled) {
   --hover-bg: var(--theme-elevation-50);
   --btn-border: 1px solid var(--theme-elevation-200);
   --hover-btn-border: 1px solid var(--theme-elevation-300);
+}
+
+/* --------------------------------------------------------------------------
+   3c. Control scale — shadcn-sized buttons and dropdowns (client request)
+   Client ask: "the style for buttons and dropdowns, I need it bigger … follow
+   the default UI from shadcn".
+
+   WHY PX AND NOT shadcn's rem VALUES. shadcn's scale (h-9 = 2.25rem,
+   px-4 = 1rem, text-sm = 0.875rem) assumes a **16px root**. Payload's admin
+   sets `--base-body-size: 13` and the document root/body font-size measured
+   **13px**, so `0.875rem` here would be 11.4px — SMALLER than the stock
+   button text, the opposite of the ask. The scale is therefore stated in px;
+   the rendered px is what the verification measures.
+
+   BUTTONS — before → after (measured, light, dev):
+     .btn--size-medium (Publish / Save draft / doc tabs) 32–34px → 36px,
+                         4px 12px / 13px → 6px 16px / 14px 500
+     .btn--size-small  (pill actions, upload "Tạo mới")  24px → 30px,
+                         0 8px / 13px → 4px 12px / 13px
+     .btn--size-large  (unused today)                     —   → 40px
+   `:not(.btn--icon-only)` deliberately keeps the 24x24 icon-only actions
+   (upload edit/remove, relationship popups) out of the rescale: they are a
+   different species and a 36px hit area would wreck the rows they sit in.
+   The size classes are Payload's own (`Button/index.js` appends
+   `--size-${size}`); we re-state the `--btn-padding-*` tokens Payload
+   consumes rather than fighting its computed padding.
+   -------------------------------------------------------------------------- */
+.btn:not(.btn--icon-only) {
+  font-size: 14px;
+  line-height: 22px;
+}
+/* font-medium, shadcn's weight. Applied to the solid/outline action styles
+   ONLY — the doc tabs keep Payload's 400/500/600 emphasis scheme. */
+.btn--style-primary:not(.btn--icon-only),
+.btn--style-secondary:not(.btn--icon-only),
+.btn--style-pill:not(.btn--icon-only) {
+  font-weight: 500;
+}
+.btn:not(.btn--icon-only).btn--size-medium {
+  min-height: 36px;
+  padding: 6px 16px;
+  --btn-padding-block-start: 6px;
+  --btn-padding-block-end: 6px;
+  --btn-padding-inline-start: 16px;
+  --btn-padding-inline-end: 16px;
+  --btn-icon-size: 18px;
+  --btn-icon-content-gap: 8px;
+}
+.btn:not(.btn--icon-only).btn--size-small {
+  min-height: 30px;
+  padding: 4px 12px;
+  --btn-padding-block-start: 4px;
+  --btn-padding-block-end: 4px;
+  --btn-padding-inline-start: 12px;
+  --btn-padding-inline-end: 12px;
+  --btn-icon-size: 16px;
+  --btn-icon-content-gap: 6px;
+}
+.btn:not(.btn--icon-only).btn--size-large {
+  min-height: 40px;
+  padding: 8px 20px;
+  --btn-padding-block-start: 8px;
+  --btn-padding-block-end: 8px;
+  --btn-padding-inline-start: 20px;
+  --btn-padding-inline-end: 20px;
+  font-size: 15px;
+}
+
+/* DROPDOWN TRIGGERS (.rs__control) — Payload styles these through BOTH
+   `.react-select .rs__control` and a react-select emotion class, so the
+   override repeats the two-class selector to out-rank the emotion rule.
+   HEIGHT IS DELIBERATELY 40px — the same as `.field-type input`. The stock
+   trigger is already 38–40px, i.e. it was never the undersized control; the
+   client's "bigger dropdowns" is served by the panel, the padding and the
+   14px text, and pinning the trigger to the input height is what makes a
+   form row read as ONE control height (a 44px trigger next to a 40px input
+   looked inflated). What changes: 13px → 14px text, 12px → 14px inline
+   padding, 7px → 8px block padding. */
+.react-select .rs__control {
+  min-height: 40px;
+  padding: 7px 14px;
+  font-size: 14px;
+}
+/* DROPDOWN PANELS. The option rows are the half of a dropdown that a bigger
+   trigger would otherwise leave looking cramped: 35px / 13px / 7.5px 15px
+   stock → 40px / 14px / 10px 15px, i.e. exactly one trigger tall. */
+.react-select .rs__option {
+  padding: 10px 15px;
+  font-size: 14px;
+}
+/* The popup panels (the "…" menus, version/status pickers, "Hiển thị cột").
+   Rows are 20px line-height + 7px padding = 27px stock; 8px + 20px = 36px. */
+.popup__content {
+  padding: 12px;
+  border-radius: 8px;
+}
+.popup-button-list {
+  --list-button-padding: 14px;
+  --popup-button-list-gap: 4px;
+}
+.popup-button-list__button {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 14px;
+}
+/* The list-view control chips that OPEN a dropdown ("Hiển thị cột",
+   "Bộ lọc") are triggers too — 26px stock reads as a third, smaller tier
+   next to the new 36px buttons and 44px selects. */
+.list-controls__toggle-columns,
+.list-controls__toggle-where {
+  min-height: 32px;
+  padding-inline: 12px;
+}
+.popup-button {
+  min-height: 32px;
+  padding-inline: 12px;
+  font-size: 14px;
 }
 
 /* --------------------------------------------------------------------------

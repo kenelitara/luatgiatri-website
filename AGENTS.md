@@ -807,6 +807,7 @@ against the served DOM after any Payload upgrade. What is overridden and why:
 | `.login__*` | `.login__form` becomes the white card (light) / elevation-50 card (dark); the login CTA is peach (`--color-peach-300` + navy text) while every other primary button stays navy, and it carries the same `:not(.btn--disabled)` guard as the other primaries. |
 | `.admin-brand` plate + `payload.config.ts` `admin.components.graphics.Logo` | The brand mark is NOT a CSS hack any more. It is registered as `admin.components.graphics.Logo: '@/components/admin/AdminBrand#AdminBrand'` — the PUBLIC hook (Payload's `elements/Logo/index.js` does `RenderServerComponent({ Component: CustomLogo, Fallback: PayloadLogo })`) — and `AdminBrand.tsx` renders `<img src="/icon.svg">` on a light rounded plate (`.admin-brand`: white `--color-base-0`, `--color-base-150` hairline, `--admin-shadow-card`). **Why a plate:** the monogram is brand navy `#002147` + gold; navy measures 1.02:1 against the dark canvas, so on the dark login only the gold fragment was visible. On the plate navy is 16.05:1 in BOTH themes. The earlier `.login__brand .graphic-logo { display: none }` + `::before { background: url('/icon.svg') }` hack was removed. Runs `pnpm generate:importmap` (its entry is in `src/app/(payload)/admin/importMap.js`). |
 | `.template-minimal { background-color: var(--theme-bg) }` | Partly an upstream Payload bug: `.template-minimal` (the login/logout/verify shell) references `--theme-bg-color`, which 3.90.2 **never defines** (one occurrence in the compiled CSS — a usage, no declaration). Declaring it makes the shell's background explicit and deterministic. NOTE: the reviewer's report of a near-black dark login was NOT reproducible — `html { background: var(--theme-bg) }` is present in the compiled CSS, so the dark canvas was already `rgb(30,30,44)`. This rule is belt-and-braces, not the fix for an invisible brand mark. |
+| `.btn--size-*` / `.react-select .rs__control` / `.rs__option` / `.popup-button-list__button` → shadcn control scale | See §3c below. Buttons 32–34 → 36px, 13 → 14px text; dropdown panels 27 → 36px rows and 35 → 40px options. |
 
 ### 3b. Sidebar icons — keyed on `#nav-<slug>`, painted with `mask-image`
 
@@ -857,6 +858,11 @@ Details that matter:
   `folder`, `tag`, `file-text`, `arrow-right-left`, `inbox`, `layers`,
   `settings`, `list` — copied verbatim into data URIs (24×24 viewBox,
   `stroke-width: 2`, scaled into an 18px box ⇒ 1.5px rendered stroke).
+- Spaces inside the data URIs are **percent-encoded (`%20`)**. The first
+  revision used literal spaces, which Chromium tolerated but is not portable;
+  `url("data:image/svg+xml,%3Csvg%20xmlns=…")` is the safe form. Verified after
+  the swap: 11/11 icons still render and no computed `mask-image` contains a
+  raw space.
 - Spacing: `margin-block: 4px` on `.nav__link`; the label offset moves 32px →
   a uniform **60px** on every row (nav inline padding 20 + link padding 12 +
   icon 18 + gap 10). Row pitch 38px; the last collection → first global gap is
@@ -867,6 +873,50 @@ Details that matter:
   `opacity: 0` + `inert` at `width: 100vw`. Nothing is ever left stranded and no
   label is hidden while the nav is visible. Verified at a 700px viewport, closed
   and open.
+
+### 3c. Control scale — shadcn-sized buttons and dropdowns (2026-10-01)
+
+Client ask: "the style for buttons and dropdowns, I need it bigger … follow the
+default UI from shadcn". custom.scss §3c.
+
+**The root-size trap is real and is why this is written in px, not rem.**
+shadcn's scale (`h-9` = 2.25rem, `px-4` = 1rem, `text-sm` = 0.875rem) assumes a
+**16px root**. Payload's admin sets `--base-body-size: 13`; `<html>` and
+`<body>` both computed **13px**. `0.875rem` here would be **11.4px** — smaller
+than the stock 13px button text, the exact opposite of the ask. shadcn's *shapes*
+were followed; its rem *numbers* were converted to px against the real root.
+
+Measured before → after (computed, light, on a served 3100 build):
+
+| control | height | padding | font-size |
+| --- | --- | --- | --- |
+| `.btn--size-medium` (Publish/Save draft/doc tabs) | 32–34 → **36px** | 4px 12px → **6px 16px** | 13 → **14px** (weight 400 → 500) |
+| `.btn--size-small` (pill actions, upload "Tạo mới") | 24 → **32px** | 0 8px → **4px 12px** | 13 → **14px** |
+| `.btn--size-large` (unused today) | — → **40px** | — → **8px 20px** | — → 15px |
+| `.field-type input` / `textarea` | **40px — UNCHANGED** | unchanged | 13px unchanged |
+| `.react-select .rs__control` (trigger) | 40 → **40px** (unchanged height) | 7px 12px → **7px 14px** | 13 → **14px** |
+| `.rs__option` (select option row) | 35 → **40px** | 7.5px 15px → **10px 15px** | 13 → **14px** |
+| `.popup-button-list__button` (menu row) | 27 → **36px** | 3.5px 10px → **8px 14px** | 13 → **14px** |
+| `.popup__content` (panel) | — | 10px → **12px**, radius 4 → **8px** | — |
+| `.list-controls__toggle-*` (dropdown-trigger chips) | 26 → **32px** | 0 8px → **0 12px** | 13px |
+
+Decisions worth recording:
+
+- **Inputs were NOT shrunk.** They already measured 40px, i.e. at/above the
+  shadcn `h-9` scale; the real gap was everything else being 24–34px. The select
+  trigger was likewise already 40px, so it is **pinned to the input height
+  rather than inflated** — a 44px trigger next to a 40px input read as
+  inflated, and "a form row reads as one control height" is the goal the client
+  actually sees.
+- **`:not(.btn--icon-only)`** keeps the 24×24 icon-only action buttons (upload
+  edit/remove, relationship popups) out of the rescale — a 36px hit area would
+  wreck the rows they sit in.
+- The button size classes are Payload's own (`Button/index.js` appends
+  `--size-${size}`); the rules re-state the `--btn-padding-*` / `--btn-icon-*`
+  tokens Payload consumes instead of hard-overriding its computed padding, so
+  Payload's own icon/padding relationship stays intact.
+- The `:not(.btn--disabled)` guards (§3) are untouched and were re-verified —
+  see §5d.
 
 ### 4. Admin favicon / Open Graph (`payload.config.ts`)
 
@@ -945,6 +995,29 @@ Against a fresh `pnpm build && pnpm exec next start -p 3100`:
 - Console: 0 errors / 0 warnings on the list and edit views.
 - Screenshots (untracked): `14-nav-icons-light.png`, `15-nav-icons-dark.png`,
   `16-nav-active-icon.png`, `17-nav-collapsed.png`.
+
+### 5d. Re-verification after the control rescale + data-URI encoding (2026-10-01)
+
+Against a fresh `pnpm build && pnpm exec next start -p 3100`:
+
+- **Disabled buttons still work** (the §3 `:not(.btn--disabled)` guards survived
+  the taller boxes). No unsaved changes: primary Publish `--bg-color` `#cfcfd9`,
+  `--color` `#2f2f32`, computed `background-color: rgb(207,207,217)` /
+  `color: rgb(47,47,50)`; secondary `color`/`border-color: rgb(207,207,217)`.
+  After typing into `#field-title`: primary `--bg-color` `#1e1e2c` / `--color`
+  `#fff`, computed `rgb(30,30,44)`; secondary `color: rgb(30,30,44)`,
+  border `rgb(207,207,217)`. Byte-identical to the pre-rescale values.
+- **Nav invariant intact:** 11/11 icons, uniform `labelLeft` 60px, row pitch
+  `[38, 73]`, active `#nav-pages` still a `<div>` rendering its own icon in
+  `rgb(114,72,44)`.
+- **Data URIs percent-encoded** and re-verified: **no** computed `mask-image`
+  contains a raw space, and all 11 icons still render.
+- **No layout damage from the taller controls:** `.doc-controls` stays 56px with
+  a 36px `.doc-controls__controls` on one line; `.list-controls` 52px, no
+  scroll overflow (`scrollWidth === clientWidth`); the list `.table` no overflow.
+- Console: 0 errors / 0 warnings on the list and edit views.
+- Screenshots (untracked): `18-buttons-light.png`, `19-buttons-dark.png`,
+  `20-dropdown-open.png`, `21-edit-actionbar.png`.
 
 ### 6. PRE-EXISTING BUG found while verifying (NOT caused by the theming) — FIXED
 
