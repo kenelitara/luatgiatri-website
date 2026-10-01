@@ -694,11 +694,20 @@ html[data-theme='light'] .collection-list .table {
    hardcodes it). Only the border is nudged to the brief's base-200; focus
    styling (the teal --theme-success-* ring Payload puts on checkbox/radio
    focus) is deliberately NOT touched.
+   Type size: 14px, to match the buttons (§3c) and the select trigger. shadcn
+   sets inputs and buttons to the SAME `text-sm`, and a form row that mixes
+   13px field text with 14px control text reads as unfinished for a reason
+   nobody can name. Height and padding are deliberately untouched — 40px is
+   already right and already matches the trigger; only the font moves.
    -------------------------------------------------------------------------- */
 .field-type input:not([type='checkbox']):not([type='radio']):not([type='submit']),
 .field-type textarea,
 .react-select .rs__control {
   border-color: var(--theme-elevation-200);
+}
+.field-type input:not([type='checkbox']):not([type='radio']):not([type='submit']),
+.field-type textarea {
+  font-size: 14px;
 }
 
 /* --------------------------------------------------------------------------

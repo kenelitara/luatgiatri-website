@@ -893,7 +893,7 @@ Measured before → after (computed, light, on a served 3100 build):
 | `.btn--size-medium` (Publish/Save draft/doc tabs) | 32–34 → **36px** | 4px 12px → **6px 16px** | 13 → **14px** (weight 400 → 500) |
 | `.btn--size-small` (pill actions, upload "Tạo mới") | 24 → **32px** | 0 8px → **4px 12px** | 13 → **14px** |
 | `.btn--size-large` (unused today) | — → **40px** | — → **8px 20px** | — → 15px |
-| `.field-type input` / `textarea` | **40px — UNCHANGED** | unchanged | 13px unchanged |
+| `.field-type input` / `textarea` | **40px — UNCHANGED** | unchanged | 13 → **14px** (§5e) |
 | `.react-select .rs__control` (trigger) | 40 → **40px** (unchanged height) | 7px 12px → **7px 14px** | 13 → **14px** |
 | `.rs__option` (select option row) | 35 → **40px** | 7.5px 15px → **10px 15px** | 13 → **14px** |
 | `.popup-button-list__button` (menu row) | 27 → **36px** | 3.5px 10px → **8px 14px** | 13 → **14px** |
@@ -1018,6 +1018,36 @@ Against a fresh `pnpm build && pnpm exec next start -p 3100`:
 - Console: 0 errors / 0 warnings on the list and edit views.
 - Screenshots (untracked): `18-buttons-light.png`, `19-buttons-dark.png`,
   `20-dropdown-open.png`, `21-edit-actionbar.png`.
+
+### 5e. Form-row type unification (2026-10-01)
+
+Follow-up to §3c: the buttons and dropdowns moved to 14px while the inputs
+stayed 13px, so a form row mixed two type sizes. shadcn sets inputs and buttons
+to the same `text-sm`, so `.field-type input` / `.field-type textarea` now
+inherit the same 14px — via the same `:not([type='checkbox']):not([type='radio']):not([type='submit'])`
+guard as the §6 border rule, so the 22×22 checkbox squares keep the browser
+default and nothing else moves.
+
+- **Height and padding untouched** — inputs still 40px, textarea still 60px.
+- Computed after the change: `.field-type input` **14px / 40px**,
+  `.field-type textarea` **14px / 60px**, `.btn--size-medium` **14px**,
+  `.react-select .rs__control` **14px**, `.rs__input` **14px**.
+- **One control deliberately stays 13px:** the list-view search box
+  (`.search-filter__input`, `#search-filter-input`). It is not a `.field-type`
+  and it is not in a form row — its neighbours are the 13px
+  `.list-controls__toggle-*` chips, so bumping only the box would create the
+  mismatch it was meant to remove.
+- **No clipping introduced.** Every `.field-type input`/`textarea` was probed
+  for `scrollWidth > clientWidth` / `scrollHeight > clientHeight`: clean. The
+  two `.field-type` *containers* that do report overflow (`blocks-field` 788/771,
+  `relationship` 767/729) are **pre-existing** — an A/B re-measure with the font
+  forced back to 13px returned byte-identical numbers, so the type change is not
+  the cause.
+- Disabled-button values re-checked and unchanged; nav invariant intact
+  (11 icons, uniform 60px label offset, active `#nav-pages` `<div>` still
+  iconned in `rgb(114,72,44)`); 0 console errors.
+- Screenshots (untracked): `22-edit-form-light.png`, `23-list-light.png`,
+  `24-edit-form-dark.png`.
 
 ### 6. PRE-EXISTING BUG found while verifying (NOT caused by the theming) — FIXED
 
