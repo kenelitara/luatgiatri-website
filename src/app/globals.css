@@ -1,0 +1,4 @@
+/* Stub — real design tokens arrive with M2 (Tailwind setup, Task 16).
+   The `@import "tailwindcss"` line is added when tailwindcss is installed;
+   importing it before the package exists breaks Turbopack (module-not-found
+   500s on every page importing this file). */

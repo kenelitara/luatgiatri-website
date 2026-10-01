@@ -1,8 +1,3 @@
-export default function HomePage() {
-  return (
-    <main>
-      <h1>Luật Gia Trí</h1>
-      <p>Placeholder scaffold — nội dung thật được dựng ở mốc M2.</p>
-    </main>
-  );
+export default function Home() {
+  return <main style={{ padding: '2rem', fontFamily: 'system-ui' }}>Luật Gia Trí</main>
 }
