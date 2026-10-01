@@ -177,7 +177,7 @@ and the `v3.90.2` website template, 2026-10-01.
      `payload/dist/fields/config/types.d.ts`; it is in the `Field`/`ClientField`
      unions and `FieldPresentationalOnly = UIField`.
   2. `admin.components.Field` accepts the string form — `PayloadComponent =
-     false | RawPayloadComponent | string` (`payload/dist/config/types.d.ts`),
+false | RawPayloadComponent | string` (`payload/dist/config/types.d.ts`),
      and `UIField.admin.components.Field?: CustomComponent` (=`PayloadComponent`).
      `parsePayloadComponent` (`dist/bin/generateImportMap/utilities/`) splits on
      `#` into path + export name; the string is stored in the importMap verbatim
@@ -197,9 +197,9 @@ and the `v3.90.2` website template, 2026-10-01.
   from the project root fails; pnpm does not hoist it). Added
   `"@payloadcms/ui": "3.90.2"` to `package.json` dependencies.
 - **Delta 2 — FormState is a FLAT dotted-path map, not nested.** `FormState =
-  { [path: string]: FieldState }` and `getFieldPaths`
+{ [path: string]: FieldState }` and `getFieldPaths`
   (`payload/dist/fields/getFieldPaths.js`) builds `path = parentPath + '.' +
-  field.name`. So `fields['seo.metaTitle'].value` is right and the plan's
+field.name`. So `fields['seo.metaTitle'].value` is right and the plan's
   `fields.seo.metaTitle.value` reads `undefined` — the counters would sit at
   `0/60` forever while still rendering. The component uses dotted keys
   (`'seo.metaTitle'`, `'seo.metaDescription'`, `'primaryHeading'`).
@@ -246,8 +246,7 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
 - Fix: run `UPDATE … to_tsvector('simple', unaccent(…))` on the transaction's
   **own session**, resolved exactly as Payload's `getTransaction` does:
   `adapter.sessions[await req.transactionID]?.db ?? adapter.drizzle`, then
-  `session.execute(sql\`…\`)` with `sql` re-exported from
-  `@payloadcms/db-postgres` (`sql.identifier(table)` for the table, values bound
+  `session.execute(sql\`…\`)`with`sql`re-exported from`@payloadcms/db-postgres` (`sql.identifier(table)` for the table, values bound
   as params). The vector then commits atomically with the content — a rolled-back
   write rolls the vector back too, so no drift.
 - Dev schema push is now **disabled project-wide**: `payload.config.ts` sets
@@ -268,6 +267,41 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
 - `searchableText` lives in `src/lib/search-text.ts`, NOT in the hook module:
   the hook imports the runtime pg adapter, so the split keeps the pure text
   builder unit-testable without dragging the DB layer into the vitest graph.
+
+Task 11 — lead capture (rate limit, server action, form, FormEmbed block).
+Verified 2026-10-01 against the built app (`next start -p 3100`), not dev.
+
+- **`payload.count` with a DOTTED-path `where` works in 3.90.2 — no SQL
+  fallback needed.** The plan's contingency (a raw `getDbPool()` count) was not
+  required: `where: { and: [{ 'compliance.ipHash': { equals } }, { submittedAt:
+{ greater_than } }] }` returned the expected count. The rate limit was proven
+  end-to-end in the browser — 5 submissions created 5 rows, the 6th returned the
+  throttle message and created nothing.
+- **`access.create: () => false` on Leads is the REST lock-out; the action is
+  the only writer.** `submitLead` writes through the Local API with
+  `overrideAccess: true`. Do NOT relax the collection access to "fix" a 403 —
+  the browser must never be able to POST a lead.
+- **The `submitLead` action takes ONLY `FormData`; `useActionState` calls its
+  action with `(prevState, formData)`.** `LeadForm` therefore wraps it
+  (`async (_prev, formData) => submitLead(formData)`) — passing `submitLead`
+  directly would hand it the previous state as the FormData and throw.
+- **vitest resolves the `@payload-config` alias to `tests/payload-config.stub.ts`
+  (added with this task).** `Renderer` → `FormEmbedView` → `LeadForm` → the lead
+  action → `@/lib/getPayload` → `@payload-config`; without the stub the
+  Renderer test drags `payload.config.ts` (postgres adapter + sharp) into the
+  test graph and dies on the unresolved alias. Same "keep the DB layer out of
+  vitest" split as `search-text.ts` (Task 8b). The real config still loads in
+  Next.
+- **`Pages.layout` registers 15 blocks** (was 14) — `formEmbed` is the 15th
+  (`src/payload/blocks/FormEmbed.ts`, migration `20261001_105457`). The block
+  view uses `Heading` for its `<h2>`; the form itself emits no headings.
+- **The lead form is the site's only data-submitting JS island.** Attribution
+  (sourcePage/sourceUrl/referrer/UTMs) is captured client-side after hydration
+  into hidden inputs — the values only exist in the browser.
+- **The honeypot's zod message is Vietnamese on purpose.** A bare `.max(0)`
+  leaked Zod's English default (`Too big: expected string to have <=0
+characters`) into the action's response; the field now carries
+  `'Yêu cầu không hợp lệ'`. Bots get a rejection, never a hint.
 
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 
@@ -307,7 +341,7 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
   nodes — the lean paragraph/text shape alone is not enough once lists are
   involved. Seeded fixtures therefore carry
   `{type:'list', version:0, listType, tag, children:[{type:'listitem',
-  version:0, value:0, children:[paragraph…]}]}`. Also: seeded pages need
+version:0, value:0, children:[paragraph…]}]}`. Also: seeded pages need
   `_status: 'published'` (drafts are on) or Task 21's published-only
   `getPage()` finds nothing, and the Payload DB pool keeps tsx scripts alive —
   call `process.exit()` at the end of seed scripts.
@@ -372,9 +406,9 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
   SIGINT, then exit 1). The service is only safe against a DB that has
   never been dev-pushed (prod). Never point it at a dev-drifted DB in
   automation; to exercise it locally, use a scratch database.
-  *(Historical — since Task 8b `push: false` disables the dev schema push, so
+  _(Historical — since Task 8b `push: false` disables the dev schema push, so
   `pnpm dev` no longer writes the `batch: -1` dev-mode record; this note
-  describes DBs that were dev-pushed before that change.)*
+  describes DBs that were dev-pushed before that change.)_
 - **M2 convention — DB-dependent routes at build time.** No route may hit the
   DB during `next build`. Strategy (a) is the convention: DB-dependent routes
   wrap their fetches in try/catch and render a static fallback that ISR

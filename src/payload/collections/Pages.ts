@@ -16,6 +16,7 @@ import { TeamGrid } from '../blocks/TeamGrid'
 import { ProcessSteps } from '../blocks/ProcessSteps'
 import { CtaBanner } from '../blocks/CtaBanner'
 import { NewsPreview } from '../blocks/NewsPreview'
+import { FormEmbed } from '../blocks/FormEmbed'
 import { writeSearchVector } from '../hooks/searchVector'
 
 export const Pages: CollectionConfig = {
@@ -84,6 +85,7 @@ export const Pages: CollectionConfig = {
         ProcessSteps,
         CtaBanner,
         NewsPreview,
+        FormEmbed,
       ],
     },
     {

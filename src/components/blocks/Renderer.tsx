@@ -5,6 +5,7 @@ import { CtaBannerView } from './views/CtaBannerView'
 import { CustomerLogoStripView } from './views/CustomerLogoStripView'
 import { FaqView } from './views/FaqView'
 import { FeatureGridView } from './views/FeatureGridView'
+import { FormEmbedView } from './views/FormEmbedView'
 import { HeroView } from './views/HeroView'
 import { NewsPreviewView } from './views/NewsPreviewView'
 import { PricingTableView } from './views/PricingTableView'
@@ -87,6 +88,8 @@ function renderBlock(block: Block): React.ReactNode {
       return <TeamGridView block={block} />
     case 'processSteps':
       return <ProcessStepsView block={block} />
+    case 'formEmbed':
+      return <FormEmbedView block={block} />
     default:
       // All 14 block types have views; this guards against future blocks
       // shipping untested markup — never emit structure for a block type

@@ -620,6 +620,13 @@ export interface Page {
         blockName?: string | null;
         blockType: 'newsPreview';
       }
+    | {
+        heading: string;
+        intro?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'formEmbed';
+      }
   )[];
   serviceMeta?: {
     serviceName?: string | null;
@@ -1170,6 +1177,14 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               heading?: T;
               ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        formEmbed?:
+          | T
+          | {
+              heading?: T;
+              intro?: T;
               id?: T;
               blockName?: T;
             };

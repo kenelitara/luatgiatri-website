@@ -102,6 +102,11 @@ describe('Renderer full block coverage', () => {
       heading: 'Quy trình',
       steps: [{ title: 'Tiếp nhận', body: 'Tư vấn ban đầu' }],
     },
+    {
+      blockType: 'formEmbed',
+      heading: 'Liên hệ với chúng tôi',
+      intro: 'Để lại thông tin để được tư vấn.',
+    },
   ] as never[]
 
   it('renders every block type without dropping content', () => {
@@ -110,5 +115,6 @@ describe('Renderer full block coverage', () => {
     expect(html).toContain('1.500.000đ')
     expect(html).toContain('Quy trình')
     expect(html).toContain('Anh Minh')
+    expect(html).toContain('Để lại thông tin để được tư vấn.')
   })
 })
