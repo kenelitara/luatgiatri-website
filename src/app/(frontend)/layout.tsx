@@ -1,5 +1,6 @@
 import { Be_Vietnam_Pro } from 'next/font/google'
 import type { Metadata } from 'next'
+import { ConsentBanner } from '@/components/ConsentBanner'
 import { Footer } from '@/components/chrome/Footer'
 import { Header } from '@/components/chrome/Header'
 import { TopBar } from '@/components/chrome/TopBar'
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings()
+  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID || undefined
   return (
     <html lang="vi" className={sans.variable}>
       <body className="font-sans text-brand-950">
@@ -33,6 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header />
         <main>{children}</main>
         <Footer />
+        <ConsentBanner ga4Id={ga4Id} />
       </body>
     </html>
   )
