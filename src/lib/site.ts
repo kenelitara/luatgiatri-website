@@ -1,13 +1,46 @@
 import { getPayloadClient } from '@/lib/getPayload'
+import type { Navigation, SiteSetting } from '@/payload-types'
 
-export async function getSiteSettings() {
-  const payload = await getPayloadClient()
-  return payload.findGlobal({ slug: 'site-settings', depth: 1 })
+/**
+ * M2 DB-at-build convention (AGENTS.md, Docker-stack section): a `docker build`
+ * has no DB, so any Local API read that throws during prerender fails the whole
+ * `next build`. These globals are read by the `(frontend)` layout and the chrome
+ * components, so their fetchers carry the same try/catch fallbacks as
+ * `getPage`/`getPost`. The fallbacks match the globals' configured defaults —
+ * the baked HTML stays correct-ish and the first runtime revalidation (ISR)
+ * heals it to the DB values.
+ */
+const SITE_SETTINGS_FALLBACK: SiteSetting = {
+  id: 0,
+  brandName: 'Luật Gia Trí',
+  hotline: '0919088119',
+  email: 'luatsu@luatgiatri.com',
+  address: {
+    street: '54/16 Đường số 2',
+    district: 'Bình Tân',
+    city: 'TP.HCM',
+    country: 'VN',
+  },
 }
 
-export async function getNavigation() {
-  const payload = await getPayloadClient()
-  return payload.findGlobal({ slug: 'navigation', depth: 0 })
+const NAVIGATION_FALLBACK: Navigation = { id: 0, headerItems: [] }
+
+export async function getSiteSettings(): Promise<SiteSetting> {
+  try {
+    const payload = await getPayloadClient()
+    return await payload.findGlobal({ slug: 'site-settings', depth: 1 })
+  } catch {
+    return SITE_SETTINGS_FALLBACK
+  }
+}
+
+export async function getNavigation(): Promise<Navigation> {
+  try {
+    const payload = await getPayloadClient()
+    return await payload.findGlobal({ slug: 'navigation', depth: 0 })
+  } catch {
+    return NAVIGATION_FALLBACK
+  }
 }
 
 export function fullAddress(settings: Awaited<ReturnType<typeof getSiteSettings>>): string {

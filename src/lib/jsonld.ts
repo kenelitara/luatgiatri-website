@@ -102,6 +102,11 @@ function publisherNode(input: string | EntityRef) {
   return typeof input === 'string' ? { '@type': 'Organization', name: input } : input
 }
 
+/** resolve the Service `provider` argument (name | `@id` ref, §6.9) */
+function providerNode(input: string | EntityRef) {
+  return typeof input === 'string' ? { '@type': 'LegalService', name: input } : input
+}
+
 export function buildLegalServiceSchema(s: SettingsLike, base: string) {
   const a = s.address ?? {}
   const sameAs = [
@@ -176,7 +181,8 @@ export function buildServiceSchema(input: {
   name: string
   description?: string | null
   url: string
-  provider: string
+  /** a LegalService name, or `{ '@id': legalServiceId(base) }` to reference the sitewide entity (§6.9) */
+  provider: string | EntityRef
   offers: { name: string; price: string }[]
 }) {
   return {
@@ -185,7 +191,7 @@ export function buildServiceSchema(input: {
     name: input.name,
     ...(input.description ? { description: input.description } : {}),
     url: input.url,
-    provider: { '@type': 'LegalService', name: input.provider },
+    provider: providerNode(input.provider),
     offers: input.offers.map((o) => ({ '@type': 'Offer', name: o.name, price: o.price })),
   }
 }

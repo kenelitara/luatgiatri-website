@@ -260,6 +260,11 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   replaces on the first runtime revalidation (Task 21 implements this).
   `force-dynamic` (loses ISR) is the fallback if (a) proves unworkable —
   document it here if it ever happens.
+- **Applies to layouts and chrome too, not just routes** — the `(frontend)`
+  layout's async `getSiteSettings()`/`getNavigation()` (via the chrome
+  components) run during prerender, so their fetchers carry the same try/catch
+  fallbacks as `getPage`/`getPost` (found in M3 Task 4: an unwrapped layout
+  fetch fails the entire `next build` in a DB-less docker build).
 - **`data/` is gitignored wholesale** — `data/db`, `data/media`, and any
   future upload contents; there is no committed marker inside it.
 - **Media URLs are `/api/media/file/<filename>` in embedded mode** (no

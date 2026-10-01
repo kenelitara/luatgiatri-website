@@ -64,7 +64,9 @@ export function pageSchemas(page: Page) {
         name: page.serviceMeta.serviceName,
         description: page.serviceMeta.shortDescription,
         url: `${base}/${page.slug}/`,
-        provider: 'Luật Gia Trí', // provider is typed as a name string in the builder
+        // reference the sitewide entity by @id — one LegalService node (§6.9),
+        // same consolidation the article publisher uses
+        provider: { '@id': legalServiceId(base) },
         offers,
       }),
     )

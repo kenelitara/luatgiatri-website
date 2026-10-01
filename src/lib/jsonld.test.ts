@@ -107,6 +107,26 @@ describe('jsonld builders (spec §6.3)', () => {
     })
     expect(s.offers).toHaveLength(1)
     expect(s.offers[0]).toMatchObject({ '@type': 'Offer', name: 'Gói cơ bản', price: '1.500.000đ' })
+    expect(s.provider).toEqual({ '@type': 'LegalService', name: 'Luật Gia Trí' })
+  })
+
+  it('service accepts an @id provider so every page describes one entity (§6.9)', () => {
+    const id = legalServiceId(BASE)
+    const s = buildServiceSchema({
+      name: 'Dịch vụ kế toán',
+      url: 'https://luatgiatri.com/dich-vu-ke-toan/',
+      provider: { '@id': id },
+      offers: [{ name: 'Gói cơ bản', price: '1.500.000đ' }],
+    })
+    expect(s.provider).toEqual({ '@id': 'https://luatgiatri.com/#legalservice' })
+    // a bare name still builds the full inline LegalService node
+    const byName = buildServiceSchema({
+      name: 'Dịch vụ kế toán',
+      url: 'https://luatgiatri.com/dich-vu-ke-toan/',
+      provider: 'Luật Gia Trí',
+      offers: [],
+    })
+    expect(byName.provider).toEqual({ '@type': 'LegalService', name: 'Luật Gia Trí' })
   })
 
   it('faq builds a FAQPage from question/answer pairs', () => {
