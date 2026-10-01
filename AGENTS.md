@@ -554,19 +554,21 @@ app (`next start -p 3100`), not dev.
   admin nav/dashboard (`@payloadcms/translations/dist/languages/vi.js`; the
   sibling `general.allCollections` is already `'Tất cả Bộ sưu tập'`, so
   `'Bộ sưu tập'` is the consistent term). `payload.config.ts`'s `i18n` block
-  carries `translations: { vi: { general: { collections: 'Bộ sưu tập' } } }`.
+  carries
+  `translations: { vi: { general: { collections: 'Bộ sưu tập' }, fields: {
+  block: 'Khối', blocks: 'Khối', blockType: 'Loại khối', searchForBlock:
+  'Tìm khối' } } }`.
   The shape is `Partial<{ [lang]: <full translations object> }>` on
   `I18nOptions`, but the config type is `I18nOptions<{} | DefaultTranslationsObject>`
   so a nested partial typechecks; at runtime `initI18n`'s `initTFunction`
   deep-merges it OVER the language pack (`deepMergeSimple(pack, config.translations[lang])`),
   so only the overridden leaf is needed. Add further overrides the same way.
-  A scan of `vi.js` (587 string leaves) found only 11 values that are pure
-  ASCII: the English ones user-visible in chrome are `general.collections`
-  (fixed), `fields.block` "Block", `fields.blocks` "blocks",
-  `fields.blockType` "Block Type", `authentication.apiKey` "API Key", and
-  `general.email` "Email"/`general.menu` "Menu" (both normal in Vietnamese
-  software) — the rest are diacritic-free Vietnamese (`Sai`, `Xem`, `trong`,
-  `giao nhau`). Left as-is pending a conscious decision.
+  `fields.searchForBlock` is the block drawer's search placeholder (the pack
+  ships it half-translated as `'Tìm block'`); the drawer TITLE is a different
+  key (`fields.addLabel` + the blocks field's `labels.singular`) — see "Adding a
+  new block" below. Deliberately NOT overridden, because they read as correct in
+  Vietnamese software: `authentication.apiKey` "API Key", `general.email`
+  "Email", `general.menu` "Menu".
 - **`SITE_ENV` is a build arg**, not a runtime knob — prerendered `robots.ts`
   and metadata bake it at build (spec §6.5; mechanism detailed in the Docker
   section below). Verify staging `noindex` against the built image, never
@@ -641,7 +643,7 @@ Where each piece lives:
 | piece | file | what it controls |
 | --- | --- | --- |
 | the picker's list + order | `src/payload/collections/Pages.ts` → `layout.blocks` | imports each block config and lists it |
-| a block's NAME, form, thumbnail | `src/payload/blocks/<Name>.ts` | `labels.singular`/`labels.plural` are the visible name; `fields` is the editor form; `imageURL`/`imageAltText` is the picker thumbnail |
+| a block's NAME, form, thumbnail | `src/payload/blocks/<Name>.ts` | `labels.singular`/`labels.plural` are the visible name; `fields` is the editor form; `admin.images.thumbnail` is the picker thumbnail |
 | the public view | `src/components/blocks/views/<Name>View.tsx` | the server component that renders the block |
 | the dispatcher | `src/components/blocks/Renderer.tsx` | `switch (block.blockType)` → the view (default → `null`) |
 | generated types | `src/payload-types.ts` | written by `pnpm generate:types` |
@@ -654,8 +656,9 @@ stores and what `Renderer` matches.
 
 1. **Create the block config** — `src/payload/blocks/<Name>.ts`:
    `export const <Name>: Block = { slug: '<slug>', labels: { singular: '…',
-   plural: '…' }, imageURL: '/block-thumbnails/<slug>.svg', imageAltText: '…',
-   fields: [ … ] }`. Labels are Vietnamese (the admin is `vi`).
+   plural: '…' }, admin: { images: { thumbnail: { url:
+   '/block-thumbnails/<slug>.svg', alt: '…' } } }, fields: [ … ] }`. Labels are
+   Vietnamese (the admin is `vi`).
 2. **Register it** — import it and append it to the `layout.blocks` array in
    `src/payload/collections/Pages.ts`. Skipping this is the classic "my block
    never appears" bug: the config can load fine and still not be pickable.
@@ -692,8 +695,10 @@ field components resolve inside `@payloadcms/ui`).
 
 The block picker renders each block as a `ThumbnailCard` whose image is a plain
 **`<img src alt>` — not `next/image`** (`@payloadcms/ui/dist/fields/Blocks/
-BlockSelector/index.js`). `imageURL`/`imageAltText` on the block config feed it.
-Conventions established 2026-10-01 (the M4 admin-UX pass):
+BlockSelector/index.js`). The image comes from the block's
+`admin.images.thumbnail` (a URL string or `{ url, alt }`); the picker resolves it
+as `thumbnailURL = admin?.images?.thumbnail ?? imageURL`. Conventions established
+2026-10-01 (the M4 admin-UX pass):
 
 - Files live in `public/block-thumbnails/<slug>.svg` — SVG is crisp at any size,
   tiny, and `public/` ships to the runner (`.dockerignore` does not exclude it).
@@ -714,18 +719,41 @@ Conventions established 2026-10-01 (the M4 admin-UX pass):
   row of circles).
 
 To add one for a new block: create `public/block-thumbnails/<slug>.svg` to that
-template and set `imageURL: '/block-thumbnails/<slug>.svg'` + a Vietnamese
-`imageAltText` (it becomes the `<img>` alt) on the block config.
+template and set, on the block config:
 
-**Gotcha — `imageURL`/`imageAltText` are deprecated (but still work).** The
-installed `payload@3.90.2` types mark both `@deprecated Use admin.images
-instead` (`payload/dist/fields/config/types.d.ts`), and the picker prefers the
-new field when present (`thumbnailURL = admin?.images?.thumbnail ?? imageURL`).
-The modern equivalent is `admin: { images: { thumbnail: { url, alt } } }` —
-identical rendering, no deprecation, accepted as a string or `{url, alt}`.
-`admin.images.icon` is a different slot (20×20 square, for Lexical block menus).
-These 15 use `imageURL`/`imageAltText`; **migrating them to
-`admin.images.thumbnail` is the low-risk follow-up before any Payload bump.**
+```ts
+admin: {
+  images: {
+    thumbnail: { url: '/block-thumbnails/<slug>.svg', alt: '…' },
+  },
+},
+```
+
+The `alt` is Vietnamese and becomes the `<img>` alt. `admin.images.icon` is a
+**different slot** — 20×20 square, for the Lexical block menus — do not put the
+wireframe there.
+
+**History (do not reintroduce):** `imageURL` / `imageAltText` are the Payload 2
+top-level equivalent. The picker still reads them (`?? imageURL`), but 3.90.2
+marks both `@deprecated Use admin.images instead`
+(`payload/dist/fields/config/types.d.ts`). These 15 blocks carried them briefly
+and were moved to `admin.images.thumbnail`; use the `admin.images` form for
+anything new.
+
+### The picker's own strings (drawer title + search box)
+
+Two strings in the block drawer are NOT block labels, and both needed a fix
+(2026-10-01):
+
+| string | where it comes from | fix |
+| --- | --- | --- |
+| drawer title `Thêm: …` | `t('fields:addLabel', { label: labels.singular })` in `@payloadcms/ui/dist/fields/Blocks/BlocksDrawer/index.js` — the `labels.singular` of the **blocks FIELD**, not of any block. Payload's sanitizer sets `field.labels = field.labels \|\| formatLabels(field.name)` whenever the field has a `label` (`payload/dist/fields/config/sanitize.js`), so it rendered the English **"Layout"** derived from `Pages.layout`'s field NAME — even though the field's own `label` is `'Bố cục'`. | `Pages.layout` now sets `labels: { singular: 'Bố cục', plural: 'Bố cục' }` explicitly. **No migration** — field `labels` are admin-only; the field name (and thus the DB column) is unchanged. |
+| search placeholder | `t('fields:searchForBlock')` in `.../BlockSelector/BlockSearch/index.js`. The `vi` pack ships it half-translated as `'Tìm block'`. | overridden to `'Tìm khối'` in `payload.config.ts`'s `i18n.translations.vi.fields`, beside the existing `block` / `blocks` / `blockType` overrides. |
+
+The two are **independent keys** — `fields.searchForBlock` (the placeholder) vs
+`fields.addLabel` + the field's `labels.singular` (the title). The remaining
+ASCII-ish `vi` gaps (`authentication.apiKey`, `general.email`, `general.menu`)
+are deliberate: they read as normal in Vietnamese software.
 
 ## Docker stack (M1, Task 5)
 

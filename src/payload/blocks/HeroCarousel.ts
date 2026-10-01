@@ -3,8 +3,11 @@ import type { Block } from 'payload'
 export const HeroCarousel: Block = {
   slug: 'heroCarousel',
   labels: { singular: 'Hero nhiều slide', plural: 'Hero nhiều slide' },
-  imageURL: '/block-thumbnails/heroCarousel.svg',
-  imageAltText: 'Băng chuyền nhiều ảnh lớn có mũi tên và chấm chuyển slide',
+  admin: {
+    images: {
+      thumbnail: { url: '/block-thumbnails/heroCarousel.svg', alt: 'Băng chuyền nhiều ảnh lớn có mũi tên và chấm chuyển slide' },
+    },
+  },
   fields: [
     {
       name: 'slides',

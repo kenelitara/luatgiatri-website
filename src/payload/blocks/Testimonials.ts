@@ -3,8 +3,11 @@ import type { Block } from 'payload'
 export const Testimonials: Block = {
   slug: 'testimonials',
   labels: { singular: 'Khách hàng nói gì', plural: 'Khách hàng nói gì' },
-  imageURL: '/block-thumbnails/testimonials.svg',
-  imageAltText: 'Thẻ nhận xét của khách hàng kèm tên người đánh giá',
+  admin: {
+    images: {
+      thumbnail: { url: '/block-thumbnails/testimonials.svg', alt: 'Thẻ nhận xét của khách hàng kèm tên người đánh giá' },
+    },
+  },
   fields: [
     {
       name: 'heading',

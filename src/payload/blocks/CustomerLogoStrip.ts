@@ -3,8 +3,11 @@ import type { Block } from 'payload'
 export const CustomerLogoStrip: Block = {
   slug: 'customerLogoStrip',
   labels: { singular: 'Dải logo khách hàng', plural: 'Dải logo khách hàng' },
-  imageURL: '/block-thumbnails/customerLogoStrip.svg',
-  imageAltText: 'Dải logo khách hàng xếp thành một hàng',
+  admin: {
+    images: {
+      thumbnail: { url: '/block-thumbnails/customerLogoStrip.svg', alt: 'Dải logo khách hàng xếp thành một hàng' },
+    },
+  },
   fields: [
     {
       name: 'logos',

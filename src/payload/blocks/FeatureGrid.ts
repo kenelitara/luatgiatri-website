@@ -3,8 +3,11 @@ import type { Block } from 'payload'
 export const FeatureGrid: Block = {
   slug: 'featureGrid',
   labels: { singular: 'Lưới giá trị cốt lõi', plural: 'Lưới giá trị cốt lõi' },
-  imageURL: '/block-thumbnails/featureGrid.svg',
-  imageAltText: 'Lưới các thẻ giá trị cốt lõi, mỗi thẻ có tiêu đề và mô tả',
+  admin: {
+    images: {
+      thumbnail: { url: '/block-thumbnails/featureGrid.svg', alt: 'Lưới các thẻ giá trị cốt lõi, mỗi thẻ có tiêu đề và mô tả' },
+    },
+  },
   fields: [
     { name: 'heading', type: 'text', label: 'Tiêu đề khối' },
     {

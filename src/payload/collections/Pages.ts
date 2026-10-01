@@ -69,6 +69,13 @@ export const Pages: CollectionConfig = {
       name: 'layout',
       type: 'blocks',
       label: 'Bố cục',
+      // The block-picker drawer title is built from the field's `labels.singular`
+      // (`fields:addLabel` → "Thêm: {{label}}"), NOT from `label`. Payload's field
+      // sanitizer auto-derives `labels` from the field NAME when a `label` is set
+      // (payload/dist/fields/config/sanitize.js: `field.labels = field.labels
+      // || formatLabels(field.name)`), which rendered the drawer title as the
+      // English "Thêm: Layout". Setting `labels` explicitly overrides it.
+      labels: { singular: 'Bố cục', plural: 'Bố cục' },
       required: true,
       blocks: [
         Hero,

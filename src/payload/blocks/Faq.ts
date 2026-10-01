@@ -3,8 +3,11 @@ import type { Block } from 'payload'
 export const Faq: Block = {
   slug: 'faq',
   labels: { singular: 'Hỏi đáp (FAQ)', plural: 'Hỏi đáp (FAQ)' },
-  imageURL: '/block-thumbnails/faq.svg',
-  imageAltText: 'Danh sách câu hỏi thường gặp dạng accordion có mũi tên',
+  admin: {
+    images: {
+      thumbnail: { url: '/block-thumbnails/faq.svg', alt: 'Danh sách câu hỏi thường gặp dạng accordion có mũi tên' },
+    },
+  },
   fields: [
     { name: 'heading', type: 'text', label: 'Tiêu đề', defaultValue: 'Câu hỏi thường gặp' },
     {

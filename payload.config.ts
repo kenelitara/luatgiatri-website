@@ -89,6 +89,11 @@ export default buildConfig({
     // English ('Block', 'blocks', 'Block Type') while every block in this
     // project carries a Vietnamese label. Vietnamese has no plural inflection,
     // so one term serves both the singular and plural keys.
+    // `fields.searchForBlock` is the block-picker search box placeholder, which
+    // the vi pack ships half-translated as 'Tìm block' — overridden to 'Tìm khối'
+    // so the drawer is consistent with fields.block. (The drawer TITLE is NOT
+    // this key: it is `fields.addLabel` + the blocks field's `labels.singular` —
+    // see the `labels` comment on Pages.layout.)
     // Deliberately NOT overridden, because these read as correct in Vietnamese
     // software: general.email 'Email', authentication.apiKey 'API Key',
     // general.menu 'Menu'.
@@ -101,6 +106,7 @@ export default buildConfig({
           block: 'Khối',
           blocks: 'Khối',
           blockType: 'Loại khối',
+          searchForBlock: 'Tìm khối',
         },
       },
     },
