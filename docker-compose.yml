@@ -2,11 +2,11 @@ services:
   app:
     build:
       context: .
-      # Lightweight dev stage (deps + pnpm, no production build).
+      # Lightweight dev stage (deps + pnpm, no production build). No build
+      # args: the dev stage bakes nothing — dev reads runtime env from .env.
+      # (SITE_ENV/NEXT_PUBLIC_SERVER_URL build args exist only on the
+      # builder/runner stages, i.e. docker-compose.vps.yml.)
       target: dev
-      args:
-        SITE_ENV: ${SITE_ENV:-staging}
-        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
     # CI=true: Docker seeds the fresh node_modules volume with the deps image's
     # node_modules; pnpm wants to purge that copy on first install and aborts
     # the purge prompt without a TTY. CI=true confirms it non-interactively.

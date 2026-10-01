@@ -156,6 +156,17 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   document it here if it ever happens.
 - **`data/` is gitignored wholesale** — `data/db`, `data/media`, and any
   future upload contents; there is no committed marker inside it.
+- **Media dir ownership on a real Linux host.** The build-time `chown` of
+  `/app/data/media` protects named-volume mounts (Dokploy — fine) and is
+  irrelevant-but-harmless under Docker Desktop's FUSE bind (fine), but on a
+  real Linux host running `docker-compose.vps.yml` as written, dockerd
+  auto-creates `./data/media` root-owned and the bind shadows the image dir —
+  the `nextjs` user (uid 1001) cannot write, so Payload media uploads fail on
+  first use. Before the first `docker-compose.vps.yml up` on a real Linux host
+  (the NPM backup path): `mkdir -p data/media && sudo chown 1001:1001 data/media` —
+  bind mounts bypass the image's build-time chown; named volumes (Dokploy)
+  seed from the image and preserve it. `./data/db` is immune (the Postgres
+  entrypoint chowns its own data dir).
 - **`stop_grace_period: 60s` on every service** in both compose files —
   Docker Desktop defaults StopTimeout to 1 s, and a plain `docker stop`
   would SIGKILL a container still serving a response (workspace rule 12).
