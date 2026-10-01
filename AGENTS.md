@@ -146,8 +146,6 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
 - No Redis, no worker, no SMTP in this project. When email/notification lands
   (or the AI crawler feature), revisit — that changes §3.9 of the spec.
 
-<!-- BEGIN:nextjs-agent-rules -->
-
 ## Docker stack (M1, Task 5)
 
 - **Dev must not pay for a production build.** `docker-compose.yml` builds the
@@ -206,6 +204,8 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
 - **`stop_grace_period: 60s` on every service** in both compose files —
   Docker Desktop defaults StopTimeout to 1 s, and a plain `docker stop`
   would SIGKILL a container still serving a response (workspace rule 12).
+
+<!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
 
