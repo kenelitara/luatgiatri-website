@@ -84,10 +84,23 @@ export default buildConfig({
     // term. These values are deep-merged OVER the language pack (initTFunction
     // → deepMergeSimple in @payloadcms/translations), so only the overridden
     // key is needed; the rest of the pack is untouched.
+    //
+    // `fields.block/blockType` are the other two: the pack leaves them in
+    // English ('Block', 'blocks', 'Block Type') while every block in this
+    // project carries a Vietnamese label. Vietnamese has no plural inflection,
+    // so one term serves both the singular and plural keys.
+    // Deliberately NOT overridden, because these read as correct in Vietnamese
+    // software: general.email 'Email', authentication.apiKey 'API Key',
+    // general.menu 'Menu'.
     translations: {
       vi: {
         general: {
           collections: 'Bộ sưu tập',
+        },
+        fields: {
+          block: 'Khối',
+          blocks: 'Khối',
+          blockType: 'Loại khối',
         },
       },
     },
