@@ -428,6 +428,81 @@ app (`next start -p 3100`), not dev.
   succeeded. On the DB-connected build the same file DOES bake the generated
   `og:image`, which is what the curl check asserts.
 
+## M3 gate findings (Task 15, 2026-10-01) — gate RED on the sitemap (now FIXED); no `m3-seo` tag
+
+- **RED at the gate, FIXED since: `/sitemap.xml` was prerendered once at build
+  and never healed — a post published at runtime never entered it.**
+  `src/app/sitemap.ts` carried no route
+  segment `revalidate` (the record pages export `export const revalidate = 60`;
+  the sitemap does not), so Next emits `/sitemap.xml` as `○ (Static)`.
+  Evidence on a `next start -p 3100` build: the response is
+  `Cache-Control: public, max-age=0, must-revalidate` with `x-nextjs-cache: HIT`
+  and NO `x-nextjs-stale-time` in `.next/server/app/sitemap.xml.meta` (contrast
+  `.next/server/app/tin-tuc.meta`, which HAS one), and the baked
+  `.next/server/app/sitemap.xml.body` stays at its build-time `<loc>` count. A
+  temp post created via the Local API appeared in the news index (ISR 60) after
+  ~60 s but NEVER in the sitemap across 75 s of polling. The source comment
+  ("ISR heals at runtime") asserts behaviour the code does not implement — and
+  it contradicts the M2 convention that DB-dependent routes are ISR. Real SEO
+  defect for a firm that authors articles in the CMS: a new post is invisible to
+  crawlers until the next deploy. The gate's post-path check requires the
+  sitemap to pick the post up, so the gate is RED. **The production impact is
+  not theoretical:** the production image is built DB-LESS (the builder stage
+  carries no `DATABASE_URI`; `docker-compose.vps.yml` passes only
+  `SITE_ENV`/`NEXT_PUBLIC_SERVER_URL`), so `sitemap()`'s catch bakes an EMPTY
+  `<urlset>` — verified by running the built `lg-m3-prod` image on :3100
+  against the live dev DB via `host.docker.internal`: it served
+  `<urlset …></urlset>` with **0** `<loc>` and stayed empty beyond 90 s.
+  **FIX (post-gate): `export const dynamic = 'force-dynamic'` in
+  `src/app/sitemap.ts` — the sitemap is now generated on demand, so it is
+  correct on the FIRST request of a fresh container, with no DB at build time
+  and no healing window.** `revalidate = 60` would also have healed it, but
+  only AFTER a ~60 s window in which Googlebot can still fetch the empty
+  build-time file — a smaller copy of the very bug being fixed, re-created on
+  every deploy; a sitemap is fetched by crawlers a few times a day, so
+  on-demand generation is negligible cost for a correctness guarantee.
+  `force-dynamic` is a valid route-segment option here (`sitemap.ts` is a
+  special Route Handler, cached by default unless it uses a dynamic option, and
+  `cacheComponents` is NOT enabled in `next.config.ts` — see the Next docs in
+  `node_modules/next/dist/docs/…/metadata/sitemap.md` and
+  `…/02-route-segment-config/index.md`).
+- **No other route output of the Part A class exists.** `/tin-tuc/` and
+  `/tin-tuc/chuyen-muc/[slug]/` both export `revalidate = 60` (ISR, so they
+  self-heal, and the gate observed the news index pick up a runtime post);
+  `/robots.txt` is `○ (Static)` by design and has NO DB dependency (pure
+  `SITE_ENV` config); `/og/[...slug]` is `ƒ (Dynamic)`; `/api/health` is
+  `force-dynamic`. There is no feed/RSS, `opengraph-image` or `manifest`
+  route output.
+- **`/robots.txt` is likewise `○ (Static)`, but that is by design** (its content
+  is build-baked from `SITE_ENV`, like the metadata).
+- **The rest of the production image is fine, and the page metadata DOES heal.**
+  `robots.txt` serves the full prod contract (`Allow: /`, `Allow: /api/media/`,
+  `Disallow: /admin`, `Disallow: /api/`, a `Sitemap:` line, no blanket
+  `Disallow: /`). Page routes are baked as the `notFound()` fallback in the
+  DB-less build (that is the documented M2 convention — `getPage`'s catch
+  returns null, the page calls `notFound()`), and ISR self-heals them: the first
+  hit 404s, the body heals within one revalidation, and by the NEXT cycle the
+  served HTML carries the real `<title>`, `<meta name="description">` and an
+  ABSOLUTE canonical on `https://luatgiatri.com`. Do not read the first-hit 404
+  or the title-less intermediate render as a gate failure — only the sitemap is
+  RED.
+- **Admin chrome has no English leak.** Nav group heading is `Bộ sưu tập`; nav
+  icons render on 11/11 rows. The only ASCII-ish strings in the served chrome
+  are `Tiêu đề (admin)` (OUR own Pages label, `src/payload/collections/Pages.ts:40`)
+  and `Cấu hình chung (globals)` — the latter is the upstream `vi` language
+  pack's own value (`@payloadcms/translations/dist/languages/vi.js:314`), not a
+  leak of ours.
+- **The Lexical `Invalid indent value` crash is gone on the served build.**
+  Opening `chinh-sach-bao-mat` (which mounts a richText block editor) in the
+  :3100 admin mounts `.editor-container` with no error boundary and 0 console
+  errors. Console entries pointing at `localhost:3000` chunks (the dev server)
+  or at a token-less `/api/users/logout` are NOT this build — do not read them
+  as gate failures. The M2-era "grep the served HTML" method is still
+  insufficient: the SEO panel and the OG cards were verified by driving a real
+  browser (counters flip `0/60` → `34/60` amber while typing a 34-char meta
+  title, and the SERP title follows the typed value; `/og/page/gioi-thieu/` and
+  `/og/post/<slug>/` render the navy card + gold accent bar).
+
 ## Meta descriptions are DERIVED, never authored (spec §10.1 item 4)
 
 - **Defect (fixed 2026-10-01):** `pageMetadata` set
@@ -591,6 +666,16 @@ version:0, value:0, indent:0, children:[paragraph…]}]}`. **`listitem.indent` i
   replaces on the first runtime revalidation (Task 21 implements this).
   `force-dynamic` (loses ISR) is the fallback if (a) proves unworkable —
   document it here if it ever happens.
+- **(a) DID prove unworkable for `/sitemap.xml` — the documented exception
+  (Task 15 post-gate fix).** For a PAGE, a baked fallback that ISR later heals
+  is acceptable. For a route OUTPUT consumed wholesale by a crawler, it is not:
+  the fallback here is an EMPTY `<urlset>`, and ISR leaves a window right after
+  every deploy in which the empty file is what gets served — the same defect,
+  smaller. So `src/app/sitemap.ts` is `export const dynamic = 'force-dynamic'`:
+  DB-less build, correct on the first request, no healing window. Cost is one
+  render per crawler fetch (a few per day), and there is no `revalidatePath`/
+  `revalidateTag` anywhere in the project, so ISR was never going to be
+  immediate anyway. Every OTHER DB-dependent route stays on strategy (a).
 - **Applies to layouts and chrome too, not just routes** — the `(frontend)`
   layout's async `getSiteSettings()`/`getNavigation()` (via the chrome
   components) run during prerender, so their fetchers carry the same try/catch

@@ -34,8 +34,10 @@ pnpm dev                      # http://localhost:3000  (admin: /admin)
 Gates:
 
 ```bash
-pnpm typecheck && pnpm test   # 12 unit tests (slugify, Renderer, HeroCarousel)
-pnpm build && pnpm e2e        # Playwright heading-discipline gate (port 3100)
+pnpm typecheck && pnpm test   # 86 unit tests (slugify, seo-helpers, search-text, Renderer, …)
+pnpm build && pnpm e2e        # Playwright gates on :3100 — heading discipline +
+                              # SEO crawl (canonical/description/JSON-LD/robots/sitemap)
+                              # + search/leads (29 tests)
 ```
 
 ## Project structure
@@ -49,7 +51,7 @@ src/lib/               slugify, site data, getPage, date formatting
 seed/raw/              verbatim HTML capture of the live site (9 pages)
 seed/content/          block-structured fixtures + media map + notes
 scripts/               capture-content, seed-media, seed
-tests/e2e/             Playwright heading-discipline gate
+tests/e2e/             Playwright gates — heading discipline + SEO crawl + search/leads
 docs/                  DEPLOYMENT.md + planning docs
 ```
 

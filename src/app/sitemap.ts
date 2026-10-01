@@ -2,14 +2,27 @@ import type { MetadataRoute } from 'next'
 import { getPayloadClient } from '@/lib/getPayload'
 import { getBaseUrl } from '@/lib/site-env'
 
+// GENERATED ON DEMAND, deliberately. `sitemap.ts` is a route OUTPUT, not a
+// page: crawlers fetch it a few times a day, never per user request, so paying
+// one render per fetch buys a correctness guarantee. The production image is
+// built DB-LESS (AGENTS.md, Docker stack), so a prerendered sitemap bakes an
+// EMPTY <urlset> — and a STATIC one never heals, leaving the site with no
+// sitemap at all until the next deploy. `revalidate = 60` would heal it too,
+// but only AFTER a window in which Googlebot can still fetch the empty
+// build-time file — a smaller copy of the exact bug being fixed, re-created on
+// every deploy. (Route-segment config is honoured here: sitemap.ts is a special
+// Route Handler, cached by default unless it uses a dynamic option, and
+// `cacheComponents` is NOT enabled in next.config.ts.)
+export const dynamic = 'force-dynamic'
+
 const base = () => getBaseUrl().replace(/\/+$/, '')
 
 /**
  * Sitemap for the published surface (spec §6.6): pages, posts, and (from
  * Task 10 on) categories. Real lastModified from Payload's updatedAt.
- * /tim-kiem and the admin/API paths are deliberately absent. The DB-at-build
- * convention applies: an unreachable DB yields an empty list rather than
- * failing the build.
+ * /tim-kiem and the admin/API paths are deliberately absent. An unreachable DB
+ * yields an empty list rather than a 500 — and because nothing is cached, the
+ * very next request retries against a live DB.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = []
@@ -55,7 +68,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
     entries.push({ url: `${base()}/tin-tuc/`, priority: 0.6 })
   } catch {
-    // DB-at-build convention (AGENTS.md): bake a minimal sitemap; ISR heals at runtime
+    // Unreachable DB: serve an empty (but valid) sitemap for this request only.
+    // Nothing is cached, so the next fetch renders again with a live DB.
   }
   return entries
 }
