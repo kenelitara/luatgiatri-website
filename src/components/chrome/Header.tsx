@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SearchBox } from '@/components/SearchBox'
 import { mediaUrl } from '@/lib/media'
 import { getNavigation, getSiteSettings } from '@/lib/site'
 
@@ -36,6 +37,7 @@ export async function Header() {
             </Link>
           ))}
         </nav>
+        <SearchBox />
       </div>
     </header>
   )
