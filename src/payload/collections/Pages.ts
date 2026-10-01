@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access'
 import { slugify } from '@/lib/slugify'
+import { isReservedRootSegment } from '@/lib/reserved-slugs'
 import { seoField } from '../fields/seo'
 import { Hero } from '../blocks/Hero'
 import { HeroCarousel } from '../blocks/HeroCarousel'
@@ -49,6 +50,14 @@ export const Pages: CollectionConfig = {
         description:
           'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7).',
       },
+      // A page must never claim a root segment owned by another route (admin,
+      // api, og, tin-tuc, tim-kiem, …). The dynamic `(frontend)/[slug]` route
+      // refuses these too, but rejecting them here fails closed in the editor:
+      // the slug can never be created in the first place. See lib/reserved-slugs.
+      validate: (value: unknown) =>
+        typeof value === 'string' && isReservedRootSegment(value)
+          ? `Slug "${value}" trùng với đường dẫn hệ thống (admin, api, og, tin-tuc, tim-kiem). Vui lòng chọn slug khác.`
+          : true,
       hooks: {
         beforeValidate: [
           ({ value, data }) => (value ? value : slugify((data?.title as string) ?? '')),

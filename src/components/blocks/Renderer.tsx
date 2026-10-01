@@ -91,7 +91,7 @@ function renderBlock(block: Block): React.ReactNode {
     case 'formEmbed':
       return <FormEmbedView block={block} />
     default:
-      // All 14 block types have views; this guards against future blocks
+      // All 15 block types have views; this guards against future blocks
       // shipping untested markup — never emit structure for a block type
       // with no view.
       return null

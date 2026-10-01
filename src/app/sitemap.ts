@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getPayloadClient } from '@/lib/getPayload'
 import { getBaseUrl } from '@/lib/site-env'
+import { isReservedRootSegment } from '@/lib/reserved-slugs'
 
 // GENERATED ON DEMAND, deliberately. `sitemap.ts` is a route OUTPUT, not a
 // page: crawlers fetch it a few times a day, never per user request, so paying
@@ -46,6 +47,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ])
 
     for (const p of pages.docs) {
+      // A reserved root segment (admin, api, og, tin-tuc, tim-kiem, …) is not
+      // servable by the dynamic route, so advertising it would be exactly the
+      // "sitemap points at a 404" defect this task fixes. The collection
+      // validation prevents creating one; this is the belt to that suspenders.
+      if (isReservedRootSegment(p.slug)) continue
       entries.push({
         url: `${base()}${p.slug === 'home' ? '/' : `/${p.slug}/`}`,
         lastModified: p.updatedAt ? new Date(p.updatedAt) : undefined,

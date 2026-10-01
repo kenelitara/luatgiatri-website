@@ -1415,6 +1415,83 @@ converters ignore `indent`).
   belongs to `(frontend)` only). custom.scss is unlayered, so it wins the
   cascade against Payload's `@layer payload-default`.
 
+## Front-end routing model — fixed route files + the dynamic `[slug]` fallback
+
+Added 2026-10-01 ("serve CMS-created pages"). Before it, every public page had
+its own fixed-slug route file under `src/app/(frontend)/` and there was NO
+dynamic route, so **a page an editor created in the admin 404'd on the front
+end** — while `/sitemap.xml` (`force-dynamic`, so it lists every published page
+immediately) advertised that 404 to Google. `src/app/(frontend)/[slug]/page.tsx`
+now serves any published Pages record that has no fixed route file.
+
+**Both kinds of route exist on purpose.** Do not collapse the fixed files into
+`[slug]` (or vice versa) without working through this list:
+
+1. **The ten fixed route files carry the DB-less-build fallback the M1/M2/M3
+   gates verified.** Each calls `getPage('<hardcoded slug>')`; `getPage`'s
+   try/catch returns null when the docker builder has no database, the route
+   bakes `notFound()`, and ISR heals it. They also carry page-specific
+   DB-less `generateMetadata` fallbacks (e.g. `/chinh-sach-bao-mat/` falls back
+   to the title `'Chính sách bảo mật'`, not to the bare brand). **A static
+   segment wins over a dynamic one in Next's router**, so every fixed slug keeps
+   its exact current behaviour and `[slug]` only ever handles pages beyond that
+   set.
+2. **`[slug]` is the fallback for CMS-created pages.** It reuses the same
+   helpers as the fixed routes — `PageShell` for the render, `pageMetadata` →
+   `buildMetadata` for metadata — so a dynamic page is byte-identical to a fixed
+   one (one code path for the `<h1>`, metadata, JSON-LD and breadcrumbs). It
+   exports `revalidate = 60`, matching every other record page. In a DB-less
+   build its `generateStaticParams` yields `[]` (see below), so nothing is
+   prerendered and every page renders on demand at runtime.
+
+**Route conflict — checked empirically, and there is none.** A root-level
+`(frontend)/[slug]` also *matches* `/admin`, `/api`, `/tin-tuc`, `/tim-kiem` and
+`/og`, which live in the `(payload)` group or have their own route files.
+`pnpm build` does **not** fail: Next resolves by precedence, and the build table
+lists `ƒ /admin/[[...segments]]`, `ƒ /api/[...slug]`, `○ /gioi-thieu`, … unchanged
+beside `● /[slug]` (the `●` is "uses generateStaticParams"; the route had no
+prerendered paths because all ten slugs are fixed). Verified on a
+`next start -p 3100` build: `/admin/` serves the Payload admin (login form,
+`Bảng điều khiển — Quản trị Luật Gia Trí`), `/tin-tuc/` and `/tim-kiem/` serve
+their own pages, `/og/page/<slug>/` still returns an image.
+
+**Reserved slugs — the guard is in BOTH the route and the collection, on
+purpose.** `src/lib/reserved-slugs.ts` lists the root segments that belong to
+something other than the Pages collection: `admin`, `api`, `og`, `tin-tuc`,
+`tim-kiem`, `_next`, `icon.svg`, `robots.txt`, `sitemap.xml` — plus `home` as a
+ROOT ALIAS (the homepage is served at `/` by `(frontend)/page.tsx`; serving the
+same record again at `/home/` would create a duplicate URL).
+
+- **Route** — `isReservedSlug()` → `notFound()` before any DB read.
+- **Collection** — `Pages.slug` gained a `validate` that rejects the reserved
+  root segments, so the slug cannot be created at all (fails closed in the
+  editor). **`home` is deliberately NOT rejected there**: the homepage record
+  itself carries that slug. That is the one slug where the route guard and the
+  collection guard intentionally disagree.
+- **Sitemap** — `src/app/sitemap.ts` skips reserved slugs (`isReservedRootSegment`,
+  not `isReservedSlug`, so `home` still maps to `/`), so the sitemap can never
+  advertise a path the dynamic route refuses to serve. With all published pages
+  routable, the earlier "sitemap lists a 404" defect is closed from both ends.
+
+**`generateStaticParams` is DB-SAFE by construction.** It calls
+`getPublishedPageSlugs()` (`src/lib/getPage.ts`), which returns `[]` when the
+database is unreachable — the docker builder stage carries no `DATABASE_URI`, so
+`next build` never fails and no known page is ever baked as a 404. Fixed-route
+slugs are filtered out as well, so a static route file always keeps ownership of
+its own path. (A `next build` with a live DB therefore still prerenders nothing
+through this route; only pages created LATER would be, and they render on demand
+under the route's ISR anyway.)
+
+**Can the ten fixed routes be collapsed into `[slug]` later?** Yes in principle,
+and it is the obvious end state — but only after: (1) the ten fixed slugs are
+added to `generateStaticParams` so they still prerender at build, (2) a
+slug→fallback-metadata map replaces the page-specific `generateMetadata`
+fallbacks each fixed file carries today (or the project accepts the generic
+`DEFAULT_BRAND` fallback), and (3) the M2/M3 DB-less-build convention is
+re-verified for the ten, because their baked-fallback semantics are exactly what
+those gates signed off on. Until then the duplication is the cheaper side of the
+trade.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
