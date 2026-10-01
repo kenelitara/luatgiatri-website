@@ -216,6 +216,9 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   document it here if it ever happens.
 - **`data/` is gitignored wholesale** — `data/db`, `data/media`, and any
   future upload contents; there is no committed marker inside it.
+- **Media URLs are `/api/media/file/<filename>` in embedded mode** (no
+  static `/{slug}` path); robots.txt must keep `Allow: /api/media/` ahead
+  of `Disallow: /api/` or Googlebot-Image is blocked.
 - **Media dir ownership on a real Linux host.** The build-time `chown` of
   `/app/data/media` protects named-volume mounts (Dokploy — fine) and is
   irrelevant-but-harmless under Docker Desktop's FUSE bind (fine), but on a
