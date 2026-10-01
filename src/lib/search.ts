@@ -38,6 +38,8 @@ export function toResult(row: {
 /**
  * Diacritic-insensitive search across pages, posts and categories (spec §7).
  * `unaccent()` runs on BOTH sides — `ke toan` matches `kế toán`.
+ * Pages are labelled with `primaryHeading` (falling back to the internal
+ * `title`) so a result list shows the same heading the page itself renders.
  */
 export async function searchAll(rawQuery: string, limit = 20): Promise<SearchResult[]> {
   const q = normalizeQuery(rawQuery)
@@ -50,7 +52,7 @@ export async function searchAll(rawQuery: string, limit = 20): Promise<SearchRes
     score: number
   }>(
     `WITH q AS (SELECT websearch_to_tsquery('simple', unaccent($1)) AS tsq)
-     SELECT 'page' AS type, title, slug, NULL::text AS excerpt,
+     SELECT 'page' AS type, COALESCE(primary_heading, title) AS title, slug, NULL::text AS excerpt,
             ts_rank(search_vector, q.tsq) AS score
      FROM pages, q WHERE search_vector @@ q.tsq
      UNION ALL

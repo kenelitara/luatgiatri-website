@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const payload = await getPayloadClient()
 
-    const [pages, posts] = await Promise.all([
+    const [pages, posts, categories] = await Promise.all([
       payload.find({
         collection: 'pages',
         limit: 200,
@@ -29,8 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         draft: false,
         where: { _status: { equals: 'published' } },
       }),
-      // NOTE: category archive URLs are ADDED IN TASK 10 — that route does not
-      // exist yet, and a sitemap must never list URLs that 404.
+      payload.find({ collection: 'categories', limit: 200 }),
     ])
 
     for (const p of pages.docs) {
@@ -45,6 +44,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${base()}/tin-tuc/${p.slug}/`,
         lastModified: p.updatedAt ? new Date(p.updatedAt) : undefined,
         priority: 0.6,
+      })
+    }
+    for (const c of categories.docs) {
+      entries.push({
+        url: `${base()}/tin-tuc/chuyen-muc/${c.slug}/`,
+        lastModified: c.updatedAt ? new Date(c.updatedAt) : undefined,
+        priority: 0.5,
       })
     }
     entries.push({ url: `${base()}/tin-tuc/`, priority: 0.6 })
