@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access'
 import { slugify } from '@/lib/slugify'
 import { seoField } from '../fields/seo'
+import { writeSearchVector } from '../hooks/searchVector'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -25,6 +26,7 @@ export const Posts: CollectionConfig = {
     delete: isAdminOrEditor,
   },
   versions: { drafts: true },
+  hooks: { afterChange: [writeSearchVector('posts')] },
   fields: [
     { name: 'title', type: 'text', label: 'Tiêu đề', required: true },
     {

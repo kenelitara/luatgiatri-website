@@ -233,6 +233,34 @@ and the `v3.90.2` website template, 2026-10-01.
   errors. Pages has `versions: { drafts: true }` but NO autosave, so the browser
   test persisted nothing (page 9's `metaTitle` stayed `null`).
 
+Task 8b — the search_vector write hook MUST run on the request transaction.
+
+- The plan's `afterChange` hook wrote the vector through M1's `getDbPool()` — a
+  **separate** pg connection. Payload runs `afterChange` INSIDE the write
+  transaction (`updateByID` calls `commitTransaction` only after the document
+  hooks), so the just-written row is already locked; the second connection then
+  blocks **forever** on that row lock — an application-level deadlock Postgres
+  cannot detect (the lock holder is not itself waiting on a DB lock). Symptom:
+  `payload.update` / every admin save hangs indefinitely while `findByID` is
+  fine. `pnpm reindex` does not hit it (it writes directly, no transaction).
+- Fix: run `UPDATE … to_tsvector('simple', unaccent(…))` on the transaction's
+  **own session**, resolved exactly as Payload's `getTransaction` does:
+  `adapter.sessions[await req.transactionID]?.db ?? adapter.drizzle`, then
+  `session.execute(sql\`…\`)` with `sql` re-exported from
+  `@payloadcms/db-postgres` (`sql.identifier(table)` for the table, values bound
+  as params). The vector then commits atomically with the content — a rolled-back
+  write rolls the vector back too, so no drift.
+- tsx scripts that call `getPayload()` against a **dev-pushed** DB hang on the
+  dev schema-push prompt once the raw columns exist: Payload sees `search_vector`
+  as drift and offers to DROP it ("DATA LOSS WARNING: … delete search_vector
+  column"). Set `process.env.PAYLOAD_MIGRATING = 'true'` before importing
+  `@payload-config` (the adapter skips the push on connect —
+  `@payloadcms/db-postgres/dist/connect.js`) so `pnpm reindex` is
+  non-interactive. Never accept that prompt.
+- `searchableText` lives in `src/lib/search-text.ts`, NOT in the hook module:
+  the hook imports the runtime pg adapter, so the split keeps the pure text
+  builder unit-testable without dragging the DB layer into the vitest graph.
+
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 
 - Payload is **embedded**: no separate backend, no REST from the browser. Public

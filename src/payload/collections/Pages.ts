@@ -16,6 +16,7 @@ import { TeamGrid } from '../blocks/TeamGrid'
 import { ProcessSteps } from '../blocks/ProcessSteps'
 import { CtaBanner } from '../blocks/CtaBanner'
 import { NewsPreview } from '../blocks/NewsPreview'
+import { writeSearchVector } from '../hooks/searchVector'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -33,6 +34,7 @@ export const Pages: CollectionConfig = {
     delete: isAdminOrEditor,
   },
   versions: { drafts: true },
+  hooks: { afterChange: [writeSearchVector('pages')] },
   fields: [
     { name: 'title', type: 'text', label: 'Tiêu đề (admin)', required: true },
     {

@@ -19,6 +19,7 @@
     "capture": "node scripts/capture-content.mjs",
     "seed": "tsx scripts/seed.ts",
     "seed:media": "tsx scripts/seed-media.ts",
+    "reindex": "tsx scripts/reindex-search.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
