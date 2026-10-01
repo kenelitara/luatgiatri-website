@@ -250,13 +250,21 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
   `@payloadcms/db-postgres` (`sql.identifier(table)` for the table, values bound
   as params). The vector then commits atomically with the content — a rolled-back
   write rolls the vector back too, so no drift.
-- tsx scripts that call `getPayload()` against a **dev-pushed** DB hang on the
-  dev schema-push prompt once the raw columns exist: Payload sees `search_vector`
-  as drift and offers to DROP it ("DATA LOSS WARNING: … delete search_vector
-  column"). Set `process.env.PAYLOAD_MIGRATING = 'true'` before importing
-  `@payload-config` (the adapter skips the push on connect —
-  `@payloadcms/db-postgres/dist/connect.js`) so `pnpm reindex` is
-  non-interactive. Never accept that prompt.
+- Dev schema push is now **disabled project-wide**: `payload.config.ts` sets
+  `postgresAdapter({ push: false })` (verified option in
+  `@payloadcms/db-postgres@3.90.2` — `push?: boolean` in `dist/types.d.ts`;
+  the connect gate is `this.push !== false` in `dist/connect.js`). Before this,
+  any column that migrations own outside Payload's field system — the raw
+  `search_vector` columns (Task 8a) and earlier ones (TokenMatrix,
+  showOverlay, logo/priceRange) — read as schema drift, and dev push offered to
+  **DROP** it on every `pnpm dev` / `pnpm seed` / tsx script run ("DATA LOSS
+  WARNING"). This is the same root cause behind all the previous "dev-pushed
+  column" dances. With `push: false`, migrations are the single source of truth
+  in EVERY environment (spec §11.2) and the whole prompt class is gone — so the
+  `reindex` script needs no `PAYLOAD_MIGRATING` workaround (it was removed;
+  `pnpm reindex` and `pnpm seed` now run prompt-free on the dev DB). In
+  development, schema changes are `pnpm payload migrate:create` +
+  `pnpm payload migrate`; a fresh dev DB must migrate before `pnpm seed`.
 - `searchableText` lives in `src/lib/search-text.ts`, NOT in the hook module:
   the hook imports the runtime pg adapter, so the split keeps the pure text
   builder unit-testable without dragging the DB layer into the vitest graph.
@@ -276,7 +284,10 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
 - **Migrations are one-shot and never run on container start** — a restart must
   not be able to change the schema (spec §11.2). Dev: `pnpm payload migrate` on
   the host against the dev DB; in-container: the `migrate` compose service
-  (commands in the Docker section below).
+  (commands in the Docker section below). The schema is migration-owned in every
+  environment — the adapter sets `push: false` (Task 8b), so `pnpm dev` / seed /
+  scripts never push; a fresh dev DB must run `pnpm payload migrate` before
+  `pnpm seed` (the README documents this).
 - **Two volumes**: `./data/db` (Postgres) and `./data/media` (Payload uploads).
   Losing `data/media` loses every uploaded image while the DB still references
   them — both go in VPS backups. On a real Linux host, bind-mount ownership
@@ -361,6 +372,9 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
   SIGINT, then exit 1). The service is only safe against a DB that has
   never been dev-pushed (prod). Never point it at a dev-drifted DB in
   automation; to exercise it locally, use a scratch database.
+  *(Historical — since Task 8b `push: false` disables the dev schema push, so
+  `pnpm dev` no longer writes the `batch: -1` dev-mode record; this note
+  describes DBs that were dev-pushed before that change.)*
 - **M2 convention — DB-dependent routes at build time.** No route may hit the
   DB during `next build`. Strategy (a) is the convention: DB-dependent routes
   wrap their fetches in try/catch and render a static fallback that ISR

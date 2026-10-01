@@ -37,6 +37,16 @@ export default buildConfig({
   typescript: { outputFile: 'src/payload-types.ts' },
   db: postgresAdapter({
     pool: { connectionString: process.env.DATABASE_URI },
+    // Migrations own the schema in EVERY environment (spec §11.2). Dev push
+    // fights any column migrations create outside Payload's field system — the
+    // raw `search_vector` columns (Task 8a) and earlier migration-owned columns
+    // (TokenMatrix, showOverlay, logo/priceRange) — seeing them as drift and
+    // offering to DROP them on every `pnpm dev` / `pnpm seed` / tsx script run
+    // ("DATA LOSS WARNING"). push:false removes that whole class of prompt and
+    // makes `pnpm payload migrate` the single source of truth. Schema changes in
+    // development are now `pnpm payload migrate:create` + `pnpm payload migrate`;
+    // a fresh dev DB must migrate before `pnpm seed`.
+    push: false,
   }),
   i18n: {
     supportedLanguages: { vi },

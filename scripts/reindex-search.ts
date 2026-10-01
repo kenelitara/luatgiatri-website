@@ -22,15 +22,6 @@ try {
   // no .env present — rely on the ambient environment
 }
 
-// The reindex is a DB-maintenance step and must NEVER let Payload's dev schema
-// push run. The raw `search_vector` columns (Task 8a) are invisible to the
-// Payload schema, so a dev-mode push prompts to DROP them ("DATA LOSS
-// WARNING"); accepting would destroy the vectors. PAYLOAD_MIGRATING=true makes
-// the postgres adapter skip the push on connect (see
-// @payloadcms/db-postgres/dist/connect.js), keeping the script non-interactive
-// and the schema untouched. Set BEFORE getPayload() runs.
-process.env.PAYLOAD_MIGRATING = 'true'
-
 async function main() {
   const { default: configPromise } = await import('@payload-config')
   const { getPayload } = await import('payload')
