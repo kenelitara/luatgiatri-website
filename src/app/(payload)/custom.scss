@@ -308,6 +308,10 @@ html[data-theme='light'] .nav {
 .nav__link {
   border-radius: 8px;
   padding: 7px 12px;
+  /* Breathing room between rows: 4px of margin between adjacent pills, so the
+     measured pitch goes 34px -> 38px (34 = 7+7 padding + a 20px label line box;
+     the stock `line-height: 30px` does not survive the body font reset). */
+  margin-block: 4px;
   transition: background-color 0.12s linear, color 0.12s linear;
 }
 /* Stock Payload underlines nav links on hover; the reference uses a tinted
@@ -334,6 +338,91 @@ html[data-theme='light'] .nav {
 /* The 2px indicator bar is replaced by the pill above. */
 .nav__link .nav__link-indicator {
   display: none;
+}
+
+/* --------------------------------------------------------------------------
+   2b. Sidebar item spacing + per-item icons  (client request, 2026-10-01)
+   The client asked for more room between menu items and an icon per item.
+   Icon shapes are lucide (https://lucide.dev, MIT) paths, copied verbatim,
+   drawn in a 24x24 viewBox at stroke-width 2 and scaled into an 18px box, so
+   the rendered stroke is 1.5px.
+
+   WHY THE IDS AND NOT THE HREFS. @payloadcms/next's elements/Nav/index.client.js
+   builds both a "href" and an "id" per item:
+     collection -> href "/admin/collections/<slug>",  id "nav-<slug>"
+     global     -> href "/admin/globals/<slug>",      id "nav-global-<slug>"
+   and then renders the ACTIVE item (pathname === href) as a plain
+   `<div class="nav__link" id=...>` with NO href at all; only the inactive ones
+   become `<Link>` -> `<a href>`. Keying icons off `a[href="..."]` would
+   therefore drop the icon from exactly the row the user is looking at. The id
+   is on BOTH branches, so the rules below are keyed on `#nav-<slug>`.
+
+   WHY mask-image AND NOT background-image. With
+   `background-color: currentColor` + `mask-image` the icon is painted as an
+   alpha stencil in the row's OWN text colour, so ONE definition covers the
+   normal row, the hover row, the peach ACTIVE pill (peach-700 text) and dark
+   mode with no extra rules. A `background-image` data-URI cannot inherit
+   `currentColor` (a data-URI SVG cannot see the page's colour), so it would
+   have needed four separately-coloured copies per icon.
+
+   GRACEFUL DEGRADATION: an item with no id listed below simply keeps an empty
+   reserved slot (see the default in the base rule), so a future collection
+   renders iconless WITHOUT breaking the label alignment of every other row.
+   Add its `#nav-<slug>::before { --admin-nav-icon: url("..."); }` here.
+   -------------------------------------------------------------------------- */
+.nav__link::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-inline-end: 10px;
+  /* No icon by default: a fully transparent mask keeps the 18px slot empty so
+     an unmapped item still lines up with every mapped one. */
+  --admin-nav-icon: linear-gradient(#0000, #0000);
+  /* currentColor is the whole point - the stencil follows the row's colour. */
+  background-color: currentColor;
+  mask-image: var(--admin-nav-icon);
+  -webkit-mask-image: var(--admin-nav-icon);
+  mask-mode: alpha;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+}
+#nav-users::before { /* Người dùng */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E");
+}
+#nav-media::before { /* Tệp media */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2' ry='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'/%3E%3C/svg%3E");
+}
+#nav-authors::before { /* Tác giả */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'/%3E%3Cpath d='m15 5 4 4'/%3E%3C/svg%3E");
+}
+#nav-categories::before { /* Chuyên mục */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E");
+}
+#nav-tags::before { /* Thẻ */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/%3E%3Ccircle cx='7.5' cy='7.5' r='.5' fill='%23000'/%3E%3C/svg%3E");
+}
+#nav-posts::before { /* Bài viết */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E");
+}
+#nav-redirects::before { /* Chuyển hướng */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m16 3 4 4-4 4'/%3E%3Cpath d='M20 7H4'/%3E%3Cpath d='m8 21-4-4 4-4'/%3E%3Cpath d='M4 17h16'/%3E%3C/svg%3E");
+}
+#nav-leads::before { /* Hộp thư liên hệ */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-6l-2 3h-4l-2-3H2'/%3E%3Cpath d='M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z'/%3E%3C/svg%3E");
+}
+#nav-pages::before { /* Trang */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z'/%3E%3Cpath d='m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65'/%3E%3Cpath d='m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65'/%3E%3C/svg%3E");
+}
+#nav-global-site-settings::before { /* Thông tin website */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+}
+#nav-global-navigation::before { /* Menu điều hướng */
+  --admin-nav-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 6h13'/%3E%3Cpath d='M8 12h13'/%3E%3Cpath d='M8 18h13'/%3E%3Cpath d='M3 6h.01'/%3E%3Cpath d='M3 12h.01'/%3E%3Cpath d='M3 18h.01'/%3E%3C/svg%3E");
 }
 
 /* --------------------------------------------------------------------------

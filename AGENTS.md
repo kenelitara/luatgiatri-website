@@ -771,7 +771,8 @@ against the served DOM after any Payload upgrade. What is overridden and why:
 | `:root` `--style-radius-s/m/l` = 8/8/12px | every `.field-type.* input` and `.btn` hardcodes `border-radius: var(--style-radius-s)`; `.card`/`.collapsible` use `-m`. One lever, soft corners everywhere. |
 | `html[data-theme='light'] .nav` → white | reference has a white rail beside a grey canvas; `.nav` is otherwise transparent over `--theme-bg`. |
 | `.nav-group__label` uppercase + letterspaced + `--theme-elevation-600` | section labels. Stock uses elevation-500, which measures ≈4.78:1 on the rail's own rail colour in DARK (just under 4.5:1) — 600 clears 4.5:1 in all four cases (light rail 5.85:1, grey canvas 5.37:1, dark rail 8.00:1, dark hover 7.73:1) with no light-mode regression. |
-| `.nav__link` → 8px pill, `padding: 7px 12px` (ELEMENT-AGNOSTIC — no `a` in the selector); `:hover` scoped `a.nav__link:not(:has(.nav__link-indicator))` → `--theme-elevation-100` | the stock link is `padding-inline-end: 30px` with no start padding, so a background would be lopsided; stock also underlines on hover. **The `a` had to be dropped:** 3.90.2 renders the CURRENT page as `<div class="nav__link">` (a plain `div`, only other pages get `<Link>`→`a`), so an `a.nav__link` selector skipped exactly the one row that needs the pill geometry — its text stayed 30px off. The `:not(:has(...))` on the hover rule is equally load-bearing: `a.nav__link:hover` (0,3,1) would out-rank `.nav__link:has(…)` (0,2,0) and repaint the active pill on hover. |
+| `.nav__link` → 8px pill, `padding: 7px 12px`, `margin-block: 4px` (ELEMENT-AGNOSTIC — no `a` in the selector); `:hover` scoped `a.nav__link:not(:has(.nav__link-indicator))` → `--theme-elevation-100` | the stock link is `padding-inline-end: 30px` with no start padding, so a background would be lopsided; stock also underlines on hover. The `margin-block` is the client's "more space between items": it collapses between siblings, so the measured row pitch goes 34px → 38px and the pill gaps are actually visible. **The `a` had to be dropped:** 3.90.2 renders the CURRENT page as `<div class="nav__link">` (a plain `div`, only other pages get `<Link>`→`a`), so an `a.nav__link` selector skipped exactly the one row that needs the pill geometry — its text stayed 30px off. The `:not(:has(...))` on the hover rule is equally load-bearing: `a.nav__link:hover` (0,3,1) would out-rank `.nav__link:has(…)` (0,2,0) and repaint the active pill on hover. |
+| `.nav__link::before` → 18px icon slot, `margin-inline-end: 10px` | one pseudo-element per row, keyed to a per-item `--admin-nav-icon`. See §3b below. |
 | `.nav__link:has(.nav__link-indicator)` → peach pill | **the active nav item is marked by the presence of a `.nav__link-indicator` child, not an `.active` class** — 3.90.2 renders `a.nav__link` with a `<div class="nav__link-indicator">` inside. The 2px bar is hidden and the whole link becomes the peach pill (`--color-peach-100` / `-700`, fixed stops on purpose so the pill reads on both rails). |
 | `html[data-theme='light'] .btn--style-primary:not(.btn--disabled)` → navy | stock is `--theme-elevation-800` = `#2f2f32` (near-black grey), not the brand navy. Dark keeps Payload's inverted (light chip + dark text) button. |
 | `.btn--style-secondary:not(.btn--disabled)`, `.btn--style-pill:not(.btn--disabled)` → hairline `--theme-elevation-200` outline | stock secondary uses a full-strength elevation-800 border; `.btn--style-pill` ("Tạo mới"…) is a solid base-150 block. |
@@ -785,6 +786,66 @@ against the served DOM after any Payload upgrade. What is overridden and why:
 | `.login__*` | `.login__form` becomes the white card (light) / elevation-50 card (dark); the login CTA is peach (`--color-peach-300` + navy text) while every other primary button stays navy, and it carries the same `:not(.btn--disabled)` guard as the other primaries. |
 | `.admin-brand` plate + `payload.config.ts` `admin.components.graphics.Logo` | The brand mark is NOT a CSS hack any more. It is registered as `admin.components.graphics.Logo: '@/components/admin/AdminBrand#AdminBrand'` — the PUBLIC hook (Payload's `elements/Logo/index.js` does `RenderServerComponent({ Component: CustomLogo, Fallback: PayloadLogo })`) — and `AdminBrand.tsx` renders `<img src="/icon.svg">` on a light rounded plate (`.admin-brand`: white `--color-base-0`, `--color-base-150` hairline, `--admin-shadow-card`). **Why a plate:** the monogram is brand navy `#002147` + gold; navy measures 1.02:1 against the dark canvas, so on the dark login only the gold fragment was visible. On the plate navy is 16.05:1 in BOTH themes. The earlier `.login__brand .graphic-logo { display: none }` + `::before { background: url('/icon.svg') }` hack was removed. Runs `pnpm generate:importmap` (its entry is in `src/app/(payload)/admin/importMap.js`). |
 | `.template-minimal { background-color: var(--theme-bg) }` | Partly an upstream Payload bug: `.template-minimal` (the login/logout/verify shell) references `--theme-bg-color`, which 3.90.2 **never defines** (one occurrence in the compiled CSS — a usage, no declaration). Declaring it makes the shell's background explicit and deterministic. NOTE: the reviewer's report of a near-black dark login was NOT reproducible — `html { background: var(--theme-bg) }` is present in the compiled CSS, so the dark canvas was already `rgb(30,30,44)`. This rule is belt-and-braces, not the fix for an invisible brand mark. |
+
+### 3b. Sidebar icons — keyed on `#nav-<slug>`, painted with `mask-image`
+
+Client request (2026-10-01): an icon per menu item, plus more room between
+items. Payload 3.90.2 has **no per-collection icon config** —
+`elements/Nav/index.client.js` builds only `href` + `id` and emits
+`.nav__link` / `.nav__link-indicator` / `.nav__link-label`. The icons are
+therefore pure CSS, in custom.scss §2b.
+
+**The hook is the `id`, NOT the `href`:**
+
+```
+if (type === collection) { href = `/admin/collections/${slug}`; id = `nav-${slug}` }
+if (type === global)     { href = `/admin/globals/${slug}`;     id = `nav-global-${slug}` }
+isActive ? <div  class="nav__link" id={id}>          ← the CURRENT page: NO href
+         : <Link class="nav__link" id={id} href={href}>
+```
+
+**Warning: the active row is a `<div>` with no `href`.** Any `a[href="…"]`
+icon rule silently loses the icon on exactly the row the user is looking at.
+The `id` is on both branches. Verified live: on `/admin/collections/pages/`
+the active `#nav-pages` is a `div` and still renders its own icon.
+
+**`mask-image` + `background-color: currentColor`, NOT `background-image`.**
+A data-URI SVG used as `background-image` cannot see `currentColor`, so it
+would need a hard-coloured copy per state per icon (4×). As an alpha mask over
+`currentColor`, one definition covers normal / hover / the peach active pill /
+dark mode with no extra rules. Measured: the icon's computed
+`background-color` is `rgb(30,30,44)` on a normal light row, `rgb(255,255,255)`
+on a normal dark row, and `rgb(114,72,44)` (`--color-peach-700`) on the active
+peach pill in BOTH themes — it always equals the row's own text colour.
+
+Details that matter:
+
+- The slot lives on `.nav__link::before`, not on `.nav__link-label`.
+  `.nav__link` is `display: flex; align-items: center`, so the pseudo-element is
+  a real flex item centred by the same rule as the label, and it exists on BOTH
+  the `<a>` and the active `<div>` branch. `.nav__link-label` has **no CSS at
+  all** in 3.90.2 (0 hits in `dist/prod/styles.css`), so there is no ellipsis to
+  preserve — but the flex-item route is still the safer one because it never
+  joins the label's inline line box.
+- **Graceful degradation:** the base rule defaults
+  `--admin-nav-icon: linear-gradient(#0000, #0000)` — a fully transparent mask
+  that keeps the 18px slot empty. A future collection with no rule renders
+  iconless **without** shifting the label alignment of any other row. To add
+  one: `#nav-<slug>::before { --admin-nav-icon: url("data:image/svg+xml,…"); }`.
+- Shapes are lucide (`https://lucide.dev`, MIT) — `users`, `image`, `pencil`,
+  `folder`, `tag`, `file-text`, `arrow-right-left`, `inbox`, `layers`,
+  `settings`, `list` — copied verbatim into data URIs (24×24 viewBox,
+  `stroke-width: 2`, scaled into an 18px box ⇒ 1.5px rendered stroke).
+- Spacing: `margin-block: 4px` on `.nav__link`; the label offset moves 32px →
+  a uniform **60px** on every row (nav inline padding 20 + link padding 12 +
+  icon 18 + gap 10). Row pitch 38px; the last collection → first global gap is
+  73px, which is the pre-existing `.nav-group { margin-bottom: 10px }` break.
+- **There is no icon-rail "collapsed" mode in 3.90.2.** The only collapsed state
+  is the off-canvas mobile drawer: `NavWrapper` renders
+  `<aside class="nav" inert={!navOpen}>`, and while closed the aside is
+  `opacity: 0` + `inert` at `width: 100vw`. Nothing is ever left stranded and no
+  label is hidden while the nav is visible. Verified at a 700px viewport, closed
+  and open.
 
 ### 4. Admin favicon / Open Graph (`payload.config.ts`)
 
@@ -845,6 +906,24 @@ The review's three must-fixes all landed; re-verified against a fresh
   real Publish / Save-draft buttons track `--bg-color` correctly, so the defect
   is genuinely fixed; the pill case is unexplained and is recorded rather than
   asserted.
+
+### 5c. Re-verification after the nav icons / spacing (2026-10-01)
+
+Against a fresh `pnpm build && pnpm exec next start -p 3100`:
+
+- 11/11 rows render an icon; every `.nav__link`'s `::before` resolves
+  `mask-image` to a `url("data:image/svg+xml,…")`.
+- **Active-row proof:** on `/admin/collections/pages/` the active `#nav-pages`
+  is a `<div>` (no href) and its icon IS present, with
+  `background-color: rgb(114,72,44)` — vs `rgb(30,30,44)` on a normal light row
+  and `rgb(255,255,255)` on a normal dark row. The icon follows the row colour,
+  it is not hard-coded.
+- Alignment invariant: `labelLeft` is a single value across all 11 rows — 60px
+  on desktop (both themes, list and edit views), 56px in the 700px drawer.
+- Spacing: row height 34px, pitch 38px (was 34px), group break 73px.
+- Console: 0 errors / 0 warnings on the list and edit views.
+- Screenshots (untracked): `14-nav-icons-light.png`, `15-nav-icons-dark.png`,
+  `16-nav-active-icon.png`, `17-nav-collapsed.png`.
 
 ### 6. PRE-EXISTING BUG found while verifying (NOT caused by the theming) — FIXED
 
