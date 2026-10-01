@@ -265,6 +265,20 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
 - **Media URLs are `/api/media/file/<filename>` in embedded mode** (no
   static `/{slug}` path); robots.txt must keep `Allow: /api/media/` ahead
   of `Disallow: /api/` or Googlebot-Image is blocked.
+- **Media URLs carry a trailing slash under `trailingSlash: true` — the
+  Media `afterRead` hook strips it (fixed 2026-10-01, post-M2 image bug).**
+  `withPayload` reads `nextConfig.trailingSlash` and sets
+  `NEXT_TRAILING_SLASH`; Payload's file-URL generation then appends the slash,
+  so stored `url`/`sizes.*.url` read `/api/media/file/x.png/`. That URL
+  308-redirects to the clean form — browsers cope, **but next/image's
+  optimizer does NOT follow redirects** and fails with "The requested
+  resource isn't a valid image", breaking every image on the site.
+  `src/payload/collections/Media.ts`'s `afterRead` hook normalizes
+  `url` + `sizes.*.url` on read, so every consumer (block views, admin
+  previews, M3's og:image/JSON-LD) sees the directly-servable URL. Do NOT
+  "fix" this by disabling `trailingSlash` (spec §6.7 needs it) or with an
+  `images.loader: 'custom'` loader (with a custom loader the built-in
+  `/_next/image` endpoint stops serving in this setup — tried and reverted).
 - **Media dir ownership on a real Linux host.** The build-time `chown` of
   `/app/data/media` protects named-volume mounts (Dokploy — fine) and is
   irrelevant-but-harmless under Docker Desktop's FUSE bind (fine), but on a
