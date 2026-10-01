@@ -155,6 +155,34 @@
   "headingRewording": {
     "why": "primaryHeading is authored SEO H1 copy (spec §6.4/§6.9), not ported body text; the M2 capture lifted the WordPress page titles, which embed the brand — the brand belongs in the title suffix, not the H1. Home was the last exception (its H1 kept the \"Luật Gia Trí - \" prefix); on 2026-10-01 the client chose the shorter H1 (\"Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế\"), so the brand now lives only in the title/schema — home is no longer special-cased in pageMetadata."
   },
+  "metaDescriptions": {
+    "status": "derived-fallback-in-use",
+    "note": "M3 derives the <meta name=\"description\"> when Pages.seo.metaDescription is empty (spec §10.1 requires one on every page). Chain: seo.metaDescription -> serviceMeta.shortDescription -> first richText block body -> primaryHeading, capped at 160 chars (matches the admin SEO panel counter). No copy was invented (spec §3.2) — every value is ported content. Before this, 9 of 11 pages emitted NO description at all; the Task 14 crawl gate caught it.",
+    "needsHandWrittenCopy": [
+      {
+        "page": "lien-he",
+        "current": "Địa chỉ: 54/16 Đường số 2, quận Bình Tân, TP.HCM Email: luatsu@luatgiatri.com Phone: 0919088119",
+        "why": "derived from the page's contact richText block — reads as contact details, not a SERP description"
+      },
+      {
+        "page": "home",
+        "current": "Công Ty Tư Vấn Thành Lập Doanh Nghiệp, Kế Toán, Báo Cáo Thuế",
+        "why": "the homepage has no richText block, so it falls back to the H1 — serviceable but a heading, not a pitch"
+      }
+    ],
+    "truncatedMidThought": {
+      "why": "the 6 service pages' serviceMeta.shortDescription values exceed the 160-char cap and are cut at a word boundary, so several end mid-sentence (e.g. hoa-don-dien-tu ends \"… pháp luật kế toán và\").",
+      "pages": [
+        "thanh-lap-doanh-nghiep-tron-goi",
+        "dich-vu-ke-toan",
+        "hoa-don-dien-tu",
+        "chu-ky-so-token",
+        "dich-vu-lien-ket",
+        "ho-tro-doanh-nghiep"
+      ],
+      "howToFix": "Pages -> SEO -> metaDescription in the admin (the field exists from M3 Task 6, with a 150-160 counter and a live SERP preview). The derived value is a fallback, not a decision."
+    }
+  },
   "privacyPolicy": {
     "status": "draft-for-legal-review",
     "note": "Nội dung Chính sách bảo mật được soạn theo cấu trúc chuẩn Nghị định 13/2023/NĐ-CP nhưng CHƯA được công ty luật rà soát. Cần xác nhận trước khi công bố.",
