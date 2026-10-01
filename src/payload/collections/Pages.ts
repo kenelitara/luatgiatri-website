@@ -19,6 +19,7 @@ import { CtaBanner } from '../blocks/CtaBanner'
 import { NewsPreview } from '../blocks/NewsPreview'
 import { FormEmbed } from '../blocks/FormEmbed'
 import { writeSearchVector } from '../hooks/searchVector'
+import { revalidatePages, revalidatePagesDelete } from '../hooks/revalidate'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -36,7 +37,10 @@ export const Pages: CollectionConfig = {
     delete: isAdminOrEditor,
   },
   versions: { drafts: true },
-  hooks: { afterChange: [writeSearchVector('pages')] },
+  hooks: {
+    afterChange: [writeSearchVector('pages'), revalidatePages],
+    afterDelete: [revalidatePagesDelete],
+  },
   fields: [
     { name: 'title', type: 'text', label: 'Tiêu đề (admin)', required: true },
     {

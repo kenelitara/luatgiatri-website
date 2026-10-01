@@ -3,6 +3,7 @@ import { isAdminOrEditor } from '../access'
 import { slugify } from '@/lib/slugify'
 import { seoField } from '../fields/seo'
 import { writeSearchVector } from '../hooks/searchVector'
+import { revalidatePosts, revalidatePostsDelete } from '../hooks/revalidate'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -26,7 +27,10 @@ export const Posts: CollectionConfig = {
     delete: isAdminOrEditor,
   },
   versions: { drafts: true },
-  hooks: { afterChange: [writeSearchVector('posts')] },
+  hooks: {
+    afterChange: [writeSearchVector('posts'), revalidatePosts],
+    afterDelete: [revalidatePostsDelete],
+  },
   fields: [
     { name: 'title', type: 'text', label: 'Tiêu đề', required: true },
     {

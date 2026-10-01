@@ -1,10 +1,13 @@
 import type { GlobalConfig } from 'payload'
 import { isAdminOrEditor } from '../access'
+import { revalidateGlobals } from '../hooks/revalidate'
 
 export const Navigation: GlobalConfig = {
   slug: 'navigation',
   label: 'Menu điều hướng',
   access: { read: () => true, update: isAdminOrEditor },
+  // The header/footer menu renders on EVERY page (see hooks/revalidate.ts).
+  hooks: { afterChange: [revalidateGlobals] },
   fields: [
     {
       name: 'headerItems',

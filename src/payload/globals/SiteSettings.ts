@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { isAdmin } from '../access'
+import { revalidateGlobals } from '../hooks/revalidate'
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -8,6 +9,9 @@ export const SiteSettings: GlobalConfig = {
     read: () => true, // public: every page reads NAP for the footer/schema
     update: isAdmin,
   },
+  // Header/footer/<title>/JSON-LD of EVERY page read this global — a broad
+  // layout invalidate is the only correct purge (see hooks/revalidate.ts).
+  hooks: { afterChange: [revalidateGlobals] },
   fields: [
     {
       name: 'brandName',

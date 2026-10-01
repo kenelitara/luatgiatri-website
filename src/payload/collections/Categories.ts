@@ -3,6 +3,7 @@ import { isAdminOrEditor } from '../access'
 import { slugify } from '@/lib/slugify'
 import { seoField } from '../fields/seo'
 import { writeSearchVector } from '../hooks/searchVector'
+import { revalidateCategories, revalidateCategoriesDelete } from '../hooks/revalidate'
 
 // Categories are indexable landing pages (spec §5.2) — they carry the seo group.
 export const Categories: CollectionConfig = {
@@ -15,7 +16,10 @@ export const Categories: CollectionConfig = {
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
   },
-  hooks: { afterChange: [writeSearchVector('categories')] },
+  hooks: {
+    afterChange: [writeSearchVector('categories'), revalidateCategories],
+    afterDelete: [revalidateCategoriesDelete],
+  },
   fields: [
     { name: 'title', type: 'text', label: 'Tên chuyên mục', required: true },
     {

@@ -1492,6 +1492,125 @@ re-verified for the ten, because their baked-fallback semantics are exactly what
 those gates signed off on. Until then the duplication is the cheaper side of the
 trade.
 
+## On-demand revalidation — a CMS write purges the ISR cache (2026-10-01)
+
+Every public route is time-based ISR (`revalidate = 60`), so before this an
+editor's publish/edit took up to a minute to appear. Worse, a URL requested
+BEFORE the page existed had that 404 CACHED, and it stayed 404 for the rest of
+the window. `src/lib/revalidate-paths.ts` (pure: doc → paths) plus
+`src/payload/hooks/revalidate.ts` (the runtime glue) now call Next's
+`revalidatePath` from Payload hooks, so publish/edit/delete is immediate.
+
+### Which paths each collection purges, and why
+
+| change | paths | why |
+| --- | --- | --- |
+| Page created / updated / deleted | `/<slug>/` (**`/`** for the `home` record), `/og/page/<slug>/`, `/sitemap.xml` | the record's own URL; `home` is a ROOT ALIAS served at `/` (see the routing model above — never purge `/home/`); the OG card; the sitemap lists it |
+| Post created / updated / deleted | `/tin-tuc/<slug>/`, `/tin-tuc/`, `/og/post/<slug>/`, **every category archive it belongs to** (`/tin-tuc/chuyen-muc/<slug>/`), `/sitemap.xml` | a post shows on its own page, in the news index, in the card and in each of its archives; the index and the archives have no other change event |
+| Category changed / deleted | `/tin-tuc/chuyen-muc/<slug>/`, `/tin-tuc/`, `/sitemap.xml` | the archive itself plus the index listing |
+| SiteSettings / Navigation | `revalidatePath('/', 'layout')` | these feed the header, footer, `<title>` and JSON-LD of EVERY page; a per-page list cannot be derived from a global, so a broad invalidate is correct here |
+| Media | **nothing — deliberate gap** | bulk uploads happen during seeding (`pnpm seed:media` uploads 13 files + the logo) and there is no reliable way to map a media doc to the pages that reference it (the references are blocks/arrays of `upload` fields scattered across 15 block types). Revalidating everything on every media write would purge the whole site during a seed. A stale `og:image`/hero heals within the normal ISR window. Revisit only with a real reverse index. |
+
+A **slug change** purges BOTH URLs (old and new) — the old one is now a 404. A
+post that is re-filed purges the archives it LEFT as well as the ones it joined
+(`previousDoc.categories`), or it would linger in the old archive.
+
+Not needed, verified rather than assumed: **`/tim-kiem/` exports
+`revalidate = 0`** (and the build marks it `ƒ (Dynamic)`), so a newly published
+page appears in search results with no revalidation at all. **`/sitemap.xml` is
+`force-dynamic`** (M3 post-gate fix), so it is already correct on the next
+request and its `revalidatePath` is a no-op today — kept in the list so the
+mapping stays correct if it ever returns to ISR. The generated OG routes
+(`/og/[...slug]`) are `ƒ (Dynamic)` too, so their entries are likewise inert but
+harmless.
+
+### Hazard 1 — `afterChange` runs INSIDE the write transaction
+
+Verified in the installed source (2026-10-01), not assumed:
+`payload/dist/collections/operations/create.js` runs the collection
+`afterChange` hooks at ~line 388 and calls `commitTransaction(req)` at line 421;
+`update.js` commits at line 347 *after* its hooks; `delete.js` runs
+`afterDelete` at ~line 204 and commits at line 270; globals
+(`globals/operations/update.js`) run `afterChange` at ~407 and commit at 424.
+**There is no post-commit hook anywhere in `payload/dist`** (no `afterCommit`
+exists). Purging inside the hook would therefore run BEFORE the row is visible,
+and a request landing in that window re-renders OLD data and re-caches it.
+
+**A `setImmediate`/`process.nextTick` deferral does NOT fix it — and it silently
+breaks the purge entirely.** Next collects `revalidatePath` calls in a
+REQUEST-scoped `workStore.pendingRevalidatedTags` and flushes them in
+`executeRevalidates(workStore)`; for a route handler that is
+`route-modules/app-route/module.js`'s `resolvePendingRevalidations()`, which runs
+in the microtask continuation right after the handler resolves — i.e.
+immediately after the COMMIT. A `setImmediate` scheduled from the hook fires in
+the next check phase, *after* that flush: measured, the tags were recorded
+(`FileSystemCache: revalidateTag [...]` logged) but the cache was never
+invalidated and the page stayed stale. `process.nextTick` is worse still — it
+always runs before the COMMIT round-trip.
+
+**The fix is `after()` from `next/server`.** An `after()` task runs when the
+request closes — strictly after the response, hence strictly after the COMMIT —
+and Next wraps the whole callback queue in `withExecuteRevalidates(workStore, …)`
+(`server/after/after-context.js`, `runCallbacks()`), so revalidations performed
+there ARE flushed. This also closes the hazard completely: any stale entry a
+concurrent request manages to write in the residual window is timestamped
+BEFORE the purge's `expiredAt`, so `areTagsExpired` still marks it expired.
+
+`waitForCommit()` is kept anyway as an explicit, cheap assertion of the
+invariant: `commitTransaction(req)` is literally
+`await payload.db.commitTransaction(transactionID); delete req.transactionID`
+(`payload/dist/utilities/commitTransaction.js`, and `killTransaction` deletes it
+too), on the SAME `req` object the hook receives (`req` is destructured straight
+off `args`, and the hook is invoked with `req: args.req`), so
+`req.transactionID === undefined` is a precise post-commit signal. It normally
+returns on its first check; the 5 s ceiling only stops a pathological
+transaction from pinning a pending purge.
+
+### Hazard 2 — a static `next/*` import breaks every standalone script
+
+`pnpm seed`, `pnpm reindex`, `pnpm payload migrate`, `pnpm ga4:set/clear` and the
+Payload CLI all load `payload.config.ts` → collections → the hook module under
+`tsx`, OUTSIDE the Next runtime, where `next/cache` and `next/server` do not
+exist. A static import breaks all of them. Both imports are therefore DYNAMIC
+and guarded inside `getNextApis()`, cached per process, and `after()` itself
+throws outside a request scope (caught) — so the whole hook is a silent no-op in
+a script. Same class of fix as `search-text.ts` living apart from its hook.
+Verified after the change: `pnpm seed`, `pnpm reindex`, `pnpm payload migrate`,
+`pnpm ga4:set G-TEST123`, `pnpm ga4:clear` and `pnpm test` all still run clean
+(the DB-less `docker build` also exercises it — its builder stage runs
+`pnpm generate:types`, which loads the same config).
+
+### The `type` argument trap (this one cost an hour)
+
+`revalidatePath(path, 'page')` appends `/page` to the tag it invalidates
+(`_N_T_/tin-tuc/page`), but the tag an ISR entry actually CARRIES for its own
+URL is the bare pathname tag (`_N_T_/tin-tuc`) — read it out of
+`.next/server/app/<route>.meta`'s `x-next-cache-tags`. So passing a `type` for a
+record path invalidates nothing at all, silently. Record paths are revalidated
+with NO type; only the globals case passes one (`('/','layout')` →
+`_N_T_/layout`, the derived root-layout tag every page carries).
+
+### How this was verified (2026-10-01)
+
+Against a `pnpm build && next start -p 3100` build, driving every write through
+the running server's REST API so the hooks execute inside Next (a tsx script
+would run them outside it):
+
+- **Cached-404 case:** `GET /<new-slug>/` twice → `404` / `x-nextjs-cache: HIT`;
+  create the page published; the very next `GET` → **`200` in 87 ms**
+  (`x-nextjs-cache: MISS`, 188 ms after the 404 was cached). A MISS means the
+  entry was found-unusable, i.e. INVALIDATED — and 188 ms is ~0.3 % of the 60 s
+  window, so time-based expiry cannot explain it. With
+  `NEXT_PRIVATE_DEBUG_CACHE=1` the same moment logs
+  `FileSystemCache: revalidateTag ['_N_T_/<slug>', …]`.
+- Edit → immediate (PATCH `primaryHeading`, next GET reflects it), post →
+  index + archive + sitemap, delete → immediate 404, globals → every page
+  (`/gioi-thieu/` MISS with the new brand, and again on restore).
+- `pnpm e2e` 29/29 — the GA4 consent test needs the documented
+  `pnpm ga4:set <id>` → build → start → e2e → `clear` sequence, or the banner is
+  not in the prerendered HTML; `pnpm test` 107/107; DB-less
+  `docker build --target runner` exits 0.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
