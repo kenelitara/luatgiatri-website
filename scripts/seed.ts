@@ -16,8 +16,16 @@
  *  - fixtures carry `_status: "published"` so draft-enabled pages are visible
  *    to the published-only queries of the public routes (Task 21).
  *
+ * Foundation data (Task 24, gate finding): a wiped DB loses more than pages —
+ * the admin user, the Authors, the news category and BOTH globals are otherwise
+ * hand-created in the admin. The script now upserts them FIRST (idempotently),
+ * before the page loop, because teamGrid resolves author slugs and pages
+ * reference the category. The admin password is read from DEV_ADMIN_PASSWORD
+ * in .env (gitignored); DEV_ADMIN_EMAIL is optional (default
+ * dev-admin@luatgiatri.local). The user is only created when `users` is empty.
+ *
  * Env: Node's built-in `process.loadEnvFile()` loads .env (PAYLOAD_SECRET,
- * DATABASE_URI) — no dotenv dependency.
+ * DATABASE_URI, DEV_ADMIN_*) — no dotenv dependency.
  */
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -55,6 +63,104 @@ async function main() {
   } catch {
     // no media map yet — every mediaRef resolves to null
   }
+
+  // ── Foundation data (Task 24) ─────────────────────────────────────────────
+  // Idempotent upserts; run BEFORE the pages so author-slug resolution below
+  // finds the Authors. A re-run over an already-seeded DB changes no records.
+
+  // 1. Admin user — only on a fresh DB (the users collection is empty).
+  const existingUsers = await payload.find({ collection: 'users', limit: 1 })
+  if (existingUsers.totalDocs === 0) {
+    const adminEmail = process.env.DEV_ADMIN_EMAIL || 'dev-admin@luatgiatri.local'
+    const adminPassword = process.env.DEV_ADMIN_PASSWORD
+    if (!adminPassword) {
+      throw new Error(
+        'DEV_ADMIN_PASSWORD missing from .env — cannot create the admin user (see .env.example)',
+      )
+    }
+    await payload.create({
+      collection: 'users',
+      data: {
+        email: adminEmail,
+        password: adminPassword,
+        fullName: 'Quản trị viên',
+        roles: ['admin'],
+      } as never,
+    })
+    console.log(`seeded admin user: ${adminEmail}`)
+  } else {
+    console.log(`admin user: ${existingUsers.totalDocs} present, skipped`)
+  }
+
+  // 2. Authors (spec §5.2 E-E-A-T surface) — upsert by slug.
+  for (const author of [
+    { slug: 'nguyen-minh-tri', name: 'Nguyễn Minh Trí' },
+    { slug: 'le-thanh-hoa', name: 'Lê Thanh Hoa' },
+  ]) {
+    const { docs } = await payload.find({
+      collection: 'authors',
+      where: { slug: { equals: author.slug } },
+      limit: 1,
+    })
+    if (docs.length) {
+      await payload.update({ collection: 'authors', id: docs[0].id, data: author as never })
+    } else {
+      await payload.create({ collection: 'authors', data: author as never })
+    }
+    console.log(`seeded author: ${author.slug}`)
+  }
+
+  // 3. Default news category (Posts taxonomy) — upsert by slug.
+  {
+    const slug = 'tin-cong-ty'
+    const data = { slug, title: 'Tin công ty' }
+    const { docs } = await payload.find({
+      collection: 'categories',
+      where: { slug: { equals: slug } },
+      limit: 1,
+    })
+    if (docs.length) {
+      await payload.update({ collection: 'categories', id: docs[0].id, data: data as never })
+    } else {
+      await payload.create({ collection: 'categories', data: data as never })
+    }
+    console.log(`seeded category: ${slug}`)
+  }
+
+  // 4. Navigation global — the 8 header links (Task 10).
+  await payload.updateGlobal({
+    slug: 'navigation',
+    data: {
+      headerItems: [
+        { label: 'Trang chủ', href: '/' },
+        { label: 'Giới thiệu', href: '/gioi-thieu/' },
+        { label: 'Thành lập DN', href: '/thanh-lap-doanh-nghiep-tron-goi/' },
+        { label: 'Kế toán', href: '/dich-vu-ke-toan/' },
+        { label: 'Hóa đơn', href: '/hoa-don-dien-tu/' },
+        { label: 'Chữ ký số', href: '/chu-ky-so-token/' },
+        { label: 'Tin tức', href: '/tin-tuc/' },
+        { label: 'Liên hệ', href: '/lien-he/' },
+      ],
+    },
+  })
+  console.log('seeded navigation: 8 header links')
+
+  // 5. SiteSettings global — brand + NAP (footer + schema source of truth).
+  await payload.updateGlobal({
+    slug: 'site-settings',
+    data: {
+      brandName: 'Luật Gia Trí',
+      hotline: '0919088119',
+      email: 'luatsu@luatgiatri.com',
+      address: {
+        street: '54/16 Đường số 2',
+        district: 'Bình Tân',
+        city: 'TP.HCM',
+        country: 'VN',
+      },
+    },
+  })
+  console.log('seeded site settings: brand + NAP')
 
   // Resolve author slugs once (teamGrid.membersBySlug → relationship ids)
   const authorIds = new Map<string, number>()
