@@ -27,9 +27,11 @@ export function lexicalText(body: unknown, max = 160): string {
 export function pageMetadata(page: Page, settings?: SiteSetting | null): MetadataInput {
   const isHome = page.slug === 'home'
   return {
-    // home's primaryHeading already names the brand (spec §6.9) — suffixing would double it
+    // the brand is appended by buildMetadata (spec §6.9) unless the page has an
+    // explicit metaTitle (treated as editor-complete); the includes(brand) guard
+    // still prevents any doubling. Home is NOT special-cased (2026-10-01).
     title: page.seo?.metaTitle || page.primaryHeading || page.title,
-    branded: !isHome && !page.seo?.metaTitle,
+    branded: !page.seo?.metaTitle,
     description: page.seo?.metaDescription || undefined,
     path: isHome ? '/' : `/${page.slug}/`,
     noindex: page.seo?.noindex ?? false,

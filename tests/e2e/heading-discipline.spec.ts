@@ -46,9 +46,14 @@ test.describe('heading discipline (spec §6.4)', () => {
     })
   }
 
-  test('home <h1> names the brand (spec §6.9)', async ({ page }) => {
+  test('home <title> names the brand (spec §6.9)', async ({ page }) => {
     await page.goto('/')
+    // the brand is auto-appended to the title (2026-10-01: the client chose a
+    // shorter H1, so home is no longer the special case that carried it)
+    const title = await page.title()
+    expect(title).toContain('Luật Gia Trí')
+    // bonus: the H1 no longer needs to repeat it — it carries the keyword copy
     const h1 = await page.locator('h1').first().textContent()
-    expect(h1).toContain('Luật Gia Trí')
+    expect(h1).not.toContain('Luật Gia Trí')
   })
 })

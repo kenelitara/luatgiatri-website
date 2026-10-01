@@ -16,7 +16,7 @@ export type MetadataInput = {
   modifiedTime?: string | null
   /** SiteSettings.brandName — single source (spec §6.1/§6.9) */
   brandName?: string | null
-  /** when false, `title` is emitted verbatim (the homepage names the brand itself, §6.9) */
+  /** when false, `title` is emitted verbatim (the brand is otherwise appended, §6.9) */
   branded?: boolean
 }
 

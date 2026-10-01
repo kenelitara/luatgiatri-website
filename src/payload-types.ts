@@ -399,7 +399,7 @@ export interface Page {
    */
   slug: string;
   /**
-   * Trang có đúng MỘT thẻ H1 lấy từ trường này. Trang chủ PHẢI chứa chuỗi "Luật Gia Trí" (spec §6.9).
+   * Trang có đúng MỘT thẻ H1 lấy từ trường này. H1 mang từ khóa chính của trang — thương hiệu "Luật Gia Trí" được tự động thêm vào tiêu đề (<title>) và schema, không cần lặp lại trong H1 (spec §6.9).
    */
   primaryHeading: string;
   layout: (
