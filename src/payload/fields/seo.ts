@@ -9,6 +9,20 @@ export const seoField: Field = {
   type: 'group',
   label: 'SEO',
   fields: [
+    {
+      // Data-less `ui` field: a vessel for the SERP preview + live character
+      // counters component (spec §6.2). Rendered once, above metaTitle.
+      name: 'panel',
+      type: 'ui',
+      admin: {
+        components: {
+          // Alias form (`@/…`) rather than a leading-slash path: payload.config.ts
+          // lives at the project root, so admin.importMap.baseDir defaults to the
+          // root, and `/components/…` would resolve outside `src/`.
+          Field: '@/components/admin/SeoPreview#SeoPanel',
+        },
+      },
+    },
     { name: 'metaTitle', type: 'text', label: 'Thẻ tiêu đề (50–60 ký tự)' },
     {
       name: 'metaDescription',

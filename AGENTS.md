@@ -166,6 +166,73 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   resolve inside `@payloadcms/ui`, and the pages create view served cleanly
   with all 13 block labels.
 
+## Verified APIs (M3)
+
+Task 6 — SEO panel custom admin component (SERP preview + live character
+counters). Checked against installed `payload@3.90.2` / `@payloadcms/ui@3.90.2`
+and the `v3.90.2` website template, 2026-10-01.
+
+- **Plan assumptions that HELD (no delta):**
+  1. The `ui` field type exists — `UIField` (`type: 'ui'`, `name: string`) in
+     `payload/dist/fields/config/types.d.ts`; it is in the `Field`/`ClientField`
+     unions and `FieldPresentationalOnly = UIField`.
+  2. `admin.components.Field` accepts the string form — `PayloadComponent =
+     false | RawPayloadComponent | string` (`payload/dist/config/types.d.ts`),
+     and `UIField.admin.components.Field?: CustomComponent` (=`PayloadComponent`).
+     `parsePayloadComponent` (`dist/bin/generateImportMap/utilities/`) splits on
+     `#` into path + export name; the string is stored in the importMap verbatim
+     (alias/package form) or joined to the importMap→baseDir relative path
+     (leading `.`/`/` form).
+  3. `useFormFields` IS exported from `@payloadcms/ui`
+     (`dist/exports/client/index.d.ts` re-exports it from
+     `dist/forms/Form/context.js`). Signature:
+     `<Value>(selector: (ctx: FormFieldsContextType) => Value) => Value` where
+     `FormFieldsContextType = [FormState, Dispatch]`. **The plan's `([fields]) =>`
+     destructuring is correct** — the callback receives the `[fields, dispatch]`
+     tuple.
+- **Delta 1 — `@payloadcms/ui` was not a direct dependency.** The scaffold
+  omitted it (the official 3.90.2 template lists it, e.g. for
+  `@/components/BeforeLogin`). Without it neither `tsc` nor the bundler can
+  resolve `@payloadcms/ui` from `src/` (`node -e "import('@payloadcms/ui')"`
+  from the project root fails; pnpm does not hoist it). Added
+  `"@payloadcms/ui": "3.90.2"` to `package.json` dependencies.
+- **Delta 2 — FormState is a FLAT dotted-path map, not nested.** `FormState =
+  { [path: string]: FieldState }` and `getFieldPaths`
+  (`payload/dist/fields/getFieldPaths.js`) builds `path = parentPath + '.' +
+  field.name`. So `fields['seo.metaTitle'].value` is right and the plan's
+  `fields.seo.metaTitle.value` reads `undefined` — the counters would sit at
+  `0/60` forever while still rendering. The component uses dotted keys
+  (`'seo.metaTitle'`, `'seo.metaDescription'`, `'primaryHeading'`).
+- **Delta 3 — component path uses the tsconfig alias form.** This project's
+  `payload.config.ts` sits at the repo ROOT, so `admin.importMap.baseDir`
+  defaults to `process.cwd()` (the root) — a leading-slash path would resolve to
+  `<root>/components/...`, not `src/components/...`. The official template sets
+  `importMap.baseDir: path.resolve(dirname)` and its config lives in `src/`, so
+  its `/components/…` works there; here the baseDir-independent alias form
+  `@/components/admin/SeoPreview#SeoPanel` is used (it matches the template's
+  own `@/components/BeforeLogin` convention).
+- **Delta 4 — Tailwind is NOT in the admin bundle.** `src/app/(payload)/layout.tsx`
+  imports only `@payloadcms/next/css` + `custom.scss`; `globals.css` (Tailwind)
+  is imported by the `(frontend)` layout alone. The plan's counter colours used
+  Tailwind classes (`text-amber-600` …), which would be inert in the admin; the
+  component uses inline hex styles instead (same as the SERP card).
+- **Generated entry** (in `src/app/(payload)/admin/importMap.js`):
+  `import { SeoPanel as SeoPanel_<hash> } from '@/components/admin/SeoPreview'`
+  and `"@/components/admin/SeoPreview#SeoPanel": SeoPanel_<hash>`. The running
+  dev server wrote it on its recompile of the `seo.ts` edit before
+  `pnpm generate:importmap` ran (which then reported "No new imports found").
+- **Admin render verification — the M2 "grep the served HTML" method is NOT
+  sufficient for client-rendered field components.** The served admin HTML
+  contains `SeoPanel` only as an RSC client reference
+  (`I[<moduleId>,[chunks…],"SeoPanel"]`) — the document edit form renders
+  client-side, so the counter strings are absent from the SSR HTML. Verified
+  instead with headless chromium (Playwright) against a `next start -p 3100`
+  build: the panel renders with live values — the SERP title falls back to
+  `primaryHeading` when metaTitle is empty, and typing a 37-char metaTitle flips
+  the counter to `37/60` and the SERP title to the typed text, with zero console
+  errors. Pages has `versions: { drafts: true }` but NO autosave, so the browser
+  test persisted nothing (page 9's `metaTitle` stayed `null`).
+
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 
 - Payload is **embedded**: no separate backend, no REST from the browser. Public
