@@ -44,11 +44,15 @@ describe('jsonld builders (spec §6.3)', () => {
   })
 
   it('webSite carries SearchAction pointing at /tim-kiem/', () => {
-    const s = buildWebSiteSchema('https://luatgiatri.com')
+    const s = buildWebSiteSchema('https://luatgiatri.com', 'Luật Gia Trí')
+    expect(s.name).toBe('Luật Gia Trí')
     expect(s.potentialAction).toMatchObject({
       '@type': 'SearchAction',
       target: { urlTemplate: 'https://luatgiatri.com/tim-kiem/?q={search_term_string}' },
     })
+    // the brand comes from the caller, never a literal (spec §6.1)
+    const custom = buildWebSiteSchema('https://luatgiatri.com', 'Công ty ABC')
+    expect(custom.name).toBe('Công ty ABC')
   })
 
   it('breadcrumb maps items to ListItems with absolute URLs', () => {

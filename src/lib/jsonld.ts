@@ -65,12 +65,12 @@ export function buildLegalServiceSchema(s: SettingsLike, base: string) {
   }
 }
 
-export function buildWebSiteSchema(base: string) {
+export function buildWebSiteSchema(base: string, name: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     url: base,
-    name: 'Luật Gia Trí',
+    name,
     inLanguage: 'vi-VN',
     potentialAction: {
       '@type': 'SearchAction',
