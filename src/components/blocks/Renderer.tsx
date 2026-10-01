@@ -1,14 +1,18 @@
 import { Fragment } from 'react'
-import { RichText } from '@payloadcms/richtext-lexical/react'
 
 import { HeroCarousel } from '@/components/HeroCarousel'
 import { CtaBannerView } from './views/CtaBannerView'
+import { CustomerLogoStripView } from './views/CustomerLogoStripView'
+import { FaqView } from './views/FaqView'
 import { FeatureGridView } from './views/FeatureGridView'
-import { Heading } from './Heading'
 import { HeroView } from './views/HeroView'
 import { NewsPreviewView } from './views/NewsPreviewView'
+import { PricingTableView } from './views/PricingTableView'
+import { ProcessStepsView } from './views/ProcessStepsView'
 import { RichTextView } from './views/RichTextView'
 import { ServicePairView } from './views/ServicePairView'
+import { TeamGridView } from './views/TeamGridView'
+import { TestimonialsView } from './views/TestimonialsView'
 import type { Page } from '@/payload-types'
 
 type Block = NonNullable<Page['layout']>[number]
@@ -55,25 +59,21 @@ function renderBlock(block: Block): React.ReactNode {
       ) : null
     }
     case 'faq':
-      // Kept inline until Task 19 extracts FaqView — the Renderer heading
-      // tests assert this markup renders (regression guard).
-      return (
-        <section>
-          <Heading>{block.heading}</Heading>
-          {block.items?.map((item, j) => (
-            <details key={j}>
-              <summary className="font-semibold">{item.question}</summary>
-              <div className="prose">
-                <RichText data={item.answer} />
-              </div>
-            </details>
-          ))}
-        </section>
-      )
+      return <FaqView block={block} />
+    case 'pricingTable':
+      return <PricingTableView block={block} />
+    case 'testimonials':
+      return <TestimonialsView block={block} />
+    case 'customerLogoStrip':
+      return <CustomerLogoStripView block={block} />
+    case 'teamGrid':
+      return <TeamGridView block={block} />
+    case 'processSteps':
+      return <ProcessStepsView block={block} />
     default:
-      // Remaining blocks get full components in Task 19. Until then
-      // render nothing rather than wrong markup — never emit untested
-      // structure for content blocks.
+      // All 13 block types have views; this guards against future blocks
+      // shipping untested markup — never emit structure for a block type
+      // with no view.
       return null
   }
 }
