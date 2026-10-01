@@ -48,7 +48,7 @@ export const Pages: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description:
-          'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7).',
+          'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem.',
       },
       // A page must never claim a root segment owned by another route (admin,
       // api, og, tin-tuc, tim-kiem, …). The dynamic `(frontend)/[slug]` route
