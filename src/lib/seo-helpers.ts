@@ -2,15 +2,25 @@ import type { Page, Post, SiteSetting } from '@/payload-types'
 import type { MetadataInput } from './metadata'
 import { mediaUrl } from './media'
 
-/** Extract the plain-text excerpt of a Lexical body for meta descriptions (first ~160 chars). */
+/**
+ * Extract the plain-text excerpt of a Lexical body for meta descriptions
+ * (first `max` chars).
+ *
+ * Payload stores a richText field as the ENVELOPE `{ root: { type: 'root',
+ * children: [...] } }` — the envelope itself has neither `.text` nor
+ * `.children`, so the walk must start at `body.root`. A bare root node
+ * (`{ type: 'root', children: [...] }`) is also accepted (callers that pass
+ * `field.root` directly). Empty/malformed input yields `''`, never a throw.
+ */
 export function lexicalText(body: unknown, max = 160): string {
+  const root = (body as { root?: unknown } | null | undefined)?.root ?? body
   const out: string[] = []
   const walk = (node: any): void => {
     if (!node || typeof node !== 'object') return
     if (typeof node.text === 'string') out.push(node.text)
     if (Array.isArray(node.children)) node.children.forEach(walk)
   }
-  walk(body)
+  walk(root)
   return out.join(' ').replace(/\s+/g, ' ').trim().slice(0, max)
 }
 
