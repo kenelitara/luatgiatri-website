@@ -14,8 +14,9 @@ const sans = Be_Vietnam_Pro({
 })
 
 export const metadata: Metadata = {
+  // brand composition lives solely in buildMetadata (spec §6.1) — no title
+  // template here, or a child segment's string title would double the brand.
   metadataBase: new URL(getBaseUrl()),
-  title: { default: 'Luật Gia Trí', template: '%s | Luật Gia Trí' },
   robots: isStaging() ? { index: false, follow: false } : { index: true, follow: true },
 }
 

@@ -1,10 +1,24 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Heading } from '@/components/blocks/Heading'
 import { formatViDate } from '@/lib/date'
 import { getPayloadClient } from '@/lib/getPayload'
+import { getSiteSettings } from '@/lib/site'
+import { buildMetadata } from '@/lib/metadata'
+import { staticMetadata } from '@/lib/seo-helpers'
 import type { Post } from '@/payload-types'
 
 export const revalidate = 60
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
+  return buildMetadata(
+    staticMetadata(
+      { title: 'Tin tức', description: 'Tin tức và sự kiện từ Luật Gia Trí', path: '/tin-tuc/' },
+      settings,
+    ),
+  )
+}
 
 export default async function TinTucPage() {
   let docs: Post[] = []

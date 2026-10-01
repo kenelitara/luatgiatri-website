@@ -44,7 +44,7 @@ function absoluteOrNull(url?: string | null): string | null {
  * blanket noindex unrepeatable.
  */
 export function buildMetadata(input: MetadataInput): Metadata {
-  const brand = input.brandName ?? DEFAULT_BRAND
+  const brand = input.brandName || DEFAULT_BRAND
   const staging = isStaging()
   const robots = staging
     ? { index: false, follow: false }

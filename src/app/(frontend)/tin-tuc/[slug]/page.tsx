@@ -1,29 +1,30 @@
 import { RichText } from '@payloadcms/richtext-lexical/react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { formatViDate } from '@/lib/date'
-import { getPayloadClient } from '@/lib/getPayload'
-import type { Post } from '@/payload-types'
+import { getPost } from '@/lib/getPage'
+import { getSiteSettings } from '@/lib/site'
+import { buildMetadata } from '@/lib/metadata'
+import { postMetadata } from '@/lib/seo-helpers'
 
 export const revalidate = 60
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const [post, settings] = await Promise.all([getPost(slug), getSiteSettings()])
+  if (!post) return buildMetadata({ title: 'Tin tức', path: '/tin-tuc/' })
+  return buildMetadata(postMetadata(post, settings))
+}
+
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  let post: Post | null = null
-  try {
-    const payload = await getPayloadClient()
-    const { docs } = await payload.find({
-      collection: 'posts',
-      where: { slug: { equals: slug }, _status: { equals: 'published' } },
-      draft: false,
-      depth: 2,
-      limit: 1,
-    })
-    post = docs[0] ?? null
-  } catch {
-    // DB-at-build convention: bake the notFound fallback; ISR heals at runtime
-  }
+  const post = await getPost(slug)
   if (!post) notFound()
 
   const author = typeof post.author === 'object' ? post.author : null
