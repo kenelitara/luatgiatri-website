@@ -12,7 +12,8 @@ export const Media: CollectionConfig = {
     delete: isAdminOrEditor,
   },
   // Note: Payload 3.90.2 has no per-collection `staticURL` option (Payload 2
-  // API); static files are served at `/{slug}` → `/media` automatically.
+  // API); uploads serve at `/api/media/file/<filename>`
+  // (routes.api + `/{slug}/file/…` — verified by curl in Task 11).
   upload: {
     staticDir: 'data/media',
     mimeTypes: ['image/*'],

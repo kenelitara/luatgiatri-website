@@ -2,6 +2,7 @@ import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vi } from '@payloadcms/translations/languages/vi'
+import sharp from 'sharp'
 import { Users } from './src/payload/collections/Users'
 import { Media } from './src/payload/collections/Media'
 import { SiteSettings } from './src/payload/globals/SiteSettings'
@@ -20,6 +21,7 @@ export default buildConfig({
   collections: [Users, Media],
   globals: [SiteSettings, Navigation],
   editor: lexicalEditor(),
+  sharp,
   secret: secret ?? 'dev-secret-do-not-use-in-prod',
   typescript: { outputFile: 'src/payload-types.ts' },
   db: postgresAdapter({

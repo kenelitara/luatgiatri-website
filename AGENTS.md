@@ -95,16 +95,22 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   top-level `upload` is only `FetchAPIFileUploadOptions` (express-fileupload
   options). `staticDir` belongs on the upload-enabled collection;
   `staticURL` does NOT exist in 3.90.2 at all (Payload 2 API — no such key
-  in `UploadConfig`, verified against installed types). Static files are
-  served at `/{slug}` automatically, so `slug: 'media'` gives `/media`.
+  in `UploadConfig`, verified against installed types). Uploads are also
+  NOT served at `/{slug}` — Task 11 curl-verified `/media/<filename>`
+  returns 404. Payload 3.90.2 builds URLs as
+  `config.routes.api + '/{slug}/file/{filename}'` (see
+  `generateFilePathOrURL` in `payload/dist/uploads/`), so `slug: 'media'`
+  serves at `/api/media/file/<filename>`; the `url`/`sizes.*.url` fields
+  on media docs use exactly that path.
   The Media collection (Task 10, pulled forward from Task 11 so
   `SiteSettings.defaultOgImage` could point at `relationTo: 'media'` without
   a config-load failure; option (a) of the plan's ordering note) therefore
   sets only `staticDir: 'data/media'`. (`data/` is gitignored wholesale
   already, so `data/media/` needs no extra entry.)
 - **Media upload + sharp** — 3.90.2 warns at config load that image resizing
-  needs `sharp` passed into the config; not yet a dependency. Whoever wires
-  real image uploads (Task 11 verification) must install it or resizing
+  needs `sharp` passed into the config. sharp has been in `package.json`
+  since M1; the gap was that it was never passed into `buildConfig` (fixed
+  in M2: `sharp,` in `payload.config.ts`). Without the wiring, resizing
   silently no-ops.
 - **`payload.config.ts` i18n** — plan used `fallbackLanguage: true`; the TS
   type requires a language string (`fallbackLanguage: 'vi'`). Payload's
