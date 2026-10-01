@@ -1,6 +1,12 @@
-import { NextResponse } from "next/server";
+import { getDbPool } from '@/lib/db'
 
-// Minimal readiness stub — Task 3 turns this into a real Postgres check.
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
-  return NextResponse.json({ status: "ok" });
+  try {
+    await getDbPool().query('SELECT 1')
+    return Response.json({ status: 'ok' })
+  } catch {
+    return Response.json({ status: 'error' }, { status: 503 })
+  }
 }
