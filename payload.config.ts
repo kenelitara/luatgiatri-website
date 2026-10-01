@@ -11,6 +11,7 @@ import { Tags } from './src/payload/collections/Tags'
 import { Posts } from './src/payload/collections/Posts'
 import { Redirects } from './src/payload/collections/Redirects'
 import { Leads } from './src/payload/collections/Leads'
+import { Pages } from './src/payload/collections/Pages'
 import { SiteSettings } from './src/payload/globals/SiteSettings'
 import { Navigation } from './src/payload/globals/Navigation'
 
@@ -24,7 +25,7 @@ export default buildConfig({
     user: Users.slug,
     meta: { titleSuffix: ' — Quản trị Luật Gia Trí' },
   },
-  collections: [Users, Media, Authors, Categories, Tags, Posts, Redirects, Leads],
+  collections: [Users, Media, Authors, Categories, Tags, Posts, Redirects, Leads, Pages],
   globals: [SiteSettings, Navigation],
   editor: lexicalEditor(),
   sharp,

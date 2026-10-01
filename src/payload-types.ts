@@ -75,6 +75,7 @@ export interface Config {
     posts: Post;
     redirects: Redirect;
     leads: Lead;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -90,6 +91,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -387,6 +389,235 @@ export interface Lead {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7).
+   */
+  slug: string;
+  /**
+   * Trang có đúng MỘT thẻ H1 lấy từ trường này. Trang chủ PHẢI chứa chuỗi "Luật Gia Trí" (spec §6.9).
+   */
+  primaryHeading: string;
+  layout: (
+    | {
+        image: number | Media;
+        headline: string;
+        subheadline?: string | null;
+        ctaLabel?: string | null;
+        ctaHref?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+    | {
+        slides: {
+          image: number | Media;
+          headline: string;
+          subheadline?: string | null;
+          ctaLabel?: string | null;
+          ctaHref?: string | null;
+          id?: string | null;
+        }[];
+        intervalMs?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'heroCarousel';
+      }
+    | {
+        body: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'richText';
+      }
+    | {
+        image: number | Media;
+        heading: string;
+        body: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        bullets?:
+          | {
+              item: string;
+              id?: string | null;
+            }[]
+          | null;
+        reverse?: boolean | null;
+        ctaLabel?: string | null;
+        ctaHref?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'servicePair';
+      }
+    | {
+        heading?: string | null;
+        items: {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'featureGrid';
+      }
+    | {
+        heading: string;
+        /**
+         * service-term-fee dùng cho ma trận chữ ký số (spec §5.5)
+         */
+        columns: 'service-fee' | 'service-term-fee';
+        groups?:
+          | {
+              title?: string | null;
+              rows: {
+                service: string;
+                term?: string | null;
+                fee: string;
+                id?: string | null;
+              }[];
+              id?: string | null;
+            }[]
+          | null;
+        note?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'pricingTable';
+      }
+    | {
+        heading?: string | null;
+        items: {
+          question: string;
+          answer: {
+            root: {
+              type: string;
+              children: {
+                type: any;
+                version: number;
+                [k: string]: unknown;
+              }[];
+              direction: ('ltr' | 'rtl') | null;
+              format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+              indent: number;
+              version: number;
+            };
+            [k: string]: unknown;
+          };
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'faq';
+      }
+    | {
+        heading?: string | null;
+        items: {
+          quote: string;
+          name: string;
+          role?: string | null;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'testimonials';
+      }
+    | {
+        logos: {
+          image: number | Media;
+          url?: string | null;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'customerLogoStrip';
+      }
+    | {
+        heading?: string | null;
+        members: (number | Author)[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'teamGrid';
+      }
+    | {
+        heading?: string | null;
+        steps: {
+          title: string;
+          body: string;
+          id?: string | null;
+        }[];
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'processSteps';
+      }
+    | {
+        eyebrow?: string | null;
+        heading: string;
+        body?: string | null;
+        ctaLabel?: string | null;
+        ctaHref?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'ctaBanner';
+      }
+    | {
+        heading?: string | null;
+        ctaHref?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'newsPreview';
+      }
+  )[];
+  serviceMeta?: {
+    serviceName?: string | null;
+    shortDescription?: string | null;
+    fromPrice?: string | null;
+    icon?: (number | null) | Media;
+    relatedServices?: (number | Page)[] | null;
+  };
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    /**
+     * Cách DUY NHẤT để một trang mang noindex. Không bật nếu không chắc chắn (spec §6.5).
+     */
+    noindex?: boolean | null;
+    canonicalOverride?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -440,6 +671,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'leads';
         value: number | Lead;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -695,6 +930,213 @@ export interface LeadsSelect<T extends boolean = true> {
   submittedAt?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  primaryHeading?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              image?: T;
+              headline?: T;
+              subheadline?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        heroCarousel?:
+          | T
+          | {
+              slides?:
+                | T
+                | {
+                    image?: T;
+                    headline?: T;
+                    subheadline?: T;
+                    ctaLabel?: T;
+                    ctaHref?: T;
+                    id?: T;
+                  };
+              intervalMs?: T;
+              id?: T;
+              blockName?: T;
+            };
+        richText?:
+          | T
+          | {
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicePair?:
+          | T
+          | {
+              image?: T;
+              heading?: T;
+              body?: T;
+              bullets?:
+                | T
+                | {
+                    item?: T;
+                    id?: T;
+                  };
+              reverse?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        featureGrid?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        pricingTable?:
+          | T
+          | {
+              heading?: T;
+              columns?: T;
+              groups?:
+                | T
+                | {
+                    title?: T;
+                    rows?:
+                      | T
+                      | {
+                          service?: T;
+                          term?: T;
+                          fee?: T;
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              note?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faq?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        testimonials?:
+          | T
+          | {
+              heading?: T;
+              items?:
+                | T
+                | {
+                    quote?: T;
+                    name?: T;
+                    role?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        customerLogoStrip?:
+          | T
+          | {
+              logos?:
+                | T
+                | {
+                    image?: T;
+                    url?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        teamGrid?:
+          | T
+          | {
+              heading?: T;
+              members?: T;
+              id?: T;
+              blockName?: T;
+            };
+        processSteps?:
+          | T
+          | {
+              heading?: T;
+              steps?:
+                | T
+                | {
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        ctaBanner?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+        newsPreview?:
+          | T
+          | {
+              heading?: T;
+              ctaHref?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  serviceMeta?:
+    | T
+    | {
+        serviceName?: T;
+        shortDescription?: T;
+        fromPrice?: T;
+        icon?: T;
+        relatedServices?: T;
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        noindex?: T;
+        canonicalOverride?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

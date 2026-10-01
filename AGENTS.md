@@ -149,6 +149,22 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   `@payloadcms/richtext-lexical/rsc#RscEntryLexicalField` until the
   importMap was regenerated. Run that command after adding field types with
   admin components; the auto-regeneration does not pick them up mid-dev-session.
+- **Task-14 shape verifications — all three plan forms are valid in 3.90.2,
+  no deltas needed** (checked against installed `payload/dist` types,
+  2026-10-01): (1) `filterOptions` on a relationship field accepts a plain
+  `Where` object — `FilterOptions = FilterOptionsFunc | null | Where` — so
+  `filterOptions: { slug: { in: [...] } }` typechecks; `in` is a valid
+  operator (`validOperators` in `dist/types/constants.d.ts`). (2) `minRows`
+  exists on array fields (`minRows?: number` in `dist/fields/config/types.d.ts`);
+  `minRows: 1` on HeroCarousel slides is fine. (3) `admin.condition` is
+  `(data, siblingData, { blockData, operation, path, user })`; for a TOP-LEVEL
+  group field `siblingData` is the other top-level doc fields, so
+  `siblingData?.slug` reads the parent document's slug (Pages.serviceMeta
+  condition verified show/hide by direct invocation). Also: the `blocks` and
+  `select` field types do NOT need importMap regeneration — the generated
+  importMap only holds richtext-lexical components; core field components
+  resolve inside `@payloadcms/ui`, and the pages create view served cleanly
+  with all 13 block labels.
 
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 
