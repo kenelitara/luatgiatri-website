@@ -2,37 +2,73 @@ services:
   app:
     build:
       context: .
-      target: builder
-    command: sh -c "pnpm install && pnpm dev"
-    working_dir: /app
+      # Lightweight dev stage (deps + pnpm, no production build).
+      target: dev
+      args:
+        SITE_ENV: ${SITE_ENV:-staging}
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+    # CI=true: Docker seeds the fresh node_modules volume with the deps image's
+    # node_modules; pnpm wants to purge that copy on first install and aborts
+    # the purge prompt without a TTY. CI=true confirms it non-interactively.
+    command: sh -c "CI=true pnpm install && pnpm dev"
     env_file: .env
+    environment:
+      # .env's DATABASE_URI targets 127.0.0.1:5432 for host dev (`pnpm dev`);
+      # inside the compose network the DB is reachable at db:5432.
+      # PAYLOAD_SECRET is deliberately NOT set here — it comes from env_file
+      # so an unset secret stays unset and the app crash-loops loudly.
+      DATABASE_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    volumes:
+      - ./:/app
+      - node_modules:/app/node_modules
+      - ./data/media:/app/data/media
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
       db:
         condition: service_healthy
-    networks: [internal]
+    # Docker Desktop defaults StopTimeout to 1 s; a plain `docker stop`
+    # would SIGKILL a container still serving a response.
+    stop_grace_period: 60s
+
+  # One-shot migrations: the runner image has no migrations or payload CLI
+  # (standalone output does not trace src/migrations/), so run
+  # `pnpm payload migrate` from the builder stage. Never starts with a
+  # plain `docker compose up` — invoke with:
+  #   docker compose --profile migrate up migrate
+  migrate:
+    build:
+      context: .
+      # builder has the full node_modules + payload CLI
+      target: builder
+    command: sh -c "pnpm payload migrate"
+    env_file: .env
+    environment:
+      DATABASE_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+    stop_grace_period: 60s
+    profiles: ["migrate"]
 
   db:
     image: postgres:16-alpine
-    env_file: .env
-    # Dev runs the app on the host (`pnpm dev`), so publish Postgres locally.
-    # In-container dev (`docker compose up app`) would need DATABASE_URI to
-    # point at `db:5432` instead — see AGENTS.md.
-    ports:
-      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-luatgiatri}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-luatgiatri}
     volumes:
       - ./data/db:/var/lib/postgresql/data
+    # Published on localhost only: host dev (`pnpm dev`) connects from the
+    # host; the in-container app uses the compose network instead.
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    networks: [internal]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-luatgiatri} -d ${POSTGRES_DB:-luatgiatri}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    stop_grace_period: 60s
 
-networks:
-  internal:
+volumes:
+  node_modules:

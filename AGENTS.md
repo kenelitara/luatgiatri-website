@@ -40,8 +40,10 @@ file is for things that ONLY apply here.
   you get nested-`<html>` hydration errors.
 - **Dev DB access**: dev runs the app on the host (`pnpm dev`), so
   `docker-compose.yml` publishes `127.0.0.1:5432` and `.env`'s `DATABASE_URI`
-  points at `127.0.0.1:5432`. In-container dev (`docker compose up app`) would
-  need `db:5432` instead.
+  points at `127.0.0.1:5432`. In-container dev (`docker compose up app`)
+  gets the in-network address automatically — both compose files override
+  `DATABASE_URI` in their `environment:` block to `db:5432` (see the
+  Docker-stack section below).
 - **First admin navigation in dev may throw `ERR_TOO_MANY_REDIRECTS`** while
   Turbopack compiles the admin chunk; a retry succeeds. Verified harmless.
 - **`src/app/(payload)/admin/importMap.js` is generated** by
@@ -92,8 +94,8 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   `upload: { staticURL: '/media', staticDir: 'data/media' }`; in 3.90.2 the
   top-level `upload` is only `FetchAPIFileUploadOptions` (express-fileupload
   options). `staticURL`/`staticDir` belong to each upload-enabled collection —
-  set them on the Media collection when it is created (add `data/media/` to
-  `.gitignore` then).
+  set them on the Media collection when it is created (`data/` is gitignored
+  wholesale already, so `data/media/` needs no extra entry).
 - **`payload.config.ts` i18n** — plan used `fallbackLanguage: true`; the TS
   type requires a language string (`fallbackLanguage: 'vi'`). Payload's
   sanitizer resolves unsupported fallbacks to the first supported language
@@ -109,6 +111,54 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   `src/app/(frontend)/{layout,page}.tsx`, top-level layout removed.
 
 <!-- BEGIN:nextjs-agent-rules -->
+
+## Docker stack (M1, Task 5)
+
+- **Dev must not pay for a production build.** `docker-compose.yml` builds the
+  `dev` Dockerfile stage, which is just `FROM deps` (pnpm + full
+  `node_modules`, no `pnpm build`). The source tree and `node_modules` are
+  compose volume mounts; the compose command runs `CI=true pnpm install && pnpm dev`
+  in the container (`CI=true` is required: Docker seeds a fresh named
+  `node_modules` volume with the deps image's `node_modules`, pnpm wants to
+  purge that copy on first install, and without a TTY it aborts with
+  `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`).
+  Only `docker-compose.vps.yml` builds the `runner` stage.
+- **Build-time env.** `SITE_ENV` and `NEXT_PUBLIC_SERVER_URL` are baked into
+  prerendered output (`robots.ts`, metadata) — they are Docker build args,
+  not runtime switches. A staging image therefore always serves
+  `Disallow: /`; there is no runtime override. The builder fail-fasts on an
+  empty `NEXT_PUBLIC_SERVER_URL` (`RUN test -n`) — no silent prod fallback.
+- **Secrets at build: none.** `payload.config.ts`'s `PAYLOAD_SECRET` gate
+  skips `NEXT_PHASE === 'phase-production-build'`, so `pnpm build` needs no
+  secret; `PAYLOAD_SECRET` and `DATABASE_URI` are runtime-only. Compose
+  `environment:` blocks must NEVER set `PAYLOAD_SECRET` — it comes from
+  `env_file` only, so an unset secret stays unset and the container
+  crash-loops loudly instead of running with a placeholder.
+- **In-container DB host (deviation from plan text).** `.env`'s `DATABASE_URI`
+  targets `127.0.0.1:5432` for host dev, so BOTH compose files override it in
+  `environment:` to `postgres://…@db:5432/…`. The plan's dev-compose shape
+  omitted the override, but its own Step 5 smoke test (`/api/health` →
+  `{"status":"ok"}`) requires in-container DB connectivity.
+- **Migrations (spec §11.2) — chosen mechanism: the `migrate` compose
+  service.** Next standalone output does NOT trace `src/migrations/` or the
+  payload CLI into the runner image, so the runner deliberately contains no
+  migrations. Instead both compose files define a one-shot `migrate` service
+  (build target `builder`, which has full `node_modules` + the payload CLI)
+  gated behind `profiles: ["migrate"]` so it never starts with a plain
+  `docker compose up`:
+  - dev: `docker compose --profile migrate up migrate`
+  - VPS: `docker compose -f docker-compose.vps.yml --profile migrate up migrate`
+- **M2 convention — DB-dependent routes at build time.** No route may hit the
+  DB during `next build`. Strategy (a) is the convention: DB-dependent routes
+  wrap their fetches in try/catch and render a static fallback that ISR
+  replaces on the first runtime revalidation (Task 21 implements this).
+  `force-dynamic` (loses ISR) is the fallback if (a) proves unworkable —
+  document it here if it ever happens.
+- **`data/` is gitignored wholesale** — `data/db`, `data/media`, and any
+  future upload contents; there is no committed marker inside it.
+- **`stop_grace_period: 60s` on every service** in both compose files —
+  Docker Desktop defaults StopTimeout to 1 s, and a plain `docker stop`
+  would SIGKILL a container still serving a response (workspace rule 12).
 
 # This is NOT the Next.js you know
 

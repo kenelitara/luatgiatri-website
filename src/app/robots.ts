@@ -1,3 +1,4 @@
+// Evaluated at build time: SITE_ENV is a build arg, not a runtime switch. Staging images ship Disallow: /.
 import type { MetadataRoute } from 'next'
 
 const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'https://luatgiatri.com'

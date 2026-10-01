@@ -15,10 +15,9 @@ out/
 .env.*.local
 !.env.example
 
-# Runtime data (project-private; never commit DB or upload contents)
+# Runtime data (project-private; never commit DB or media contents)
 var/
-data/db/
-data/uploads/
+data/
 *.log
 logs/
 
