@@ -3,10 +3,12 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { JsonLd } from '@/components/JsonLd'
 import { formatViDate } from '@/lib/date'
 import { getPost } from '@/lib/getPage'
 import { getSiteSettings } from '@/lib/site'
 import { buildMetadata } from '@/lib/metadata'
+import { postSchemas } from '@/lib/schema-adapters'
 import { postMetadata } from '@/lib/seo-helpers'
 
 export const revalidate = 60
@@ -32,6 +34,16 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-section">
+      <JsonLd
+        data={postSchemas({
+          title: post.title,
+          slug: post.slug ?? slug, // route param is the same slug getPost matched on
+          excerpt: post.excerpt,
+          publishedAt: post.publishedAt,
+          updatedAt: post.updatedAt,
+          author: typeof post.author === 'object' ? post.author : null,
+        })}
+      />
       <p className="text-sm text-brand-600">
         {post.publishedAt ? formatViDate(post.publishedAt) : ''}
       </p>

@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 import { Footer } from '@/components/chrome/Footer'
 import { Header } from '@/components/chrome/Header'
 import { TopBar } from '@/components/chrome/TopBar'
+import { JsonLd } from '@/components/JsonLd'
+import { sitewideSchemas } from '@/lib/schema-adapters'
+import { getSiteSettings } from '@/lib/site'
 import { getBaseUrl, isStaging } from '@/lib/site-env'
 import '../globals.css'
 
@@ -20,10 +23,12 @@ export const metadata: Metadata = {
   robots: isStaging() ? { index: false, follow: false } : { index: true, follow: true },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSiteSettings()
   return (
     <html lang="vi" className={sans.variable}>
       <body className="font-sans text-brand-950">
+        <JsonLd data={sitewideSchemas(settings)} />
         <TopBar />
         <Header />
         <main>{children}</main>

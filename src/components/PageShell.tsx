@@ -1,4 +1,6 @@
+import { JsonLd } from '@/components/JsonLd'
 import { Renderer } from '@/components/blocks/Renderer'
+import { pageSchemas } from '@/lib/schema-adapters'
 import type { Page } from '@/payload-types'
 
 /**
@@ -11,6 +13,7 @@ import type { Page } from '@/payload-types'
 export function PageShell({ page }: { page: Page }) {
   return (
     <article>
+      <JsonLd data={pageSchemas(page)} />
       <h1 className="mx-auto max-w-6xl px-4 pt-8 text-3xl font-bold text-brand-900">
         {page.primaryHeading}
       </h1>
