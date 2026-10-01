@@ -17,7 +17,7 @@ export async function Header() {
                   unless dangerouslyAllowSVG is enabled globally — a security
                   toggle we won't flip for one asset, and a vector logo needs no
                   resizing. */}
-              <img src={logoHref} alt={settings.brandName} className="h-12 w-auto" />
+              <img src={logoHref} alt={settings.brandName} className="h-24 w-auto" />
             </Link>
           ) : (
             <Link href="/" className="text-2xl font-bold tracking-tight text-brand-900">
