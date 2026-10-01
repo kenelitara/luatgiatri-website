@@ -5,7 +5,12 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 export type HeroSlide = {
-  image: { url?: string | null; alt: string }
+  image: {
+    url?: string | null
+    alt: string
+    width?: number | null
+    height?: number | null
+  }
   headline: string
   subheadline?: string | null
   ctaLabel?: string | null
@@ -37,6 +42,21 @@ export function HeroCarousel({
   const [playing, setPlaying] = useState(true)
   const isCarousel = slides.length > 1
 
+  // The banner's own ratio, taken from the ACTIVE slide's media dimensions.
+  // In pure-banner mode the container must match the image or `object-cover`
+  // crops the artwork (the legacy banners are 8/3 = 2.667:1, wider than the
+  // old fixed 21/9). Driving the height from real dims keeps ANY future banner
+  // ratio uncropped; `aspect-[8/3]` is only the fallback when dims are missing.
+  // All current banners share the 8/3 ratio, so swapping between slides is
+  // CLS-neutral in practice.
+  const active = slides[index]
+  const activeW = active?.image.width
+  const activeH = active?.image.height
+  const bannerRatio =
+    typeof activeW === 'number' && activeW > 0 && typeof activeH === 'number' && activeH > 0
+      ? `${activeW} / ${activeH}`
+      : undefined
+
   useEffect(() => {
     if (!isCarousel || !playing) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -46,7 +66,15 @@ export function HeroCarousel({
 
   return (
     <section
-      className="relative aspect-[21/9] min-h-[320px] w-full overflow-hidden"
+      // Overlay mode keeps the fixed cinematic crop (the image is a background
+      // under text, so cropping is the design). Pure-banner mode takes the
+      // active image's ratio so the banner shows in full, edge to edge.
+      className={
+        showOverlay
+          ? 'relative aspect-[21/9] min-h-[320px] w-full overflow-hidden'
+          : 'relative aspect-[8/3] w-full overflow-hidden'
+      }
+      style={showOverlay ? undefined : { aspectRatio: bannerRatio }}
       onMouseEnter={() => isCarousel && setPlaying(false)}
       onMouseLeave={() => isCarousel && setPlaying(true)}
       onFocus={() => isCarousel && setPlaying(false)}

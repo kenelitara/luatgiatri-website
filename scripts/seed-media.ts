@@ -7,7 +7,10 @@
  *
  * Pipeline:
  *  1. Scan seed/content/*.json (skipping _-prefixed files) for
- *     `{ "mediaRef": "<source URL>", "alt": "…" }` objects.
+ *     `{ "mediaRef": "<source URL>", "alt": "…" }` objects, plus the fixed
+ *     EXTRA_ASSETS list (seed-assets.ts) for assets no fixture references —
+ *     currently the site logo (an SVG, so Payload stores it with no
+ *     `imageSizes`: sharp cannot rasterize SVG — expected and fine).
  *  2. For every unique URL not already in seed/content/_media-map.json:
  *     download it, upload it through the Local API
  *     (`payload.create({ collection: 'media', data: { alt }, file })`)
@@ -25,6 +28,8 @@
  */
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+
+import { EXTRA_ASSETS } from './seed-assets'
 
 type MediaMap = Record<string, number | '__FAILED__'>
 
@@ -53,6 +58,11 @@ async function collectRefs(): Promise<Map<string, string>> {
   }
   for (const file of files) {
     walk(JSON.parse(await readFile(join(dir, file), 'utf8')))
+  }
+  // Fixed assets not carried by any fixture (e.g. the site logo used by the
+  // SiteSettings global) — first-wins dedupe matches the fixture walk.
+  for (const asset of EXTRA_ASSETS) {
+    if (!refs.has(asset.url)) refs.set(asset.url, asset.alt)
   }
   return refs
 }
@@ -127,7 +137,9 @@ async function main() {
   }
 
   await writeFile(mapPath, JSON.stringify(map, null, 2) + '\n', 'utf8')
-  console.log(`media: ${created} uploaded, ${reused} reused, map has ${Object.keys(map).length} entries`)
+  console.log(
+    `media: ${created} uploaded, ${reused} reused, map has ${Object.keys(map).length} entries`,
+  )
   if (failures.length) {
     console.error('FAILED downloads:')
     for (const f of failures) console.error('  ' + f)

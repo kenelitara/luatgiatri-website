@@ -30,6 +30,8 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
+import { SITE_LOGO_URL } from './seed-assets'
+
 type MediaMap = Record<string, number | '__FAILED__'>
 
 type PageFixture = {
@@ -146,6 +148,11 @@ async function main() {
   console.log('seeded navigation: 8 header links')
 
   // 5. SiteSettings global — brand + NAP (footer + schema source of truth).
+  // The header logo is uploaded by `seed:media` (its EXTRA_ASSETS entry, hence
+  // no fixture reference); wire the mapped media id in when it exists so a
+  // fresh DB reproduces the logo, and leave the field untouched otherwise.
+  const mappedLogo = mediaMap[SITE_LOGO_URL]
+  const logoId = typeof mappedLogo === 'number' ? mappedLogo : null
   await payload.updateGlobal({
     slug: 'site-settings',
     data: {
@@ -158,9 +165,10 @@ async function main() {
         city: 'TP.HCM',
         country: 'VN',
       },
+      ...(logoId ? { logo: logoId } : {}),
     },
   })
-  console.log('seeded site settings: brand + NAP')
+  console.log(`seeded site settings: brand + NAP${logoId ? ` + logo (media ${logoId})` : ''}`)
 
   // Resolve author slugs once (teamGrid.membersBySlug → relationship ids)
   const authorIds = new Map<string, number>()
@@ -181,9 +189,7 @@ async function main() {
       if (typeof obj.mediaRef === 'string') return resolveMedia(obj.mediaRef)
       if (Array.isArray(obj.membersBySlug)) {
         const ids = (obj.membersBySlug as string[]).map((slug) => authorIds.get(slug))
-        const missing = (obj.membersBySlug as string[]).filter(
-          (slug, i) => ids[i] === undefined,
-        )
+        const missing = (obj.membersBySlug as string[]).filter((slug, i) => ids[i] === undefined)
         if (missing.length) {
           throw new Error(`authors not found for slugs: ${missing.join(', ')}`)
         }

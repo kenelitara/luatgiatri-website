@@ -468,6 +468,35 @@ Task 8b — the search_vector write hook MUST run on the request transaction.
   labels are the collection/global `labels.plural`; the block labels are the
   block `labels`.
 
+## UI notes — hero ratio & site logo (2026-10-01)
+
+- **Hero/banner ratio comes from the media doc's `width`/`height`.** In
+  pure-banner mode (`heroCarousel` with `showOverlay: false`, the legacy
+  banners-as-design case) `HeroCarousel` sets the section's inline
+  `aspect-ratio` from the ACTIVE slide's media dimensions; `object-cover` on a
+  container whose ratio matches the image is an exact fill, so nothing is
+  cropped. `aspect-[8/3]` (2.667:1, the real banner ratio) is only the fallback
+  when dims are missing; all three homepage banners are 2048×768 (or
+  1024×384), so slide swaps are CLS-neutral (measured 0 at 1440 and 375). The
+  `overlay` hero (`showOverlay: true`) and the single-image `hero` block
+  (`HeroView`) keep the fixed `aspect-[21/9] min-h-[320px]` + `object-cover` —
+  there the image is a background under our own text, so cropping is by design.
+  `Renderer`'s `heroCarousel` mapping passes `width`/`height` through from the
+  Payload Media doc.
+- **The site logo is an SVG served via a plain `<img>`**, not `next/image`:
+  Next's image optimizer rejects SVG unless `dangerouslyAllowSVG` is enabled
+  globally — a security toggle we deliberately did NOT flip for one asset — and
+  a vector logo needs no resizing. `Header` links the logo to `/` with
+  `aria-label`/`alt` = `brandName` and sizes it `h-12 w-auto`, falling back to
+  the plain-text brand link when `SiteSettings.logo` is empty.
+- **The logo is part of the seed pipeline.** `scripts/seed-assets.ts` exports
+  the fixed `EXTRA_ASSETS` list (the logo source URL + alt `'Luật Gia Trí'`);
+  `scripts/seed-media.ts` merges it into the fixture-scan refs so `seed:media`
+  uploads it (as an SVG, `sharp` stores it with NO `imageSizes` — expected), and
+  `scripts/seed.ts` sets `SiteSettings.logo` from the mapped id. A fresh DB
+  therefore reproduces the header logo with no manual admin step; the firm can
+  still replace it in the admin (Thông tin website → Logo).
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

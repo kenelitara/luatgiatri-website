@@ -49,7 +49,17 @@ function renderBlock(block: Block): React.ReactNode {
       return <NewsPreviewView block={block} />
     case 'heroCarousel': {
       const slides = (block.slides ?? []).map((s) => ({
-        image: typeof s.image === 'object' && s.image !== null ? s.image : { url: '', alt: '' },
+        // Carry the media's intrinsic width/height so HeroCarousel can take the
+        // banner's own ratio (pure mode) and never crop it.
+        image:
+          typeof s.image === 'object' && s.image !== null
+            ? {
+                url: s.image.url,
+                alt: s.image.alt,
+                width: s.image.width,
+                height: s.image.height,
+              }
+            : { url: '', alt: '' },
         headline: s.headline,
         subheadline: s.subheadline,
         ctaLabel: s.ctaLabel,
