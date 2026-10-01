@@ -182,6 +182,16 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   `docker compose up`:
   - dev: `docker compose --profile migrate up migrate`
   - VPS: `docker compose -f docker-compose.vps.yml --profile migrate up migrate`
+- **`migrate` service vs dev-pushed DBs (M1 gate finding, 2026-10-01).**
+  `pnpm payload migrate` prompts interactively whenever
+  `payload_migrations` contains a dev-mode record (`name: "dev"`,
+  `batch: -1`, written by every `pnpm dev` schema push):
+  "It looks like you've run Payload in dev mode … data loss will occur.
+  Would you like to proceed? (y/N)". The one-shot compose service has no
+  TTY, so the prompt hangs forever (gate run: hung >10 min until
+  SIGINT, then exit 1). The service is only safe against a DB that has
+  never been dev-pushed (prod). Never point it at a dev-drifted DB in
+  automation; to exercise it locally, use a scratch database.
 - **M2 convention — DB-dependent routes at build time.** No route may hit the
   DB during `next build`. Strategy (a) is the convention: DB-dependent routes
   wrap their fetches in try/catch and render a static fallback that ISR
