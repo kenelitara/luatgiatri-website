@@ -79,4 +79,61 @@ describe('buildMetadata (spec §6.1)', () => {
     const m = buildMetadata({ title: 'X', path: '/x/', canonicalOverride: 'https://example.com/y' })
     expect(m.alternates?.canonical).toBe('https://example.com/y')
   })
+
+  it('threads brandName from SiteSettings into the title suffix and siteName', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    const m = buildMetadata({ title: 'X', path: '/x/', brandName: 'Công ty ABC' })
+    expect(m.title).toBe('X | Công ty ABC')
+    expect(m.openGraph?.siteName).toBe('Công ty ABC')
+  })
+
+  it('strips query/hash and forces a leading slash on the canonical', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    expect(buildMetadata({ title: 'X', path: '/tim-kiem/?q=ke+toan' }).alternates?.canonical).toBe(
+      'https://luatgiatri.com/tim-kiem/',
+    )
+    expect(buildMetadata({ title: 'X', path: 'gioi-thieu' }).alternates?.canonical).toBe(
+      'https://luatgiatri.com/gioi-thieu/',
+    )
+    expect(buildMetadata({ title: 'X', path: '/gioi-thieu#top' }).alternates?.canonical).toBe(
+      'https://luatgiatri.com/gioi-thieu/',
+    )
+    expect(buildMetadata({ title: 'X', path: '/' }).alternates?.canonical).toBe(
+      'https://luatgiatri.com/',
+    )
+  })
+
+  it('emits the title verbatim when branded is false, suffixed by default', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    const unbranded = buildMetadata({ title: 'Luật Gia Trí', path: '/', branded: false })
+    expect(unbranded.title).toBe('Luật Gia Trí')
+    const branded = buildMetadata({ title: 'Luật Gia Trí', path: '/' })
+    expect(branded.title).toBe('Luật Gia Trí | Luật Gia Trí')
+  })
+
+  it('passes protocol-relative image URLs through with https:', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    const m = buildMetadata({ title: 'X', path: '/x/', ogImage: '//cdn.example.com/x.png' })
+    expect(m.openGraph?.images).toEqual(['https://cdn.example.com/x.png'])
+  })
+
+  it('uses a summary twitter card without an image, large image with one', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    expect(buildMetadata({ title: 'X', path: '/x/' }).twitter).toMatchObject({ card: 'summary' })
+    const withImage = buildMetadata({ title: 'X', path: '/x/', ogImage: '/api/media/file/og.png' })
+    expect(withImage.twitter).toMatchObject({ card: 'summary_large_image' })
+  })
+
+  it('treats an empty-string description as absent', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    const m = buildMetadata({ title: 'X', path: '/x/', description: '' })
+    expect(m.description).toBeUndefined()
+    expect(m.openGraph?.description).toBeUndefined()
+  })
 })

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getBaseUrl, isStaging } from '@/lib/site-env'
 
 export type MetadataInput = {
+  /** never includes the brand — it is appended here unless `branded: false` */
   title: string
   description?: string | null
   path: string
@@ -13,20 +14,27 @@ export type MetadataInput = {
   defaultOgImage?: string | null
   publishedTime?: string | null
   modifiedTime?: string | null
+  /** SiteSettings.brandName — single source (spec §6.1/§6.9) */
+  brandName?: string | null
+  /** when false, `title` is emitted verbatim (the homepage names the brand itself, §6.9) */
+  branded?: boolean
 }
 
-const BRAND = 'Luật Gia Trí'
+const DEFAULT_BRAND = 'Luật Gia Trí'
 
-/** absolute URL for a same-origin path, normalised to the trailing-slash policy */
+/** absolute URL for a same-origin path — pathname only (query/hash are stripped),
+ *  normalised to the trailing-slash policy (spec §6.7) */
 function absolute(path: string): string {
   const base = getBaseUrl().replace(/\/+$/, '')
-  const clean = path === '/' ? '/' : `${path.replace(/\/+$/, '')}/`
+  const pathname = path.split(/[?#]/)[0] || '/'
+  const withLeading = pathname.startsWith('/') ? pathname : `/${pathname}`
+  const clean = withLeading === '/' ? '/' : `${withLeading.replace(/\/+$/, '')}/`
   return `${base}${clean}`
 }
 
 function absoluteOrNull(url?: string | null): string | null {
   if (!url) return null
-  if (/^https?:\/\//.test(url)) return url
+  if (/^(https?:)?\/\//.test(url)) return url.startsWith('//') ? `https:${url}` : url
   return `${getBaseUrl().replace(/\/+$/, '')}${url.startsWith('/') ? url : `/${url}`}`
 }
 
@@ -36,6 +44,7 @@ function absoluteOrNull(url?: string | null): string | null {
  * blanket noindex unrepeatable.
  */
 export function buildMetadata(input: MetadataInput): Metadata {
+  const brand = input.brandName ?? DEFAULT_BRAND
   const staging = isStaging()
   const robots = staging
     ? { index: false, follow: false }
@@ -45,17 +54,18 @@ export function buildMetadata(input: MetadataInput): Metadata {
 
   const canonical = input.canonicalOverride ?? absolute(input.path)
   const image = absoluteOrNull(input.ogImage) ?? absoluteOrNull(input.defaultOgImage)
+  const title = input.branded === false ? input.title : `${input.title} | ${brand}`
 
   return {
-    title: `${input.title} | ${BRAND}`,
-    description: input.description ?? undefined,
+    title,
+    description: input.description || undefined,
     alternates: { canonical },
     robots,
     openGraph: {
       title: input.title,
-      description: input.description ?? undefined,
+      description: input.description || undefined,
       url: canonical,
-      siteName: BRAND,
+      siteName: brand,
       locale: 'vi_VN',
       type: input.type ?? 'website',
       ...(input.type === 'article'
@@ -67,7 +77,7 @@ export function buildMetadata(input: MetadataInput): Metadata {
       ...(image ? { images: [image] } : {}),
     },
     twitter: {
-      card: 'summary_large_image',
+      card: image ? 'summary_large_image' : 'summary',
       title: input.title,
       ...(input.description ? { description: input.description } : {}),
       ...(image ? { images: [image] } : {}),
