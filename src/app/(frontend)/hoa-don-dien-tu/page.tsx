@@ -4,8 +4,8 @@ import { getPage } from '@/lib/getPage'
 
 export const revalidate = 60
 
-export default async function HomePage() {
-  const page = await getPage('home')
+export default async function HoaDonDienTuPage() {
+  const page = await getPage('hoa-don-dien-tu')
   if (!page) notFound()
   return <PageShell page={page} />
 }
