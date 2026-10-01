@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { lexicalText } from './seo-helpers'
+import type { Page, Post } from '@/payload-types'
+import { lexicalText, pageMetadata, postMetadata } from './seo-helpers'
 
 /** the exact shape Payload stores for a richText field */
 const envelope = {
@@ -76,5 +77,37 @@ describe('lexicalText', () => {
     expect(lexicalText({})).toBe('')
     expect(lexicalText(null)).toBe('')
     expect(lexicalText({ root: { type: 'root', children: [] } })).toBe('')
+  })
+})
+
+describe('generated-OG fallback (Task 13)', () => {
+  const page = (seo: Page['seo'], slug: string | null) =>
+    ({ id: 1, title: 'Giới thiệu', primaryHeading: 'Giới thiệu', slug, seo }) as unknown as Page
+
+  it('points a page with no editor OG at /og/page/<slug>', () => {
+    expect(pageMetadata(page(undefined, 'gioi-thieu')).fallbackOgImage).toBe('/og/page/gioi-thieu')
+  })
+
+  it('points a post with no editor OG at /og/post/<slug>', () => {
+    const post = {
+      id: 1,
+      title: 'Tin',
+      primaryHeading: 'Tin',
+      slug: 'tin-moi',
+      body: { root: { children: [] } },
+    } as unknown as Post
+    expect(postMetadata(post).fallbackOgImage).toBe('/og/post/tin-moi')
+  })
+
+  it('emits no fallback when the record has no slug', () => {
+    expect(pageMetadata(page(undefined, null)).fallbackOgImage).toBeNull()
+  })
+
+  it('still records an editor-chosen OG separately (precedence lives in buildMetadata)', () => {
+    const withOg = pageMetadata(
+      page({ ogImage: { id: 9, url: '/api/media/file/x.png/' } } as Page['seo'], 'gioi-thieu'),
+    )
+    expect(withOg.ogImage).toBe('/api/media/file/x.png')
+    expect(withOg.fallbackOgImage).toBe('/og/page/gioi-thieu')
   })
 })

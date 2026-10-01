@@ -333,6 +333,67 @@ Task 12 — consent banner gating GA4.
   `${NEXT_PUBLIC_GA4_ID:-}`. Empty id ⇒ the banner renders nothing and no
   analytics script ships. Verified both ways 2026-10-01.
 
+Task 13 — dynamic OG images (`next/og`). Verified 2026-10-01 against a built
+app (`next start -p 3100`), not dev.
+
+- **Satori cannot use a `next/font/google` face — it needs raw font bytes.**
+  `ImageResponse` renders through satori, so the site's Be Vietnam Pro
+  (`src/app/(frontend)/layout.tsx`) is unreachable from the OG route. Two TTFs
+  (`public/fonts/be-vietnam-pro-{regular,bold}.ttf`, from `google/fonts`) are
+  committed and read once per process with
+  `readFileSync(path.join(process.cwd(), 'public', 'fonts', …))`. `process.cwd()`
+  (not `import.meta.url`) is the load-bearing resolver: in the standalone runner
+  the route compiles to `/.next/server/app/og/[...slug]/route.js`, so a
+  module-relative path would point inside `.next/server`. `public/` is copied
+  wholesale by `Dockerfile`'s runner stage (`COPY --from=builder /app/public
+  ./public`) and `.dockerignore` does NOT exclude it — both checked, or the
+  build would silently ship a fontless image.
+- **`ImageResponse`'s `fonts` option REPLACES `@vercel/og`'s bundled default —
+  it does not merge.** Measured in `next/dist/compiled/@vercel/og/index.node.js`:
+  `fonts: options.fonts || defaultFonts`. Two consequences: (1) when `fonts` is
+  passed, the built-in face is gone, so every element must name the family
+  (`fontFamily: 'Be Vietnam Pro'`) or satori has nothing to match; (2) an EMPTY
+  array is **truthy**, so `fonts: []` selects zero fonts and satori throws
+  `No fonts are loaded`. The route therefore omits the key entirely on a load
+  failure (`...(fonts ? { fonts } : {})`) instead of passing `[]`.
+- **Vietnamese glyphs — verified by looking at the PNG, both paths.** Next 16.3.6
+  bundles exactly one OG font, `Geist-Regular.ttf` (the stale JSDoc in
+  `@vercel/og`'s `types.d.ts` claims "Noto Sans Latin Regular" — it is wrong).
+  Parsing its `cmap` showed all 74 precomposed Vietnamese characters in the
+  U+1EA0–1EF9 block map to real glyphs (not `.notdef`), and a rendered card
+  confirmed it: `/og/page/gioi-thieu` → "Giới thiệu về Luật Gia Trí" with every
+  diacritic correct in both the Be Vietnam Pro card (true bold) and the
+  fonts-missing fallback card (Geist regular). No `fontWeight` synthesis: satori
+  renders 400 when only 400 exists, so the design's `fontWeight: 700` is a no-op
+  without the committed bold TTF.
+- **OG precedence is 3-tier, and the generated route is LAST.** The plan's
+  prose ("when neither `seo.ogImage` nor `settings.defaultOgImage` exists") and
+  its shorthand (`ogImage: mediaUrl(…) ?? '/og/page/x'`) disagree; the prose
+  wins, because putting the generated URL in `ogImage` would make
+  `SiteSettings.defaultOgImage` dead for every page and post. `MetadataInput`
+  gained `fallbackOgImage`, and `buildMetadata`'s image chain is
+  `ogImage ?? defaultOgImage ?? fallbackOgImage`. Both are NULL in the current
+  DB, so the observable result is the same today.
+- **`/og/[...slug]` shape.** One `route.tsx` serves both `/og/page/<slug>` and
+  `/og/post/<slug>` (`revalidate = 3600`, `runtime = 'nodejs'`). The build marks
+  it `ƒ (Dynamic)` — it is never executed during `next build`, so a DB-less
+  docker build cannot fail on it. Verified with `next start` (2026-10-01):
+  `/og/page/{gioi-thieu,home}` → `200 image/png`; `/og/page` (no slug),
+  `/og/page/` (trailing slash), `/og/post/khong-ton-tai` and `/og/bogus/x` all →
+  `200 image/png` brand-only cards (never a 500); `/og` bare → `404` (a
+  `[...slug]` catch-all needs at least one segment). `next/og`'s own fallback is
+  what makes the malformed paths safe.
+- **`/og` stays OUT of robots.txt on purpose.** `disallow: ['/admin', '/api/']`
+  does not cover it, and crawlable OG images are the point (social + link
+  previews). Do not "tidy" it in.
+- **DB-less build re-proved for this route** (the same technique as Task 12):
+  a full `pnpm build` with `DATABASE_URI` pointed at a closed port exited 0 and
+  the baked `.next/server/app/gioi-thieu.html` contained ZERO
+  `/og/page/gioi-thieu` occurrences — i.e. the DB really was unreachable, the
+  `getPage`/`getSiteSettings` try/catch fallbacks took over, and the build still
+  succeeded. On the DB-connected build the same file DOES bake the generated
+  `og:image`, which is what the curl check asserts.
+
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 
 - Payload is **embedded**: no separate backend, no REST from the browser. Public

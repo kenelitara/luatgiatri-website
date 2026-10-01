@@ -73,6 +73,35 @@ describe('buildMetadata (spec §6.1)', () => {
     ])
   })
 
+  it('uses the generated /og image only when no editor image exists (Task 13)', () => {
+    process.env.SITE_ENV = 'production'
+    process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'
+    const m = buildMetadata({
+      title: 'X',
+      path: '/x/',
+      fallbackOgImage: '/og/page/x',
+    })
+    expect(m.openGraph?.images).toEqual(['https://luatgiatri.com/og/page/x'])
+    // the site-wide default outranks the generated card…
+    const withDefault = buildMetadata({
+      title: 'X',
+      path: '/x/',
+      defaultOgImage: '/api/media/file/og.png',
+      fallbackOgImage: '/og/page/x',
+    })
+    expect(withDefault.openGraph?.images).toEqual(['https://luatgiatri.com/api/media/file/og.png'])
+    // …and so does the record's own image
+    const withRecord = buildMetadata({
+      title: 'X',
+      path: '/x/',
+      ogImage: '/api/media/file/custom.png',
+      fallbackOgImage: '/og/page/x',
+    })
+    expect(withRecord.openGraph?.images).toEqual([
+      'https://luatgiatri.com/api/media/file/custom.png',
+    ])
+  })
+
   it('accepts a canonical override verbatim', () => {
     process.env.SITE_ENV = 'production'
     process.env.NEXT_PUBLIC_SERVER_URL = 'https://luatgiatri.com'

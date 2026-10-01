@@ -12,6 +12,10 @@ export type MetadataInput = {
   canonicalOverride?: string | null
   ogImage?: string | null
   defaultOgImage?: string | null
+  /** last-resort per-record image: the `/og/...` route (Task 13), which renders
+   *  the record's title. Sits BELOW `ogImage` and `defaultOgImage` so an editor's
+   *  explicit choice (record or site-wide) always wins. */
+  fallbackOgImage?: string | null
   publishedTime?: string | null
   modifiedTime?: string | null
   /** SiteSettings.brandName — single source (spec §6.1/§6.9) */
@@ -20,7 +24,10 @@ export type MetadataInput = {
   branded?: boolean
 }
 
-const DEFAULT_BRAND = 'Luật Gia Trí'
+/** Fallback for `SiteSettings.brandName` — the SINGLE brand source is the
+ *  global (spec §6.1/§6.9). Exported so non-metadata surfaces (the `/og` route)
+ *  import the constant instead of re-typing the string. */
+export const DEFAULT_BRAND = 'Luật Gia Trí'
 
 /** absolute URL for a same-origin path — pathname only (query/hash are stripped),
  *  normalised to the trailing-slash policy (spec §6.7) */
@@ -53,7 +60,12 @@ export function buildMetadata(input: MetadataInput): Metadata {
       : { index: true, follow: true }
 
   const canonical = input.canonicalOverride ?? absolute(input.path)
-  const image = absoluteOrNull(input.ogImage) ?? absoluteOrNull(input.defaultOgImage)
+  // Precedence: record override → site-wide default → the record's generated
+  // `/og/...` image (Task 13). A missing DB/media value falls through silently.
+  const image =
+    absoluteOrNull(input.ogImage) ??
+    absoluteOrNull(input.defaultOgImage) ??
+    absoluteOrNull(input.fallbackOgImage)
   // The brand must never appear twice: skip the suffix when the title already
   // names it (an explicit `branded: false` is then redundant but harmless).
   const title =
