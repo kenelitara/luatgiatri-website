@@ -6,6 +6,7 @@ services:
       args:
         SITE_ENV: ${SITE_ENV:-staging}
         NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:-https://luatgiatri.com}
+        NEXT_PUBLIC_GA4_ID: ${NEXT_PUBLIC_GA4_ID:-}
     env_file: .env
     environment:
       # PAYLOAD_SECRET is deliberately NOT set here — it comes from env_file

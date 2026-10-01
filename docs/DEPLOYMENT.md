@@ -44,6 +44,7 @@ never serve production indexing, and vice versa):
 | --- | --- | --- |
 | `SITE_ENV` | `staging` (forces `Disallow: /` + `noindex`) | `production` |
 | `NEXT_PUBLIC_SERVER_URL` | the staging URL | `https://luatgiatri.com` |
+| `NEXT_PUBLIC_GA4_ID` | optional — empty disables GA4 *and* the consent banner (M3) | the measurement id |
 
 Runtime (never baked; `env_file`/Dokploy env only):
 
@@ -53,7 +54,6 @@ Runtime (never baked; `env_file`/Dokploy env only):
 | `PAYLOAD_SECRET` | **Required in production** — the config fail-fasts the container without it (deliberate: no placeholder secret, forgeable sessions). Must NOT be set in any compose `environment:` block |
 | `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | database container + the `DATABASE_URI` interpolation |
 | `IP_HASH_SALT` | lead-capture IP hashing (M3) |
-| `NEXT_PUBLIC_GA4_ID` | optional analytics (M3) |
 | `DEV_ADMIN_EMAIL` / `DEV_ADMIN_PASSWORD` | **first-deploy seed only** — creates the admin user when `users` is empty. Remove from the production env after the first seed (the admin can then change the password in the UI) |
 
 `.env.example` lists every variable; the real `.env` is gitignored and never
@@ -67,8 +67,8 @@ committed.
 2. **App**: Dokploy → Create Application → Git source
    `github.com/kenelitara/luatgiatri-website`, branch `main`, build type
    **Dockerfile**.
-   - **Build args**: `SITE_ENV=production`, `NEXT_PUBLIC_SERVER_URL=https://luatgiatri.com`
-   - **Env**: the runtime table above (`DATABASE_URI`, `PAYLOAD_SECRET`, `IP_HASH_SALT`, optional `NEXT_PUBLIC_GA4_ID`)
+   - **Build args**: `SITE_ENV=production`, `NEXT_PUBLIC_SERVER_URL=https://luatgiatri.com`, `NEXT_PUBLIC_GA4_ID=<measurement id>` (omit/empty to ship without analytics — the consent banner renders nothing)
+   - **Env**: the runtime table above (`DATABASE_URI`, `PAYLOAD_SECRET`, `IP_HASH_SALT`)
    - **Port**: 3000. **Healthcheck**: path `/api/health`
    - **Volume**: mount `data/media` → `/app/data/media` (survives redeploys and
      is covered by Dokploy's volume backups)

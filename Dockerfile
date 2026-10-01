@@ -27,6 +27,12 @@ ARG SITE_ENV=production
 ENV SITE_ENV=$SITE_ENV
 ARG NEXT_PUBLIC_SERVER_URL=https://luatgiatri.com
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+# GA4 is inlined by `pnpm build` too (the layout reads it and Next replaces the
+# reference), so it is the same class of value — a build arg. Empty is a
+# legitimate state: with no id the consent banner renders nothing and no
+# analytics script ships. Deliberately no `RUN test -n` fail-fast here.
+ARG NEXT_PUBLIC_GA4_ID=
+ENV NEXT_PUBLIC_GA4_ID=$NEXT_PUBLIC_GA4_ID
 # No silent prod fallback: an unset/empty public URL must fail the build loudly.
 RUN test -n "$NEXT_PUBLIC_SERVER_URL"
 # No secrets at build: payload.config.ts's PAYLOAD_SECRET gate skips

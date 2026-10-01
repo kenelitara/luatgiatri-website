@@ -316,6 +316,23 @@ Verified 2026-10-01 against the built app (`next start -p 3100`), not dev.
 characters`) into the action's response; the field now carries
   `'Yêu cầu không hợp lệ'`. Bots get a rejection, never a hint.
 
+Task 12 — consent banner gating GA4.
+
+- **`NEXT_PUBLIC_GA4_ID` is inlined at `pnpm build` time — it is a Docker
+  build arg, NOT a runtime knob (same class as `SITE_ENV`).** The layout reads
+  `process.env.NEXT_PUBLIC_GA4_ID` and Next replaces the reference with the
+  build-time literal, so the compiled chunk bakes `ga4Id:"G-TEST123"` (or
+  `ga4Id:void 0` when unset). Consequence: the plan's original Step 3
+  verification command — `NEXT_PUBLIC_GA4_ID=G-TEST123 next start -p 3100`
+  against a default build — proves nothing (the banner grep returns 0); the id
+  must be present at build time. Consequence for deploy: because `.dockerignore`
+  excludes `.env`, an image built without the build arg is permanently
+  GA4-less even if `.env` carries an id, so `Dockerfile` declares
+  `ARG NEXT_PUBLIC_GA4_ID=` (+ `ENV`, empty default, no `test -n` fail-fast —
+  an absent id is legitimate) and `docker-compose.vps.yml` passes
+  `${NEXT_PUBLIC_GA4_ID:-}`. Empty id ⇒ the banner renders nothing and no
+  analytics script ships. Verified both ways 2026-10-01.
+
 ## Stack rules — Payload 3.90.2 + Next 16.3.6
 
 - Payload is **embedded**: no separate backend, no REST from the browser. Public
