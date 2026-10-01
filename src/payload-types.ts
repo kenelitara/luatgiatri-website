@@ -1261,6 +1261,10 @@ export interface SiteSetting {
    * Ví dụ: Mo-Fr 08:00-17:30
    */
   openingHours?: string | null;
+  /**
+   * Ví dụ: 500.000đ - 20.000.000đ (schema LegalService.priceRange)
+   */
+  priceRange?: string | null;
   socials?: {
     facebook?: string | null;
     zalo?: string | null;
@@ -1268,6 +1272,10 @@ export interface SiteSetting {
     googleBusinessProfile?: string | null;
   };
   defaultOgImage?: (number | null) | Media;
+  /**
+   * Logo cho schema Organization / knowledge panel (JSON-LD logo & image). Để trống nếu chưa có.
+   */
+  logo?: (number | null) | Media;
   /**
    * Để trống nếu chưa dùng
    */
@@ -1317,6 +1325,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         country?: T;
       };
   openingHours?: T;
+  priceRange?: T;
   socials?:
     | T
     | {
@@ -1326,6 +1335,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         googleBusinessProfile?: T;
       };
   defaultOgImage?: T;
+  logo?: T;
   ga4Id?: T;
   gscVerificationToken?: T;
   updatedAt?: T;

@@ -55,6 +55,12 @@ export const SiteSettings: GlobalConfig = {
       admin: { description: 'Ví dụ: Mo-Fr 08:00-17:30' },
     },
     {
+      name: 'priceRange',
+      type: 'text',
+      label: 'Khoảng giá',
+      admin: { description: 'Ví dụ: 500.000đ - 20.000.000đ (schema LegalService.priceRange)' },
+    },
+    {
       name: 'socials',
       type: 'group',
       label: 'Mạng xã hội (sameAs cho schema)',
@@ -66,6 +72,16 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
     { name: 'defaultOgImage', type: 'upload', label: 'Ảnh OG mặc định', relationTo: 'media' },
+    {
+      name: 'logo',
+      type: 'upload',
+      label: 'Logo',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Logo cho schema Organization / knowledge panel (JSON-LD logo & image). Để trống nếu chưa có.',
+      },
+    },
     {
       name: 'ga4Id',
       type: 'text',

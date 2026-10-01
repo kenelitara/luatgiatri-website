@@ -155,5 +155,12 @@
   "headingRewording": {
     "why": "primaryHeading is authored SEO H1 copy (spec §6.4/§6.9), not ported body text; the M2 capture lifted the WordPress page titles, which embed the brand — the brand belongs in the title suffix, not the H1"
   },
-  "deferred": []
+  "deferred": [
+    {
+      "page": "global",
+      "field": "siteSettings.logo",
+      "value": "(firm task)",
+      "why": "logo cho schema Organization/knowledge panel — no logo asset exists yet; the firm uploads it into SiteSettings.logo (JSON-LD logo/image are omitted until then), spec §6.3/§6.9"
+    }
+  ]
 }
