@@ -109,6 +109,42 @@ installed `node_modules`, 2026-10-01. Template wins over plan.
   root layout caused nested-`<html>` hydration errors. Restructured to the
   template's multiple-root-layouts layout: site moved to
   `src/app/(frontend)/{layout,page}.tsx`, top-level layout removed.
+- **`package.json` `"type": "module"`** — every Payload 3.90.2 official
+  template sets it; without it the `payload` CLI cannot load
+  `payload.config.ts` as ESM (full failure chain in Project-specific
+  gotchas above). Non-negotiable.
+
+## Stack rules — Payload 3.90.2 + Next 16.3.6
+
+- Payload is **embedded**: no separate backend, no REST from the browser. Public
+  pages read via the Local API; the lead form uses a server action (M3). Never
+  call Payload REST from client components.
+- **Admin UI is Vietnamese** (`i18n.supportedLanguages: { vi }`). Every new
+  collection/field/block label is written in Vietnamese. Content `localization`
+  is NOT enabled and must not be enabled (single-locale site, spec §5.7).
+- **`SITE_ENV` is a build arg**, not a runtime knob — prerendered `robots.ts`
+  and metadata bake it at build (spec §6.5; mechanism detailed in the Docker
+  section below). Verify staging `noindex` against the built image, never
+  `pnpm dev`.
+- **Migrations are one-shot and never run on container start** — a restart must
+  not be able to change the schema (spec §11.2). Dev: `pnpm payload migrate` on
+  the host against the dev DB; in-container: the `migrate` compose service
+  (commands in the Docker section below).
+- **Two volumes**: `./data/db` (Postgres) and `./data/media` (Payload uploads).
+  Losing `data/media` loses every uploaded image while the DB still references
+  them — both go in VPS backups. On a real Linux host, bind-mount ownership
+  requires a pre-flight chown (see Docker section below).
+- The `@payload-config` path alias in `tsconfig.json` is how the app resolves
+  `payload.config.ts` — and `tsconfig.json` must exist at runtime for the
+  Payload CLI anyway (known Payload bug; see gotchas above).
+- `slugify` (src/lib/slugify.ts) implements the Vietnamese diacritic map and is
+  the ONLY way slugs are produced; it is unit-tested — extend tests, not just
+  the map.
+- Heading law (spec §6.4): one `<h1>` per page, rendered from
+  `Pages.primaryHeading`; block components start at `<h2>`, never skip levels.
+  The Playwright test `heading-discipline.spec.ts` fails the build otherwise.
+- No Redis, no worker, no SMTP in this project. When email/notification lands
+  (or the AI crawler feature), revisit — that changes §3.9 of the spec.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
