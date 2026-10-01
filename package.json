@@ -18,7 +18,7 @@
     "generate:importmap": "payload generate:importmap",
     "capture": "node scripts/capture-content.mjs",
     "seed": "tsx scripts/seed.ts",
-    "test": "vitest run --passWithNoTests",
+    "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
