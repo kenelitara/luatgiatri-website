@@ -1292,7 +1292,7 @@ export interface SiteSetting {
    */
   logo?: (number | null) | Media;
   /**
-   * Trường này KHÔNG được website sử dụng — nhập vào đây sẽ không bật Google Analytics. GA4 được cấu hình lúc triển khai bằng build arg NEXT_PUBLIC_GA4_ID (cần build lại; không sửa được từ admin).
+   * Measurement ID của Google Analytics 4 (dạng G-XXXXXXXXXX). Để trống để tắt GA4 và ẩn banner xin đồng ý cookie. Giá trị được đọc phía server; có thể cần tới 60 giây để trang cập nhật sau khi lưu.
    */
   ga4Id?: string | null;
   gscVerificationToken?: string | null;

@@ -47,10 +47,14 @@ test.describe('search + leads (spec §10.3)', () => {
   })
 
   test('consent banner gates GA4', async ({ page }) => {
-    // Requires the 3100 build to have been made WITH NEXT_PUBLIC_GA4_ID set —
-    // it is inlined at build time, so setting it on `next start` does nothing.
-    // The banner only renders when the id is present, so the visible "Đồng ý"
-    // button is itself evidence that the build arg took effect.
+    // The id is DB-sourced (SiteSettings.ga4Id), so the gate procedure is:
+    //   pnpm ga4:set G-TEST123  →  pnpm build  →  next start -p 3100  →  pnpm e2e
+    //   →  pnpm ga4:clear
+    // It MUST be in the database before `pnpm build`, because the banner's
+    // presence is baked into the prerendered HTML and ISR only refreshes that
+    // after ~60 s. The visible "Đồng ý" button is therefore itself evidence
+    // that the seeded id reached the build — a run without the id fails here,
+    // not silently passes.
     await page.goto('/')
     // fresh context per test → localStorage is empty → no prior consent
     expect(await page.locator('#ga4-script').count()).toBe(0)

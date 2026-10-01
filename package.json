@@ -20,6 +20,8 @@
     "seed": "tsx scripts/seed.ts",
     "seed:media": "tsx scripts/seed-media.ts",
     "reindex": "tsx scripts/reindex-search.ts",
+    "ga4:set": "tsx scripts/ga4-id.ts set",
+    "ga4:clear": "tsx scripts/ga4-id.ts clear",
     "fix:lexical-indent": "tsx scripts/fix-lexical-indent.ts",
     "test": "vitest run",
     "test:watch": "vitest",

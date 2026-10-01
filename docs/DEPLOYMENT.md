@@ -44,7 +44,11 @@ never serve production indexing, and vice versa):
 | --- | --- | --- |
 | `SITE_ENV` | `staging` (forces `Disallow: /` + `noindex`) | `production` |
 | `NEXT_PUBLIC_SERVER_URL` | the staging URL | `https://luatgiatri.com` |
-| `NEXT_PUBLIC_GA4_ID` | optional — empty disables GA4 *and* the consent banner (M3) | the measurement id |
+
+GA4 is deliberately **not** an env var any more: the measurement id lives in
+the `SiteSettings` global (admin → Thông tin website → GA4 Measurement ID) and
+is read server-side by the layout. It needs no rebuild and no deploy-time
+change — leave it empty to ship without analytics.
 
 Runtime (never baked; `env_file`/Dokploy env only):
 
@@ -67,7 +71,7 @@ committed.
 2. **App**: Dokploy → Create Application → Git source
    `github.com/kenelitara/luatgiatri-website`, branch `main`, build type
    **Dockerfile**.
-   - **Build args**: `SITE_ENV=production`, `NEXT_PUBLIC_SERVER_URL=https://luatgiatri.com`, `NEXT_PUBLIC_GA4_ID=<measurement id>` (omit/empty to ship without analytics — the consent banner renders nothing)
+   - **Build args**: `SITE_ENV=production`, `NEXT_PUBLIC_SERVER_URL=https://luatgiatri.com` (GA4 is not a build arg — set the id in the admin after deploying)
    - **Env**: the runtime table above (`DATABASE_URI`, `PAYLOAD_SECRET`, `IP_HASH_SALT`)
    - **Port**: 3000. **Healthcheck**: path `/api/health`
    - **Volume**: mount `data/media` → `/app/data/media` (survives redeploys and

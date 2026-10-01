@@ -26,7 +26,6 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings()
-  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID || undefined
   return (
     <html lang="vi" className={sans.variable}>
       <body className="font-sans text-brand-950">
@@ -35,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header />
         <main>{children}</main>
         <Footer />
-        <ConsentBanner ga4Id={ga4Id} />
+        <ConsentBanner ga4Id={settings.ga4Id ?? undefined} />
       </body>
     </html>
   )

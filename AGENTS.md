@@ -318,20 +318,36 @@ characters`) into the action's response; the field now carries
 
 Task 12 — consent banner gating GA4.
 
-- **`NEXT_PUBLIC_GA4_ID` is inlined at `pnpm build` time — it is a Docker
-  build arg, NOT a runtime knob (same class as `SITE_ENV`).** The layout reads
-  `process.env.NEXT_PUBLIC_GA4_ID` and Next replaces the reference with the
-  build-time literal, so the compiled chunk bakes `ga4Id:"G-TEST123"` (or
-  `ga4Id:void 0` when unset). Consequence: the plan's original Step 3
-  verification command — `NEXT_PUBLIC_GA4_ID=G-TEST123 next start -p 3100`
-  against a default build — proves nothing (the banner grep returns 0); the id
-  must be present at build time. Consequence for deploy: because `.dockerignore`
-  excludes `.env`, an image built without the build arg is permanently
-  GA4-less even if `.env` carries an id, so `Dockerfile` declares
-  `ARG NEXT_PUBLIC_GA4_ID=` (+ `ENV`, empty default, no `test -n` fail-fast —
-  an absent id is legitimate) and `docker-compose.vps.yml` passes
-  `${NEXT_PUBLIC_GA4_ID:-}`. Empty id ⇒ the banner renders nothing and no
-  analytics script ships. Verified both ways 2026-10-01.
+- **REVISED (post-M3-gate fix, 2026-10-01): the measurement id now comes from
+  `SiteSettings.ga4Id`, NOT a build arg.** The original mechanism (kept below)
+  was a two-sources-of-truth trap: an env var that WAS the source, beside a DB
+  field that existed and did nothing, with a warning telling operators not to
+  use it — so the id could not be changed without a rebuild and a redeploy.
+  The DB field is now the single source: `(frontend)/layout.tsx` reads it
+  server-side from `getSiteSettings()` and passes it to
+  `<ConsentBanner ga4Id={settings.ga4Id ?? undefined}>`. Empty/NULL ⇒ no banner
+  and no analytics script, exactly as before. The `ARG`/`ENV` pair, the compose
+  `args:` entry, the `.env`/`.env.example` entries and the DEPLOYMENT.md rows
+  were all deleted — there is NO env fallback, deliberately (that would
+  re-create the trap).
+- **Still true and still useful: `NEXT_PUBLIC_*` is inlined at `pnpm build`
+  time.** Next replaces every `process.env.NEXT_PUBLIC_X` reference with the
+  build-time literal, so a value of that class can only change via a rebuild.
+  `SITE_ENV` and `NEXT_PUBLIC_SERVER_URL` are build args for exactly this
+  reason. GA4 does not need one any more because it is now read server-side and
+  passed as a PROP — a prop is data, not an inlined constant, which is what
+  makes DB-sourcing it work at all. Historical note: the original verification
+  command `NEXT_PUBLIC_GA4_ID=G-TEST123 next start -p 3100` against a default
+  build never proved anything (the banner grep returned 0).
+- **The banner's presence is baked into PRERENDERED HTML, so a build only
+  carries the id if it is in the DB BEFORE `pnpm build`** (afterwards the
+  layout's own render heals within the ~60 s ISR window). `scripts/ga4-id.ts`
+  (`pnpm ga4:set <id>` / `pnpm ga4:clear`, house style of
+  `scripts/reindex-search.ts`) makes the e2e gate reproducible: set → build →
+  start → `pnpm e2e` → clear. `clear` writes NULL, not `''`, so the asserted
+  DB state is `ga4_id IS NULL`. There is deliberately NO GA4 id in
+  `scripts/seed.ts` — the seed runs in production too, and seeding a real id
+  would switch analytics on for live traffic.
 
 Task 13 — dynamic OG images (`next/og`). Verified 2026-10-01 against a built
 app (`next start -p 3100`), not dev.

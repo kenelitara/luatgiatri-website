@@ -86,13 +86,15 @@ export const SiteSettings: GlobalConfig = {
       name: 'ga4Id',
       type: 'text',
       label: 'GA4 Measurement ID',
-      // NOT read anywhere — the website's only GA4 source is the build-time
-      // NEXT_PUBLIC_GA4_ID env var (it must be inlined into the client bundle,
-      // so it cannot come from the DB). Kept only because dropping it needs a
-      // migration; the description below tells operators not to rely on it.
+      // Source of truth for GA4 (there is no env var / build arg any more).
+      // The (frontend) layout reads this global SERVER-side and passes it to
+      // <ConsentBanner>, which injects the gtag script only after the visitor
+      // consents (spec §9). Empty ⇒ no banner and no analytics script. The
+      // banner is baked into the prerendered HTML, so a change here reaches
+      // visitors within the ISR window (~60 s), not instantly.
       admin: {
         description:
-          'Trường này KHÔNG được website sử dụng — nhập vào đây sẽ không bật Google Analytics. GA4 được cấu hình lúc triển khai bằng build arg NEXT_PUBLIC_GA4_ID (cần build lại; không sửa được từ admin).',
+          'Measurement ID của Google Analytics 4 (dạng G-XXXXXXXXXX). Để trống để tắt GA4 và ẩn banner xin đồng ý cookie. Giá trị được đọc phía server; có thể cần tới 60 giây để trang cập nhật sau khi lưu.',
       },
     },
     { name: 'gscVerificationToken', type: 'text', label: 'Token xác minh Search Console' },

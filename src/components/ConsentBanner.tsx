@@ -6,9 +6,12 @@ import { useEffect, useState } from 'react'
 // visitor consents: this banner asks, and the gtag scripts are injected only
 // after "Đồng ý" — no consent, no script.
 //
-// `ga4Id` is a BUILD-TIME constant. `process.env.NEXT_PUBLIC_*` is inlined by
-// `pnpm build` (see the Task 12 note in AGENTS.md), so changing the measurement
-// id needs a rebuild — editing it in the admin does nothing.
+// `ga4Id` comes from the SiteSettings global: the (frontend) layout reads it
+// server-side and passes it down as a prop (no env var, no build arg — see the
+// Task 12 note in AGENTS.md). It is still effectively a build-time value for a
+// given response, because the banner's presence is baked into the PRERENDERED
+// HTML: an id added in the admin only shows up once ISR refreshes that route
+// (~60 s, the project-wide revalidate window).
 //
 // The `getElementById('ga4-script')` guard makes the injection idempotent, which
 // is what keeps React StrictMode's double-invoked mount effect from loading GA4
