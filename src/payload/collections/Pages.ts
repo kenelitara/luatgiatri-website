@@ -26,7 +26,11 @@ export const Pages: CollectionConfig = {
   labels: { singular: 'Trang', plural: 'Trang' },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'updatedAt'],
+    // `_status` first after the title: Pages has drafts enabled, and without it
+    // the list view gives no way to tell a draft from a published page — the
+    // draft pill only appeared on the document header. (Verified: adding a page
+    // through the admin and finding no status marker in the list.)
+    defaultColumns: ['title', '_status', 'slug', 'updatedAt'],
     // 3.90.2: `url` must be a function — a plain string is used verbatim (verified in Task 12)
     livePreview: { url: ({ data }) => (data?.slug ? `/${data.slug}` : null) },
   },

@@ -10,7 +10,9 @@ export const Posts: CollectionConfig = {
   labels: { singular: 'Bài viết', plural: 'Bài viết' },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'publishedAt', 'author'],
+    // `_status` matters most here: the firm authors articles as drafts, so the
+    // list must distinguish unpublished from live at a glance.
+    defaultColumns: ['title', '_status', 'publishedAt', 'author'],
     // NOTE (3.90.2 delta): livePreview.url as a plain string is used
     // verbatim as the iframe src — there is no `{field}` placeholder
     // interpolation in 3.90.2 — so the per-doc URL must be a function.
