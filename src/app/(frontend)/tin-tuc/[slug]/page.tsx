@@ -79,7 +79,10 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           />
         </div>
       ) : null}
-      <div className="prose mt-6">
+      {/* `prose--fill` opts this body out of the readable measure so it aligns
+          with the container (client decision, see globals.css). Scoped: every
+          other .prose consumer keeps the default cap. */}
+      <div className="prose prose--fill mt-6">
         <RichText data={post.body} />
       </div>
     </article>

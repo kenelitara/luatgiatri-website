@@ -43,6 +43,21 @@
   max-width: 75ch;
 }
 
+/* Article body — fills its container BY EXPLICIT CLIENT CHOICE (2026-10-02).
+   The client reviewed the trade-off and chose full-width alignment (title,
+   hero image and paragraphs all 1120px) over the readable measure. That is a
+   deliberate decision, NOT an oversight: DO NOT "fix" this back to 65/75ch
+   without asking.
+
+   Scoped via a second class (specificity 0,2,0 beats `.prose` at 0,1,0) rather
+   than removing the global cap, so every other `.prose` consumer keeps the
+   readable default and a future wide-container page cannot silently inherit
+   this. Measured consequence at 16px: ~103 characters per line — past the
+   comfortable 45–75 range, which is the accepted cost of the decision. */
+.prose.prose--fill {
+  max-width: none;
+}
+
 /* ---------------------------------------------------------------------------
    Floating contact buttons (src/components/chrome/FloatingContact.tsx)
 
