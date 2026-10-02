@@ -1,6 +1,7 @@
 import { Be_Vietnam_Pro } from 'next/font/google'
 import type { Metadata } from 'next'
 import { ConsentBanner } from '@/components/ConsentBanner'
+import { DraftPreviewBar } from '@/components/DraftPreviewBar'
 import { Footer } from '@/components/chrome/Footer'
 import { Header } from '@/components/chrome/Header'
 import { TopBar } from '@/components/chrome/TopBar'
@@ -8,6 +9,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { sitewideSchemas } from '@/lib/schema-adapters'
 import { getSiteSettings } from '@/lib/site'
 import { getBaseUrl, isStaging } from '@/lib/site-env'
+import { isDraftModeEnabled } from '@/lib/draft-mode'
 import '../globals.css'
 
 const sans = Be_Vietnam_Pro({
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSiteSettings()
+  const [settings, draftMode] = await Promise.all([getSiteSettings(), isDraftModeEnabled()])
   return (
     <html lang="vi" className={sans.variable}>
       <body className="font-sans text-brand-950">
@@ -35,6 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main>{children}</main>
         <Footer />
         <ConsentBanner ga4Id={settings.ga4Id ?? undefined} />
+        {draftMode && <DraftPreviewBar />}
       </body>
     </html>
   )

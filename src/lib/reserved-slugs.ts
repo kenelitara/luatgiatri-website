@@ -10,6 +10,8 @@
  *   og                     -> `src/app/og/[...slug]/route.tsx` (generated OG cards)
  *   tin-tuc                -> the news index (`(frontend)/tin-tuc/`)
  *   tim-kiem               -> the search page (`(frontend)/tim-kiem/`)
+ *   next                   -> Live Preview entry/exit (`(frontend)/next/preview`,
+ *                             `(frontend)/next/exit-preview`)
  *   _next                  -> Next.js internals
  *   icon.svg, robots.txt,
  *   sitemap.xml            -> Next.js file conventions at the app root
@@ -24,6 +26,7 @@ export const RESERVED_ROOT_SEGMENTS = [
   'og',
   'tin-tuc',
   'tim-kiem',
+  'next',
   '_next',
   'icon.svg',
   'robots.txt',

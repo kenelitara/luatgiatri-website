@@ -1611,6 +1611,112 @@ would run them outside it):
   not in the prerendered HTML; `pnpm test` 107/107; DB-less
   `docker build --target runner` exits 0.
 
+## Live Preview — draft preview via Next Draft Mode (2026-10-02)
+
+The admin Preview (eye) icon used to 404 on an unpublished draft:
+`livePreview.url` returned the bare public URL, `getPage`/`getPost` always queried
+`draft: false`, and nothing ever enabled Next's draft mode. Fixed end-to-end. This
+section is the mechanism plus the security argument. **No new env var was needed.**
+
+### The supported mechanism (read out of the installed packages, not assumed)
+
+- `payload@3.90.2` `LivePreviewConfig.url`
+  (`node_modules/payload/dist/config/types.d.ts:80-124`) is
+  `string | ((args) => string | null | Promise<…>)`. A plain string is used
+  VERBATIM; a function is executed per request by `handleLivePreview`
+  (`@payloadcms/ui/dist/utilities/handleLivePreview.js:39-95`), which passes
+  `{ collectionConfig, data, globalConfig, locale, payload, req }`.
+- `@payloadcms/next/dist/views/Document/index.js:300-358` runs it and hands the
+  result to `LivePreviewProvider` as `url`; `LivePreviewWindow`
+  (`@payloadcms/ui/dist/elements/LivePreview/Window/index.js:98-122`) renders
+  `<IframeLoader src={url}>`. So **the iframe loads `livePreview.url` exactly** —
+  there is no Payload-side route shape, wrapper, or required query parameter. The
+  `/next/preview/?path=…` shape is ours.
+- `@payloadcms/next` ships NO draft-mode/preview helper (`dist/utilities/` and
+  `dist/exports/utilities.js` have none), so the route is the standard Next recipe.
+- The admin posts `{type:'payload-live-preview', data:<current form values>}` into
+  the iframe on every form change, and `{type:'payload-document-event'}` on a
+  document event (`Window/index.js:46-94`). Payload's fully-live client hook
+  (`@payloadcms/live-preview-react`) is NOT installed.
+
+### Authorisation — the admin session; no URL secret
+
+`/next/preview` validates the request with `payload.auth({ headers })` and requires
+a user whose `roles` include admin/editor, BEFORE `draftMode()` is touched. A failed
+authorisation returns 403 and never enables draft mode (verified end-to-end).
+
+No `PREVIEW_SECRET` — and certainly no `PAYLOAD_SECRET` — appears in any URL or in
+any HTML, because the session check is sufficient: **Next's bypass cookie is itself
+unforgeable.** `DraftModeProvider.isEnabled`
+(`next/dist/server/async-storage/draft-mode-provider.js:12-26`) is
+`cookieValue === previewProps.previewModeId`, and `previewModeId` is the server-only
+build-time secret `__NEXT_PREVIEW_MODE_ID` (set only for the server/edge runtime in
+`next/dist/build/webpack-config.js`; never in the client bundle). The only way to
+obtain the cookie is through the auth-gated route — verified: a forged
+`__prerender_bypass=…` cookie does not enable draft mode.
+
+### The pieces
+
+| piece | file |
+| --- | --- |
+| preview entry (authorise → `draftMode().enable()` → redirect) | `src/app/(frontend)/next/preview/route.ts` |
+| exit (`draftMode().disable()` → redirect back) | `src/app/(frontend)/next/exit-preview/route.ts` |
+| guarded draft-mode read + open-redirect guard | `src/lib/draft-mode.ts` |
+| draft-aware fetch | `getPage` / `getPost` in `src/lib/getPage.ts` |
+| indicator + refresh bridge | `src/components/DraftPreviewBar.tsx`, mounted from `(frontend)/layout.tsx` |
+| `livePreview.url` (Pages + Posts) | `.../collections/Pages.ts`, `.../collections/Posts.ts` |
+
+- Both `livePreview.url` functions build the target path from the SHARED
+  `pageUrl`/`postUrl` helpers (`src/lib/revalidate-paths.ts`) and emit
+  `/next/preview/?path=<encoded>`. The trailing slash is the canonical route form
+  under `trailingSlash: true` — without it every preview eats an extra 308 first.
+  (Bonus fix: `pageUrl('home')` is `/`, so the home record now previews at `/`
+  instead of the unroutable `/home`.)
+- `next` was added to `RESERVED_ROOT_SEGMENTS` (`src/lib/reserved-slugs.ts`), so no
+  Page can claim that slug — the route guard AND the collection validation both use
+  it. The slug field's `description` and validation message were updated to list it
+  (that is the only reason `payload-types.ts` changed).
+
+### The guarded `draftMode()` read — why the guard is load-bearing
+
+`isDraftModeEnabled()` uses the DYNAMIC guarded import (the `revalidate.ts` pattern,
+AGENTS "Hazard 2"): `draftMode()` THROWS outside a request (`seed`/`reindex`/CLI/
+vitest) and inside `generateStaticParams` (case `'generate-static-params'`). It does
+NOT throw in normal prerender — the `'prerender'` branch returns an EMPTY draft mode
+whose `isEnabled` is `false` — so the published filter is in force at build and the
+ISR/static semantics survive (the build table still lists every fixed route
+`○ (Static)` with `1m` revalidate). Fail closed: any unreadable case ⇒ `false`.
+
+`getPage`/`getPost` drop the `_status: 'published'` filter and pass
+`draft: isDraftModeEnabled()` ONLY when the cookie is present; otherwise the query is
+unchanged. `getPublishedPageSlugs` deliberately does NOT read draft mode — it runs in
+`generateStaticParams`, where the call would throw.
+
+### Indexing
+
+- `/next` is in `robots.ts`'s disallow list (beside `/admin`, `/api/`).
+- Any response carrying the draft bypass cookie gets `X-Robots-Tag: noindex, nofollow`
+  via `next.config.ts` `headers()` with a `has: [{ type: 'cookie' }]` condition —
+  declarative, no middleware, and it covers the arbitrary slugs a draft can be served
+  at. Verified: a normal page has NO such header and stays ISR-cacheable; a
+  draft-cookie request gets it.
+- Crawlers cannot obtain the cookie at all (unforgeable + auth-gated), and Next serves
+  draft responses `Cache-Control: private, no-cache, no-store, max-age=0, must-revalidate`.
+
+### What works, honestly
+
+- **The client's case is fixed**: opening the admin Preview on the unpublished draft
+  `Trang kiểm thử tất cả khối` (id 25, `_status: draft`) renders the page in the pane
+  with all 15 blocks (measured in a real browser: 15 `<section>`, one `<h1>`, no 404).
+  The page was NOT modified.
+- **UNSAVED edits do NOT appear.** Payload 3.90.2 has no autosave on Pages/Posts, so
+  the admin posts the unsaved values but nothing re-reads them; rendering them would
+  need a client-side block renderer (out of scope). **SAVED edits DO appear**:
+  `DraftPreviewBar` listens for `payload-document-event` and calls `router.refresh()`,
+  which re-fetches the freshly saved draft. Both verified in a real browser.
+- Fully-live editing would need `versions.drafts.autosave` on the collections or the
+  `@payloadcms/live-preview-react` hook — neither is enabled, deliberately.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

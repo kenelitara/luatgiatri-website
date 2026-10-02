@@ -1,19 +1,32 @@
 import { getPayloadClient } from '@/lib/getPayload'
+import { isDraftModeEnabled } from '@/lib/draft-mode'
 import type { Page, Post } from '@/payload-types'
 
 /**
- * Fetch a published Pages record. The try/catch implements the M2 convention
- * (AGENTS.md): docker builds have no DB — the build bakes the notFound
- * fallback and the first runtime request past the revalidate window
- * regenerates with the real page (ISR self-heal).
+ * Fetch a Pages record.
+ *
+ * Normally published-only (the site's public contract). When the request is in
+ * Next Draft Mode — which ONLY the auth-gated `/next/preview` route can turn on
+ * — the `_status` filter is dropped and `draft: true` is passed, so an
+ * unpublished draft is fetchable for the editor's preview. Without the bypass
+ * cookie the published filter is untouched, so an unpublished page still 404s
+ * for every visitor and every crawler.
+ *
+ * `isDraftModeEnabled()` is guarded (see `src/lib/draft-mode.ts`): it returns
+ * false during prerender, in `generateStaticParams`, and outside a request, so
+ * the M2 convention holds — a DB-less docker build bakes the notFound fallback
+ * and ISR heals it at runtime.
  */
 export async function getPage(slug: string): Promise<Page | null> {
   try {
+    const draft = await isDraftModeEnabled()
     const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'pages',
-      where: { slug: { equals: slug }, _status: { equals: 'published' } },
-      draft: false,
+      where: draft
+        ? { slug: { equals: slug } }
+        : { slug: { equals: slug }, _status: { equals: 'published' } },
+      draft,
       depth: 2, // populates media + teamGrid members (+ their photos)
       limit: 1,
     })
@@ -49,16 +62,21 @@ export async function getPublishedPageSlugs(): Promise<string[]> {
 }
 
 /**
- * Fetch a published Posts record. Same DB-at-build try/catch convention as
- * `getPage` — the metadata export and the page body share this one query.
+ * Fetch a Posts record. Same DB-at-build try/catch convention as `getPage` —
+ * the metadata export and the page body share this one query — and the same
+ * Draft Mode branch: published-only unless the request carries the preview
+ * bypass cookie. See `getPage` for why the guard is safe at build time.
  */
 export async function getPost(slug: string): Promise<Post | null> {
   try {
+    const draft = await isDraftModeEnabled()
     const payload = await getPayloadClient()
     const { docs } = await payload.find({
       collection: 'posts',
-      where: { slug: { equals: slug }, _status: { equals: 'published' } },
-      draft: false,
+      where: draft
+        ? { slug: { equals: slug } }
+        : { slug: { equals: slug }, _status: { equals: 'published' } },
+      draft,
       depth: 2,
       limit: 1,
     })

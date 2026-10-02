@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '../access'
 import { slugify } from '@/lib/slugify'
 import { isReservedRootSegment } from '@/lib/reserved-slugs'
+import { pageUrl } from '@/lib/revalidate-paths'
 import { seoField } from '../fields/seo'
 import { Hero } from '../blocks/Hero'
 import { HeroCarousel } from '../blocks/HeroCarousel'
@@ -31,8 +32,20 @@ export const Pages: CollectionConfig = {
     // draft pill only appeared on the document header. (Verified: adding a page
     // through the admin and finding no status marker in the list.)
     defaultColumns: ['title', '_status', 'slug', 'updatedAt'],
-    // 3.90.2: `url` must be a function — a plain string is used verbatim (verified in Task 12)
-    livePreview: { url: ({ data }) => (data?.slug ? `/${data.slug}` : null) },
+    // 3.90.2: `url` must be a function — a plain string is used verbatim
+    // (verified in Task 12), and it becomes the preview iframe src directly.
+    // It points at the /next/preview route (which enables Next Draft Mode and
+    // redirects), so an UNPUBLISHED draft is previewable. `pageUrl` is the
+    // single source for a Page's public path: it maps `home` to `/` and refuses
+    // a reserved root segment, so the preview targets exactly the served URL.
+    // The route is written WITH the trailing slash the site's `trailingSlash: true`
+    // makes canonical, or every preview would eat an extra 308 first.
+    livePreview: {
+      url: ({ data }) => {
+        const path = pageUrl(data?.slug as string | undefined)
+        return path ? `/next/preview/?path=${encodeURIComponent(path)}` : null
+      },
+    },
   },
   access: {
     read: () => true,
@@ -56,15 +69,16 @@ export const Pages: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description:
-          'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem.',
+          'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem, next.',
       },
       // A page must never claim a root segment owned by another route (admin,
-      // api, og, tin-tuc, tim-kiem, …). The dynamic `(frontend)/[slug]` route
-      // refuses these too, but rejecting them here fails closed in the editor:
-      // the slug can never be created in the first place. See lib/reserved-slugs.
+      // api, og, tin-tuc, tim-kiem, next, …). The dynamic `(frontend)/[slug]`
+      // route refuses these too, but rejecting them here fails closed in the
+      // editor: the slug can never be created in the first place. See
+      // lib/reserved-slugs.
       validate: (value: unknown) =>
         typeof value === 'string' && isReservedRootSegment(value)
-          ? `Slug "${value}" trùng với đường dẫn hệ thống (admin, api, og, tin-tuc, tim-kiem). Vui lòng chọn slug khác.`
+          ? `Slug "${value}" trùng với đường dẫn hệ thống (admin, api, og, tin-tuc, tim-kiem, next). Vui lòng chọn slug khác.`
           : true,
       hooks: {
         beforeValidate: [
