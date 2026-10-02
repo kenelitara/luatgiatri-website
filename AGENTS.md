@@ -1798,6 +1798,53 @@ prerender path.
   the component present in `.next/server`. Screenshots (untracked):
   `docs/admin-shots/m5-floating-*.png`.
 
+## Authored (non-ported) content — the ONE exception to the port-only law
+
+Spec §3.2 ("port copy verbatim, invent no legal or pricing copy") governs this
+site; every byte of the 9 migrated pages was ported byte-verified from the live
+site. The **three Posts in `seed/content/posts/` are a deliberate, documented
+exception**: they are AI-compiled placeholder articles on recent
+business-registration instruments, **NOT reviewed by the firm's lawyers** and
+**NOT official firm content** until the firm verifies and adjusts every
+sentence. The review requirement lives in `seed/content/_notes.json` →
+`authoredLegalPosts` (the client's handover file) and in this note — there is
+deliberately **no in-body review banner** (published copy must read cleanly), so
+those two records are the ONLY marker that this content is AI-compiled.
+
+Rules for this content:
+
+- Seeded `_status: 'published'` — a client decision (fill the site now, verify
+  the wording later; the site is not deployed yet, so nothing is public). The
+  fixture carries `_status`; `scripts/seed-posts.ts` passes it through.
+- Every substantive claim is anchored to its instrument (number + effective
+  date) with a source link; **contested points are OMITTED, not asserted**. The
+  05-vs-06-year non-listed-JSC shareholder-record retention conflict is the
+  worked example — see `_notes.json`.
+- Fixtures live in `seed/content/posts/` (a SUBFOLDER) so the flat
+  `seed/content/*.json` scans in `scripts/seed.ts` (pages) and
+  `scripts/seed-media.ts` (media refs) cannot mistake them for pages;
+  `seed-media.ts` walks the subfolder explicitly so a fresh DB still uploads
+  the hero images.
+- Seeded by `pnpm seed:posts` — idempotent upsert by slug. It resolves
+  `author`/`categories` slugs → ids and `{mediaRef, alt}` → media id via
+  `_media-map.json` (same indirection as `seed.ts`).
+- Featured images are the firm's OWN seeded `img-blog-*` media used as
+  placeholders — **replace with purpose-made artwork**. No third-party assets.
+
+### Lexical fixture gotchas (re-confirmed 2026-10-02, seeded Posts)
+
+- **Bold is `"format": 1`** — `"bold": true` is SILENTLY IGNORED by both the
+  JSX and HTML converters (M3 note above). All seeded bold runs use `format: 1`.
+- **`listitem.indent` MUST be the NUMBER `0`** (plus `tag: 'ul'|'ol'` on the list
+  node and a numeric `value` per item), or the ADMIN editor throws
+  `Invalid indent value.` while the front end renders fine. Verified by opening
+  all three seeded Posts in the admin (mounts clean, 0 console errors).
+- **Link nodes round-trip** as `{type:'link', version:3, id:'<24-hex>',
+  fields:{linkType:'custom', newTab, url}, format:'', indent:0, direction:'ltr',
+  children:[text]}` — `indent` is again the NUMBER `0`, and `id` is a 24-char
+  hex ObjectID. Payload stores them and the admin/editor and front-end converter
+  both handle them (verified 2026-10-02). No seeded Post is dropped on load.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

@@ -188,6 +188,82 @@
     "note": "Nội dung Chính sách bảo mật được soạn theo cấu trúc chuẩn Nghị định 13/2023/NĐ-CP nhưng CHƯA được công ty luật rà soát. Cần xác nhận trước khi công bố.",
     "reviewMarkerInPage": true
   },
+  "authoredLegalPosts": {
+    "status": "AI-compiled-placeholder-pending-firm-review",
+    "cảnhBáo": "BA BÀI VIẾT TRONG MỤC NÀY KHÔNG PHẢI NỘI DUNG SAO CHÉP NGUYÊN VĂN TỪ WEBSITE GỐC. Đây là nội dung do AI tổng hợp từ các văn bản pháp luật được nêu bên dưới, CHƯA ĐƯỢC LUẬT SƯ CỦA CÔNG TY RÀ SOÁT. Mọi câu chữ và nội dung pháp lý phải được kiểm chứng và chỉnh sửa trước khi được coi là nội dung chính thức của công ty. Đây là ngoại lệ CÓ CHỦ ĐÍCH so với nguyên tắc nội dung của dự án (spec §3.2: chỉ sao chép nguyên văn nội dung đã có, không tự sáng tác nội dung pháp lý).",
+    "seededAs": "_status = published. Ba bài được đăng (không phải bản nháp) để website trông đầy đủ theo yêu cầu của khách hàng; khách hàng đã xác nhận rằng toàn bộ nội dung sẽ được kiểm chứng sau. Website CHƯA triển khai (chưa lên production) nên đây là nội dung ở môi trường phát triển để khách hàng xem.",
+    "reviewMarkerInBody": false,
+    "reviewMarkerNote": "Các bài viết KHÔNG mang dòng ghi chú 'cần rà soát' trong nội dung (theo yêu cầu: nội dung đăng phải đọc sạch sẽ, chuyên nghiệp). Do đó, tệp _notes.json này và ghi chú trong AGENTS.md là BẢN GHI DUY NHẤT xác nhận nội dung là do AI biên soạn và đang chờ công ty luật kiểm chứng.",
+    "posts": [
+      {
+        "slug": "nghi-dinh-296-2026-nd-cp-nhung-thay-doi-ve-dang-ky-doanh-nghiep-tu-ngay-23-7-2026",
+        "title": "Nghị định 296/2026/NĐ-CP: những thay đổi về đăng ký doanh nghiệp từ ngày 23/7/2026",
+        "tácGiả": "Nguyễn Minh Trí",
+        "instruments": [
+          "Nghị định 296/2026/NĐ-CP — sửa đổi Nghị định 168/2025/NĐ-CP về đăng ký doanh nghiệp; ban hành 23/7/2026, hiệu lực 23/7/2026",
+          "Nghị định 168/2025/NĐ-CP — về đăng ký doanh nghiệp; hiệu lực 01/7/2025",
+          "Văn bản hợp nhất 29/2026/VBHN-NĐ-BTC — hợp nhất Nghị định về đăng ký doanh nghiệp; 28/8/2026"
+        ],
+        "claimsNeedingVerification": [
+          "Giới hạn thời hạn tạm ngừng kinh doanh: mỗi lần không quá 12 tháng, tổng liên tiếp không quá 24 tháng (đã đối chiếu với Văn bản hợp nhất 29/2026/VBHN-NĐ-BTC — nguyên văn khớp).",
+          "Nguyên tắc 'không đứng tên thay người khác để góp vốn vào doanh nghiệp' (đã đối chiếu nguyên văn với VBHN 29/2026).",
+          "Nhà đầu tư nước ngoài thành lập doanh nghiệp trước khi cấp/điều chỉnh Giấy chứng nhận đăng ký đầu tư — hồ sơ không gồm bản sao GCN đăng ký đầu tư (đã đối chiếu nguyên văn với VBHN 29/2026, khoản 6 Điều 24).",
+          "Rút ngắn thời hạn giải quyết từ 03 ngày làm việc xuống 02 ngày làm việc tại một số thủ tục (Điều 21 Nghị định 296/2026) — nguồn là bản tóm tắt thứ cấp, CHƯA đối chiếu từng điều khoản cụ thể.",
+          "Nghị định bổ sung khái niệm 'Bản chính' và 'Bản trích sao'; cơ quan đăng ký kinh doanh khai thác dữ liệu quốc gia để thay thế bản sao (Điều 2, bổ sung khoản 7 Điều 4 NĐ 168) — nguồn thứ cấp."
+        ]
+      },
+      {
+        "slug": "luat-so-76-2025-qh15-minh-bach-chu-so-huu-huong-loi-khi-thanh-lap-doanh-nghiep",
+        "title": "Luật số 76/2025/QH15: minh bạch chủ sở hữu hưởng lợi khi thành lập doanh nghiệp",
+        "tácGiả": "Lê Thanh Hoa",
+        "instruments": [
+          "Luật số 76/2025/QH15 — sửa đổi, bổ sung một số điều của Luật Doanh nghiệp; thông qua 17/6/2025, hiệu lực 01/7/2025",
+          "Văn bản hợp nhất 67/VBHN-VPQH — hợp nhất Luật Doanh nghiệp"
+        ],
+        "claimsNeedingVerification": [
+          "Khái niệm 'chủ sở hữu hưởng lợi của doanh nghiệp' tại khoản 35 Điều 4 (đã đối chiếu nguyên văn với toàn văn Luật 76/2025).",
+          "Nghĩa vụ thu thập, cập nhật, lưu giữ, cung cấp thông tin chủ sở hữu hưởng lợi (khoản 5a Điều 8) và 'Danh sách chủ sở hữu hưởng lợi' trong hồ sơ (điểm h khoản 1 Điều 11; nội dung danh sách tại khoản 5 Điều 25) — đã đối chiếu nguyên văn.",
+          "Hành vi bị nghiêm cấm: kê khai khống vốn điều lệ; cố ý định giá tài sản góp vốn không đúng giá trị (Điều 16) — đã đối chiếu nguyên văn.",
+          "Nghĩa vụ lưu giữ thông tin chủ sở hữu hưởng lợi sau khi giải thể, phá sản (điểm h khoản 1 Điều 216) — SỐ NĂM đã được BỎ khỏi nội dung bài viết (xem mục conflicts).",
+          "Điều khoản chuyển tiếp (Điều 3): doanh nghiệp thành lập trước 01/7/2025 bổ sung thông tin chủ sở hữu hưởng lợi ở lần đăng ký/thay đổi gần nhất — nguồn thứ cấp, đã đối chiếu một phần."
+        ]
+      },
+      {
+        "slug": "dang-ky-doanh-nghiep-truc-tuyen-bang-dinh-danh-dien-tu-nhung-thay-doi-can-biet",
+        "title": "Đăng ký doanh nghiệp trực tuyến bằng định danh điện tử: những thay đổi cần biết",
+        "tácGiả": "Nguyễn Minh Trí",
+        "instruments": [
+          "Nghị định 168/2025/NĐ-CP (Điều 37, 39) — hiệu lực 01/7/2025",
+          "Nghị định 296/2026/NĐ-CP (Điều 21; sửa Điều 12, Điều 93 NĐ 168) — hiệu lực 23/7/2026",
+          "Thông tư 121/2026/TT-BTC — biểu mẫu đăng ký doanh nghiệp/hộ kinh doanh; hiệu lực 21/8/2026",
+          "Quyết định 2370/QĐ-BTC — công bố thủ tục hành chính thành lập và hoạt động doanh nghiệp; 24/8/2026",
+          "Văn bản hợp nhất 29/2026/VBHN-NĐ-BTC — 28/8/2026"
+        ],
+        "claimsNeedingVerification": [
+          "Đăng nhập Cổng dịch vụ công quốc gia / Ứng dụng định danh quốc gia bằng tài khoản định danh điện tử (Điều 39 — đã đối chiếu nguyên văn với VBHN 29/2026).",
+          "Định nghĩa 'xác thực điện tử' và các phương tiện (mật khẩu dùng một lần, sinh trắc học, số điện thoại chính chủ) — đã đối chiếu nguyên văn với NĐ 168/2025/NĐ-CP.",
+          "Bộ Tài chính chủ trì Hệ thống thông tin quốc gia về đăng ký doanh nghiệp — đã đối chiếu nguyên văn với NĐ 168/2025/NĐ-CP.",
+          "Rút ngắn thời hạn giải quyết 03 → 02 ngày làm việc (Điều 21 NĐ 296/2026) — nguồn thứ cấp.",
+          "Nội dung Thông tư 121/2026/TT-BTC và Quyết định 2370/QĐ-BTC chỉ được nêu ở mức thông tin văn bản (số hiệu, ngày hiệu lực) — chưa truy cập được toàn văn để kiểm chứng chi tiết."
+        ]
+      }
+    ],
+    "conflicts": [
+      {
+        "topic": "Thời hạn lưu giữ thông tin cổ đông của công ty cổ phần không phải công ty niêm yết",
+        "detail": "Nguồn tóm tắt về Nghị định 296/2026/NĐ-CP (Điều 5, bổ sung khoản 8a Điều 21 Nghị định 168/2025/NĐ-CP) nêu thời hạn 05 năm kể từ ngày giải thể; trong khi Văn bản hợp nhất 29/2026/VBHN-NĐ-BTC ghi 06 năm cho cùng nội dung. Hai nguồn MÂU THUẪN nhau.",
+        "resolution": "ĐÃ BỎ HOÀN TOÀN khỏi nội dung ba bài viết (không khẳng định 05 năm hay 06 năm). Cần đối chiếu văn bản gốc/hợp nhất chính thức trước khi nêu con số này."
+      },
+      {
+        "topic": "Cách diễn đạt 'qua mạng thông tin điện tử' → 'trên môi trường điện tử'",
+        "detail": "Một số nguồn nêu Nghị định 296/2026 đổi tên các điều về hồ sơ/thủ tục đăng ký doanh nghiệp thành 'trên môi trường điện tử'; tuy nhiên Văn bản hợp nhất 29/2026/VBHN-NĐ-BTC vẫn giữ tiêu đề 'qua mạng thông tin điện tử' ở Điều 39.",
+        "resolution": "ĐÃ BỎ khỏi nội dung bài viết để tránh khẳng định chưa chắc chắn."
+      }
+    ],
+    "images": "Ảnh bìa của cả ba bài dùng ảnh CÓ SẴN của công ty (nhóm img-blog-* trong thư viện media) làm ảnh tạm. Không tải ảnh của bên thứ ba (bản quyền). CẦN THAY bằng ảnh thiết kế riêng cho từng bài trước khi coi là nội dung chính thức.",
+    "seedCommand": "pnpm seed:posts (idempotent theo slug; fixture ở seed/content/posts/)",
+    "authorNote": "Tác giả gán tạm theo hai Author có sẵn (Nguyễn Minh Trí, Lê Thanh Hoa) — công ty luật cần xác nhận người chịu trách nhiệm nội dung thực tế cho từng bài."
+  },
   "deferred": [
     {
       "page": "global",

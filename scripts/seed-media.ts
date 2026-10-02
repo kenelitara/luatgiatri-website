@@ -59,6 +59,20 @@ async function collectRefs(): Promise<Map<string, string>> {
   for (const file of files) {
     walk(JSON.parse(await readFile(join(dir, file), 'utf8')))
   }
+  // Authored Post fixtures live in their own subfolder (seed/content/posts/),
+  // which the flat scan above does not reach — walk them too so their hero
+  // images upload on a fresh DB (a no-op when the images are already mapped).
+  const postsDir = join(dir, 'posts')
+  try {
+    const postFiles = (await readdir(postsDir)).filter(
+      (f) => f.endsWith('.json') && !f.startsWith('_'),
+    )
+    for (const file of postFiles) {
+      walk(JSON.parse(await readFile(join(postsDir, file), 'utf8')))
+    }
+  } catch {
+    // no posts folder — fine
+  }
   // Fixed assets not carried by any fixture (e.g. the site logo used by the
   // SiteSettings global) — first-wins dedupe matches the fixture walk.
   for (const asset of EXTRA_ASSETS) {

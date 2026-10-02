@@ -18,6 +18,7 @@
     "generate:importmap": "payload generate:importmap",
     "capture": "node scripts/capture-content.mjs",
     "seed": "tsx scripts/seed.ts",
+    "seed:posts": "tsx scripts/seed-posts.ts",
     "seed:media": "tsx scripts/seed-media.ts",
     "reindex": "tsx scripts/reindex-search.ts",
     "ga4:set": "tsx scripts/ga4-id.ts set",
