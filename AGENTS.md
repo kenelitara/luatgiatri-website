@@ -1009,6 +1009,22 @@ are deliberate: they read as normal in Vietnamese software.
   therefore reproduces the header logo with no manual admin step; the firm can
   still replace it in the admin (Thông tin website → Logo).
 
+## Top bar — search box + dropped social links (2026-10-02)
+
+- **The search box lives in the top bar** (`src/components/chrome/TopBar.tsx`),
+  right-aligned; it was removed from `Header`. The top bar's social links were
+  removed too — the same `SiteSettings.socials` values still feed
+  `FloatingContact` (`(frontend)/layout.tsx`) and the JSON-LD `sameAs`
+  (`src/lib/jsonld.ts`), so nothing is orphaned.
+- **`src/components/SearchBox.tsx` is layout-agnostic by design** — it renders
+  only the form's own flex row; the CALLER supplies placement via its
+  `className` prop. Keep positioning (centering, right-aligning) OUT of the
+  component; a hardcoded `mx-auto max-w-md` is what kept it out of the top bar.
+- **Narrow screens (≤375px):** the long email is `hidden` below `sm` (still in
+  the footer and on `/lien-he/`); the hotline stays `shrink-0` and the search
+  form absorbs the remaining width. One row, no overflow. Bar height 32 → 36px.
+  The input is 16px on mobile (`max-sm:text-base`) to suppress iOS focus zoom.
+
 ## Admin theming — brand palette + dashboard polish (2026-10-01)
 
 `src/app/(payload)/custom.scss` is the ONLY admin stylesheet other than

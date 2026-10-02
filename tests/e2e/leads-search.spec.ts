@@ -33,10 +33,10 @@ test.describe('search + leads (spec §10.3)', () => {
     test('contact form submits and shows the success state', async ({ page }) => {
       await page.goto('/lien-he/')
       // Scope every interaction to the lead form (identified by its consent
-      // checkbox). The header's SearchBox is ALSO a form with a
-      // `button[type="submit"]` ("Tìm") and it precedes <main> in the DOM, so a
-      // bare `button[type="submit"]` click (the plan's selector) hits the search
-      // button and GETs /tim-kiem/ — the lead is never submitted.
+      // checkbox). The top bar's SearchBox (in the chrome, above <main>) is ALSO
+      // a form with a `button[type="submit"]` ("Tìm") and it precedes <main> in
+      // the DOM, so a bare `button[type="submit"]` click (the plan's selector)
+      // hits the search button and GETs /tim-kiem/ — the lead is never submitted.
       const form = page.locator('form:has(input[name="consent"])')
       await form.locator('input[name="name"]').fill('E2E Người Thử')
       await form.locator('input[name="phone"]').fill('0900000001')
