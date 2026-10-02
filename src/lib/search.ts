@@ -51,13 +51,20 @@ export async function searchAll(rawQuery: string, limit = 20): Promise<SearchRes
     excerpt: string | null
     score: number
   }>(
+    // `_status = 'published'` on pages AND posts: both are draft-enabled, and
+    // without this filter search returned UNPUBLISHED drafts to the public —
+    // a real leak (verified: searching a draft page's title returned it). The
+    // URL behind such a result 404s for an anonymous visitor, but the draft's
+    // title and existence were exposed. `categories` has no drafts, so it needs
+    // no filter. Note the vector itself is written for every status, so the
+    // filter belongs here, at read time.
     `WITH q AS (SELECT websearch_to_tsquery('simple', unaccent($1)) AS tsq)
      SELECT 'page' AS type, COALESCE(primary_heading, title) AS title, slug, NULL::text AS excerpt,
             ts_rank(search_vector, q.tsq) AS score
-     FROM pages, q WHERE search_vector @@ q.tsq
+     FROM pages, q WHERE search_vector @@ q.tsq AND _status = 'published'
      UNION ALL
      SELECT 'post', title, slug, excerpt, ts_rank(search_vector, q.tsq)
-     FROM posts, q WHERE search_vector @@ q.tsq
+     FROM posts, q WHERE search_vector @@ q.tsq AND _status = 'published'
      UNION ALL
      SELECT 'category', title, slug, NULL, ts_rank(search_vector, q.tsq)
      FROM categories, q WHERE search_vector @@ q.tsq
