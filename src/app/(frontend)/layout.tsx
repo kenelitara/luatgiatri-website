@@ -2,6 +2,7 @@ import { Be_Vietnam_Pro } from 'next/font/google'
 import type { Metadata } from 'next'
 import { ConsentBanner } from '@/components/ConsentBanner'
 import { DraftPreviewBar } from '@/components/DraftPreviewBar'
+import { FloatingContact } from '@/components/chrome/FloatingContact'
 import { Footer } from '@/components/chrome/Footer'
 import { Header } from '@/components/chrome/Header'
 import { TopBar } from '@/components/chrome/TopBar'
@@ -36,6 +37,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Header />
         <main>{children}</main>
         <Footer />
+        {/* Values come off the settings already read above — no extra fetch. */}
+        <FloatingContact hotline={settings.hotline} facebookUrl={settings.socials?.facebook ?? null} />
         <ConsentBanner ga4Id={settings.ga4Id ?? undefined} />
         {draftMode && <DraftPreviewBar />}
       </body>

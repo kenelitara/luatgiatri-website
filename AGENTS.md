@@ -1717,6 +1717,71 @@ unchanged. `getPublishedPageSlugs` deliberately does NOT read draft mode — it 
 - Fully-live editing would need `versions.drafts.autosave` on the collections or the
   `@payloadcms/live-preview-react` hook — neither is enabled, deliberately.
 
+## Floating contact buttons (Phone / Zalo / Facebook) — 2026-10-02
+
+Client request: a fixed bottom-right stack of circular quick-contact buttons.
+Lives in `src/components/chrome/FloatingContact.tsx`, rendered from
+`(frontend)/layout.tsx` with the values passed as props off the ALREADY-read
+`getSiteSettings()` — the component never fetches, so it adds no DB call to the
+prerender path.
+
+- **Server component by design** — three plain `<a>` tags need no JavaScript,
+  and the site keeps its client islands minimal (HeroCarousel, LeadForm). No
+  `'use client'`, no dependency. Icons are inline SVG (phone handset; the Zalo
+  wordmark; the Messenger bubble+bolt via `fill-rule="evenodd"`, because the
+  client asked for Facebook *message*, not the plain "f"). The component emits
+  NO headings (`heading-discipline.spec.ts`).
+- **ONE SOURCE PER BUTTON — there are NO fallback URL constants** (same anti-trap
+  reasoning that removed the GA4 env fallback; a value with two sources is a
+  trap):
+  - **Phone** — `tel:<hotline digits>` from the required `SiteSettings.hotline`
+    (live `0919088119` → `tel:0919088119`).
+  - **Zalo** — `https://zalo.me/<hotline digits>` derived from the SAME
+    `hotline`. `ZALO_BASE_URL` is the only exported constant. `socials.zalo` is
+    deliberately NOT consulted here (it stays in the schema for schema.org
+    `sameAs`).
+  - **Facebook** — `SiteSettings.socials.facebook` is the ONLY source. **When it
+    is empty the button is NOT rendered at all** — no default URL, no `#`, no
+    empty `href`. The button appears the moment the firm enters their profile
+    URL in the admin (Thông tin website); no deploy.
+- **`scripts/seed.ts` writes the SiteSettings global UNCONDITIONALLY** — the
+  `payload.updateGlobal` at `seed.ts:156` sets brandName/hotline/email/address
+  on EVERY seed run and omits `socials`. The Facebook URL is therefore
+  deliberately **NOT in the seed**: writing it there would clobber a value the
+  firm later edits in the admin. The dev DB was set once via the **Local API**
+  (`payload.updateGlobal`); **a fresh DB — and production — needs the URL
+  entered once in the admin.** (`socials.zalo` is not needed by this button.)
+- **Consent-banner collision — the deliberate z-index/offset decision.** The
+  banner is `fixed inset-x-0 bottom-0 z-50` and owns the whole bottom strip. The
+  stack is `z-[60]` and is LIFTED clear of the banner by a CSS-only rule in
+  `globals.css`, keyed on the banner's own DOM:
+  `body:has([role='dialog'][aria-label='Thông báo cookie']) .floating-contact
+  { bottom: 11rem }` (7rem at ≥768px). `:has()` watches the real DOM, so the
+  stack drops back to `bottom-6` the instant the visitor answers (the banner
+  unmounts); when GA4 is off there is no banner and the rule never applies.
+  Measured: banner 70px tall / stack lifted to 112px on desktop (42px gap);
+  banner 142px / stack lifted to 176px at 375px (34px gap) — both usable, never
+  hidden.
+- **Focus ring = the project's teal** `#0f908a` (= `--theme-success-500`), 2px
+  with a 2px offset, set in `globals.css` (not a Tailwind variant). `#0f908a`
+  measures 3.9:1 on white and 4.1:1 on the navy footer; the brand teal chip
+  `#34b1aa` is only 2.6:1 on white, which is why the darker stop is used.
+  Measured glyph-on-background contrasts: navy `#002147` 16.06:1, Zalo
+  `#0068FF` 4.75:1, Messenger gradient `#1877F2`→`#A033FF` 4.23–4.85:1 — all
+  ≥ 3:1 (WCAG non-text contrast). Zalo (flat blue) and Messenger (blue→violet
+  gradient) are separated on purpose so the two blue brands never read alike.
+- **Links:** Zalo + Facebook carry `target="_blank" rel="noopener noreferrer"`;
+  the `tel:` link carries neither.
+- Verified 2026-10-02 against `pnpm build && pnpm exec next start -p 3100`:
+  resolved hrefs `tel:0919088119`, `https://zalo.me/0919088119`,
+  `https://www.facebook.com/profile.php?id=61580495127981`. The hide-when-empty
+  path was proven BOTH ways by clearing then restoring `socials.facebook` via the
+  Local API and watching ISR heal (button gone at ~35s, back at ~55s). `pnpm test`
+  107, `pnpm e2e` 29, `pnpm typecheck` clean, DB-less
+  `docker build --build-arg SITE_ENV=production … --target runner` exits 0 with
+  the component present in `.next/server`. Screenshots (untracked):
+  `docs/admin-shots/m5-floating-*.png`.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

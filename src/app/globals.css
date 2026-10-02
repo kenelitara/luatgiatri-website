@@ -24,3 +24,31 @@
 .prose {
   max-width: 65ch;
 }
+
+/* ---------------------------------------------------------------------------
+   Floating contact buttons (src/components/chrome/FloatingContact.tsx)
+
+   Focus ring: the same teal the admin uses for its focus states
+   (`--theme-success-500`, #0f908a). Plain Zalo/Facebook blues are low-contrast
+   against it, and #34b1aa (the brand teal chip) measures only ~2.6:1 on white;
+   #0f908a measures ~3.9:1 on white and ~4.1:1 on the navy footer, so the ring
+   stays visible wherever the buttons float.
+--------------------------------------------------------------------------- */
+.floating-contact a:focus-visible {
+  outline: 2px solid #0f908a;
+  outline-offset: 2px;
+}
+
+/* The cookie-consent banner is `fixed inset-x-0 bottom-0 z-50` and owns the
+   whole bottom strip. While it is on screen, lift the stack clear of it so BOTH
+   stay usable; `:has()` watches the real DOM, so the buttons drop back to
+   `bottom-6` the moment the visitor answers (the banner unmounts) — and when
+   GA4 is off there is no banner at all and this never applies. */
+body:has([role='dialog'][aria-label='Thông báo cookie']) .floating-contact {
+  bottom: 11rem; /* clears the stacked mobile banner */
+}
+@media (min-width: 768px) {
+  body:has([role='dialog'][aria-label='Thông báo cookie']) .floating-contact {
+    bottom: 7rem; /* clears the single-row desktop banner */
+  }
+}
