@@ -25,6 +25,9 @@
  * has no `alternateName` and no `founder`; a subset schema is a LEGITIMATE
  * record, not a parse failure.
  */
+/** One registered industry from the record's `industries-list` section. */
+export type TaxIndustry = { code: string; name: string }
+
 export type TaxRecord = {
   mst: string
   name: string | null
@@ -32,6 +35,19 @@ export type TaxRecord = {
   englishName: string | null
   address: string | null
   representative: string | null
+  /**
+   * Main business line — the record region's `Ngành nghề chính` row. It exists
+   * ONLY in the region (the JSON-LD Organization node does not carry it), and a
+   * business household does not have it at all → `null`, row not rendered.
+   */
+  sector: string | null
+  /**
+   * The registered-industry list — the record's OWN `industries-list` section,
+   * read region-anchored, in source order. `null` when the section is absent
+   * (a household page has none). NEVER derived from the summary prose or the
+   * FAQ JSON-LD, which mention the same subject in marketing copy.
+   */
+  industries: TaxIndustry[] | null
 }
 
 export const TAX_SOURCE_NAME = 'dailychukyso.com.vn'
@@ -101,6 +117,17 @@ const RECORD_INFO_BLOCK = 'card-info-grid'
 const RECORD_INVOICE_BLOCK = 'invoice-section'
 
 /**
+ * The record's own label for the main business line. The source's FAQPage
+ * JSON-LD carries marketing prose containing the SAME phrase (`"Ngành nghề kinh
+ * doanh chính của công ty là: …"`), so this must ONLY ever be matched inside the
+ * record region — never document-wide.
+ */
+const SECTOR_LABEL = 'Ngành nghề'
+
+/** The registered-industry list container. Its items are `{ code, name }`. */
+const RECORD_INDUSTRIES_BLOCK = 'industries-list'
+
+/**
  * Inner HTML of the first `<div class="… <className> …">`, found by a balanced
  * `<div>` scan. Returns null when the class is absent OR the tags do not
  * balance — a null here means "record region not found", and the caller must
@@ -153,7 +180,16 @@ function fromJsonLd(html: string, expectedMst: string): TaxRecord | null {
         founder && typeof founder === 'object' ? str((founder as Record<string, unknown>).name) : str(founder)
       // A household has neither `alternateName` nor `founder` — both come out
       // null, and their rows are not rendered. That is correct, not a failure.
-      return { mst: taxId, name, englishName: str(org.alternateName), address: street, representative }
+      // `sector` and `industries` are region-only and are filled by `parseTaxRecord`.
+      return {
+        mst: taxId,
+        name,
+        englishName: str(org.alternateName),
+        address: street,
+        representative,
+        sector: null,
+        industries: null,
+      }
     }
   }
   return null
@@ -204,11 +240,59 @@ function fromLabels(html: string, expectedMst: string): TaxRecord | null {
       (info ? labelledValue(info, 'Địa chỉ') : null) ??
       (invoice ? labelledValue(invoice, 'Địa chỉ') : null),
     representative: info ? labelledValue(info, 'Người đại diện') : null,
+    sector: info ? labelledValue(info, SECTOR_LABEL) : null,
+    industries: parseIndustries(html),
   }
+}
+
+/**
+ * The registered-industry list, read from its OWN container only
+ * (`industries-list`). NEVER derived from the summary prose ("Ngành nghề kinh
+ * doanh chính là 7310 - quảng cáo") or the FAQ JSON-LD — both mention the same
+ * subject and both are marketing copy, not the record. Returns `null` when the
+ * section is absent (a household page has none).
+ */
+export function parseIndustries(html: string): TaxIndustry[] | null {
+  const list = recordBlock(html, RECORD_INDUSTRIES_BLOCK)
+  if (!list) return null
+  const re =
+    /<span[^>]*class="[^"]*industry-code[^"]*"[^>]*>([\s\S]*?)<\/span>\s*<span[^>]*class="[^"]*industry-name[^"]*"[^>]*>([\s\S]*?)<\/span>/gi
+  const out: TaxIndustry[] = []
+  let m: RegExpExecArray | null
+  while ((m = re.exec(list))) {
+    const code = cleanText(m[1])
+    const name = cleanText(m[2])
+    if (code && name) out.push({ code, name })
+  }
+  return out
+}
+
+/**
+ * The count printed in the industries section title (`Ngành nghề kinh doanh (35)`)
+ * — a cheap cross-check against the parsed item count. Null when absent.
+ */
+export function industriesTitleCount(html: string): number | null {
+  const m = html.match(
+    /<h2[^>]*class="[^"]*section-title[^"]*"[^>]*>[\s\S]*?Ngành nghề kinh doanh\s*\((\d+)\)[\s\S]*?<\/h2>/i,
+  )
+  return m ? Number(m[1]) : null
 }
 
 /** Parse a record page. Returns null when the requested code is not described. */
 export function parseTaxRecord(html: string, expectedMst: string): TaxRecord | null {
   if (!html) return null
-  return fromJsonLd(html, expectedMst) ?? fromLabels(html, expectedMst)
+  const jsonLd = fromJsonLd(html, expectedMst)
+  if (jsonLd) {
+    // The JSON-LD path is authoritative for the fields it carries, but `sector`
+    // and `industries` live ONLY in the record region — fill them from there
+    // (region-anchored, so the FAQ prose that mentions the same phrases can
+    // never be the source).
+    const info = recordBlock(html, RECORD_INFO_BLOCK)
+    return {
+      ...jsonLd,
+      sector: info ? labelledValue(info, SECTOR_LABEL) : null,
+      industries: parseIndustries(html),
+    }
+  }
+  return fromLabels(html, expectedMst)
 }

@@ -57,6 +57,31 @@ export const TaxLookups: CollectionConfig = {
     { name: 'englishName', type: 'text', label: 'Tên giao dịch (tiếng Anh)' },
     { name: 'address', type: 'textarea', label: 'Địa chỉ' },
     { name: 'representative', type: 'text', label: 'Người đại diện pháp luật' },
+    {
+      name: 'sector',
+      type: 'text',
+      label: 'Lĩnh vực chính',
+      admin: {
+        description:
+          'Ngành nghề chính trên trang nguồn (nhãn "Ngành nghề chính"). Hộ kinh doanh không có trường này.',
+      },
+    },
+    {
+      name: 'industries',
+      type: 'array',
+      label: 'Ngành nghề kinh doanh',
+      // `labels` is MANDATORY on array/blocks fields (the row-title trap —
+      // without it the rows would be titled "Item 01" from the field name).
+      labels: { singular: 'Ngành nghề', plural: 'Ngành nghề' },
+      admin: {
+        description:
+          'Danh sách ngành nghề đăng ký trên trang nguồn (mục "Ngành nghề kinh doanh"). Hộ kinh doanh không có mục này.',
+      },
+      fields: [
+        { name: 'code', type: 'text', label: 'Mã ngành' },
+        { name: 'name', type: 'text', label: 'Tên ngành' },
+      ],
+    },
     { name: 'fetchedAt', type: 'date', label: 'Thời điểm tra cứu', required: true },
     { name: 'source', type: 'text', label: 'Nguồn', required: true },
     {

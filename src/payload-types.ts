@@ -396,7 +396,7 @@ export interface Lead {
 export interface TaxLookup {
   id: number;
   /**
-   * Dạng chuẩn hoá: 10 chữ số, hoặc 10 chữ số + 3 chữ số của đơn vị trực thuộc.
+   * Dạng chuẩn hoá: 10 chữ số (doanh nghiệp) hoặc 12 chữ số (hộ kinh doanh), kèm 3 chữ số của đơn vị trực thuộc nếu có.
    */
   mst: string;
   /**
@@ -407,6 +407,20 @@ export interface TaxLookup {
   englishName?: string | null;
   address?: string | null;
   representative?: string | null;
+  /**
+   * Ngành nghề chính trên trang nguồn (nhãn "Ngành nghề chính"). Hộ kinh doanh không có trường này.
+   */
+  sector?: string | null;
+  /**
+   * Danh sách ngành nghề đăng ký trên trang nguồn (mục "Ngành nghề kinh doanh"). Hộ kinh doanh không có mục này.
+   */
+  industries?:
+    | {
+        code?: string | null;
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   fetchedAt: string;
   source: string;
   /**
@@ -1008,6 +1022,14 @@ export interface TaxLookupsSelect<T extends boolean = true> {
   englishName?: T;
   address?: T;
   representative?: T;
+  sector?: T;
+  industries?:
+    | T
+    | {
+        code?: T;
+        name?: T;
+        id?: T;
+      };
   fetchedAt?: T;
   source?: T;
   fetchedByIpHash?: T;

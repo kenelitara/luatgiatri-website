@@ -71,8 +71,35 @@ function ResultCard({ outcome }: { outcome: Extract<TaxLookupOutcome, { status: 
         {record.englishName ? <Field label="Tên giao dịch (tiếng Anh)" value={record.englishName} /> : null}
         {record.address ? <Field label="Địa chỉ" value={record.address} /> : null}
         {record.representative ? <Field label="Người đại diện pháp luật" value={record.representative} /> : null}
+        {record.sector ? <Field label="Lĩnh vực chính" value={record.sector} /> : null}
         <Field label="Thời điểm tra cứu" value={formatViDate(outcome.fetchedAt)} />
       </dl>
+
+      {/*
+        Registered industries — a native <details> so no client JS is needed (the
+        content is already in the DOM; only its visibility changes). A company can
+        carry 35 of them, so the list scrolls inside a max-height instead of
+        pushing the footer away. <summary> is NOT a heading, so the heading law
+        is untouched (the page keeps one <h1> + the company-name <h2>).
+      */}
+      {record.industries && record.industries.length > 0 ? (
+        <details className="mt-4 rounded border border-brand-100 bg-brand-50">
+          <summary className="cursor-pointer select-none px-4 py-3 text-sm font-semibold text-brand-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0f908a]">
+            Ngành nghề kinh doanh ({record.industries.length})
+          </summary>
+          <div className="max-h-80 overflow-auto border-t border-brand-100 px-4">
+            <dl className="divide-y divide-brand-50">
+              {record.industries.map((it, i) => (
+                <div key={`${it.code}-${i}`} className="grid gap-1 py-2 sm:grid-cols-[80px_1fr] sm:gap-3">
+                  <dt className="text-sm font-semibold text-brand-600">{it.code}</dt>
+                  <dd className="text-sm leading-6 text-brand-900">{it.name}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </details>
+      ) : null}
+
       <p className="mt-4 text-sm leading-6 text-brand-700">{MSG_DISCLAIMER}</p>
     </div>
   )

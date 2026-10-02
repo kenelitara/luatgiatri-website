@@ -1977,6 +1977,43 @@ the whole document returns `✓` (the hazard), while `parseTaxRecord` returns
   household is complete without englishName/representative (so its lookup logs
   nothing), an enterprise missing its representative IS partial (warn). Keeps a
   healthy run quiet.
+- **The main business line (`Ngành nghề chính`) is region-only.** The JSON-LD
+  Organization node does NOT carry it, so `parseTaxRecord` reads it from the
+  record region and merges it into whichever record it returns (the JSON-LD path
+  fills only `sector` this way). A **business household has no such row** →
+  `sector` is `null` and the row is not rendered (the household fixture's
+  `/Ngành nghề/` count is 0 in the WHOLE page).
+- **The FAQ-prose hazard (guard it exactly like the `✓` checkmark).** The
+  source's FAQPage JSON-LD contains the SAME phrase in marketing copy
+  (`"Ngành nghề kinh doanh chính của công ty là: …"`). A document-wide match
+  would read the FAQ; the region-anchored read cannot. Regression tests
+  (`sector — record-region provenance`): on the REAL enterprise fixture the FAQ
+  phrasing is present in the raw HTML yet the parser returns the record value; a
+  synthetic page whose FAQ names a DIFFERENT sector returns the RECORD value; and
+  a page whose record row is renamed away returns `null` while the FAQ prose is
+  still present. **Assert provenance, not just the string — the value coincides
+  on the real page.**
+- **The registered-industry LIST is a separate record section**
+  (`industries-list`), NOT the same thing as the single `Ngành nghề chính`
+  value. `parseIndustries(html)` reads it region-anchored — `recordBlock(html,
+  'industries-list')` then the `industry-code` / `industry-name` pairs — in
+  source order, names kept VERBATIM (one is 436 chars with parenthetical
+  qualifiers). A household page has no such section → `null`. It must NEVER be
+  derived from the summary prose (`"Ngành nghề kinh doanh chính là 7310 - quảng
+  cáo"`), the FAQ JSON-LD, or the `ind-badge` VSIC chips — all marketing copy.
+  35 items for `0319461598` (first `1075`, last `9011`), 0 for both other
+  fixtures.
+- **Free integrity cross-check:** the section title carries the item count
+  (`Ngành nghề kinh doanh (35)`); `industriesTitleCount(html)` reads it and
+  `tax-lookup.ts` logs `[mst] industries count mismatch:` when it disagrees with
+  the parsed length — a quiet signal that the markup shifted. A healthy run
+  logs nothing (35 == 35).
+- **Fixture:** `tests/fixtures/dailychukyso-mst-0319461598.html` (a company with
+  a 35-item list) sits beside the enterprise and household fixtures.
+- **Deliberately NOT built** (present on these pages, not requested): the VSIC
+  `ind-badge` chip summary (`Bán buôn=6, Nhóm 11=5, …`), and the extra
+  `📋 Trạng thái`, `📅 Ngày hoạt động`, `⚖️ Loại hình pháp lý`, `🏛️ Quản lý bởi`,
+  `📌 Tỉnh/TP` info rows. Build none of them without being asked.
 - Verified samples: enterprise `0319122355` → CÔNG TY TNHH THƯƠNG MẠI CÔNG NGHỆ
   HÀ NHI · `54/16 Đường Số 2, Phường Bình Tân, TP Hồ Chí Minh` · TRẦN LƯƠNG
   KHÁNH THY · HA NHI TECHNOLOGY TRADING COMPANY LIMITED; household `060091003294`
@@ -1985,10 +2022,26 @@ the whole document returns `✓` (the hazard), while `parseTaxRecord` returns
 
 ### The cache — `tax-lookups` collection (server-only writer)
 
-- `src/payload/collections/TaxLookups.ts`; migration
-  `20261002_123501_add_tax_lookups` (table `tax_lookups`, `mst` UNIQUE). Fields:
-  `mst`, `outcome`, `name`, `englishName`, `address`, `representative`,
-  `fetchedAt`, `source`, `fetchedByIpHash`.
+- `src/payload/collections/TaxLookups.ts`; migrations
+  `20261002_123501_add_tax_lookups` (the table),
+  `20261002_130438_add_tax_lookups_sector` (the `sector` column) and
+  `20261002_130853_add_tax_lookups_industries` (the `tax_lookups_industries`
+  child table). Table `tax_lookups`, `mst` UNIQUE. Fields: `mst`, `outcome`,
+  `name`, `englishName`, `address`, `representative`, `sector`, `industries`
+  (array of `{ code, name }`), `fetchedAt`, `source`, `fetchedByIpHash`. The
+  `industries` array field carries explicit `labels` (the row-title trap — an
+  array field without `labels` titles its rows "Item 01" from the field name).
+- **ADDING A PARSER FIELD INVALIDATES THE CACHE — clear the rows ONCE.** Rows
+  written before a field existed carry NULL for it, so a cache hit would show no
+  row for up to the 30-day TTL. Do NOT solve this by treating a missing value as
+  stale: a household legitimately has `null` sector AND `null` representative, so
+  that rule would re-fetch every household on every lookup forever and break the
+  one-fetch-per-code guarantee that makes this feature acceptable. Instead run
+  `DELETE FROM tax_lookups;` once when the field ships (the `sector` change
+  cleared **4** legacy rows; the `industries` change cleared **4** more) — each
+  code re-fetches ONCE on its next lookup and then caches normally. **Watch for a
+  second writer:** the dev server on :3000 shares this DB and will re-populate
+  rows with its own (possibly older) code, so clear and verify in the same breath.
 - **`access.create: () => false`** — the same server-only-writer lock-out as
   Leads. The lookup writes through the Local API with `overrideAccess`; the
   browser can never POST a row.
@@ -2038,6 +2091,15 @@ window returns the throttle message and makes no outbound request.
 - One `<h1>` (`Tra cứu mã số thuế`); the result card's company name is the only
   `<h2>` (heading law). Brand navy/gold, Be Vietnam Pro, a
   `mx-auto max-w-3xl px-4 py-section` container.
+- **The registered-industry list renders in a native `<details>` panel** —
+  `<summary>` reads `Ngành nghề kinh doanh (N)`, the body is
+  `max-h-80 overflow-auto` so 35 rows SCROLL instead of pushing the footer away.
+  No client JS: the content is already in the DOM and only its visibility
+  changes (unlike the click-to-load map, there is no load-on-open concern).
+  `<summary>` is NOT a heading, so the outline stays `h1` + the company-name
+  `h2` (measured in the browser). `Lĩnh vực chính` — the client's wording for
+  the source's `Ngành nghề chính` — stays a single row. Both the row and the
+  panel are omitted entirely when their value is null/empty (household).
 - **The source is NOT named or linked on the page (client instruction
   2026-10-02).** No "Nguồn:" line, no link out, no third-party domain in any
   title / aria-label / alt / metadata string. The source URL still lives in the
@@ -2051,28 +2113,45 @@ window returns the throttle message and makes no outbound request.
 
 ### Verification (2026-10-02)
 
-- **Enterprise `0319122355`** renders 6 rows: Mã số thuế / Tên / Tên giao dịch
-  (tiếng Anh) / Địa chỉ / Người đại diện pháp luật / Thời điểm tra cứu.
+- **Enterprise `0319122355`** renders 7 rows: Mã số thuế / Tên / Tên giao dịch
+  (tiếng Anh) / Địa chỉ / Người đại diện pháp luật / **Lĩnh vực chính
+  (`Bán buôn đồ dùng khác cho gia đình`)** / Thời điểm tra cứu. No industries
+  panel (that page has no `industries-list`).
+- **`0319461598`** (35-item list) renders the same rows with
+  `Lĩnh vực chính :: 7310 - Quảng cáo` PLUS a `<details>` panel
+  `Ngành nghề kinh doanh (35)` — 35 rows, first `1075 - Sản xuất món ăn, thức ăn
+  chế biến sẵn`, last `9011 - Hoạt động sáng tác văn học…`; the panel scrolls
+  (scrollHeight 2058 > clientHeight 319) and does not push the footer away.
 - **Household `060091003294`** renders 4 rows: Mã số thuế / Tên / Địa chỉ / Thời
-  điểm tra cứu — NO empty "Tên giao dịch" row and **no `✓` anywhere** in the
-  served HTML (`grep` for the checkmark returns false in every state).
+  điểm tra cứu — NO sector row, NO industries panel, NO empty "Tên giao dịch"
+  row and **no `✓` anywhere** in the served HTML.
+- **Heading outline** (measured): `H1 :: Tra cứu mã số thuế` +
+  `H2 :: <company name>` — exactly two headings; `<summary>` adds no level.
 - Cache: 3 requests → 1 `[mst] FETCH` line and `fetched_at` unchanged; a server
-  restart re-served the code from the DB with 0 fetches. The household is
-  likewise cache-served on its second request.
+  restart re-served the code from the DB with 0 fetches. Each code is
+  cache-served on its second request.
 - Invalid `abc` / `1234567` (and an 11-digit code) → Vietnamese alert, 0
   outbound requests. `9999999999` (valid, no record) → graceful `Không tìm thấy
   thông tin cho mã số thuế …`, no empty card, and no source mention anywhere in
   the served HTML. The two failure messages stay distinct.
 - Rate limit trips on the 6th lookup with no outbound request.
-- `noindex, nofollow` (staging build), exactly one `<h1>`, zero console errors.
-  `pnpm typecheck` clean; `pnpm test` **140/140** (was 107 before the feature:
-  +19 for the original, +14 for the household/record-region fix); `pnpm e2e`
-  29/29; DB-less `docker build --target runner` exits 0. **No new env var** —
-  `IP_HASH_SALT` already existed.
-- **Politeness ledger:** the household page was fetched ONCE to make the second
-  fixture, and once more to prove the live parse end-to-end on the served build.
-  No range sweeps, no probing: validation is unit-tested, never exercised
-  against the source.
+- `noindex, nofollow` (staging build) / **`noindex, follow` on the production
+  image** (verified for both entity types), exactly one `<h1>`, zero console
+  errors. `pnpm typecheck` clean; `pnpm test` **153/153** (was 107 before the
+  feature: +19 original, +14 household/record-region, +5 `Lĩnh vực chính` +8
+  industries); `pnpm e2e` 29/29; DB-less `docker build --target runner` exits 0.
+  **No new env var** — `IP_HASH_SALT` already existed.
+- **Politeness ledger:** this task's live requests are the forced re-fetches for
+  the cleared codes — one each for `0319122355`, `060091003294`, `0319461598`
+  (plus one 404 for `9999999999` in the state check), plus the earlier
+  fixture/lookup requests. No range sweeps, no probing: validation and the
+  parsers are unit-tested against SAVED fixtures, never against the source.
+- **Operational gotcha found here:** the :3000 dev server shares this DB. It
+  re-populated the cache with its own (older, pre-`industries`) bundle while a
+  verification build was being made, which silently served rows with an empty
+  list. Clear the cache and run the verification build in one breath, and confirm
+  the 3100 `next start` actually bound (a stale 3100 process makes the new one
+  exit 1 while the old one keeps serving old code).
 
 <!-- BEGIN:nextjs-agent-rules -->
 

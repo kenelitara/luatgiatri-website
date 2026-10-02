@@ -25,6 +25,7 @@ import { getPayloadClient } from '@/lib/getPayload'
 import { hashIp, isRateLimited, TAX_LOOKUP_RATE_LIMIT } from '@/lib/rate-limit'
 import { normalizeTaxCode } from '@/lib/tax-code'
 import {
+  industriesTitleCount,
   isCacheFresh,
   missingExpectedFields,
   parseTaxRecord,
@@ -91,6 +92,8 @@ type TaxLookupRow = {
   englishName?: string | null
   address?: string | null
   representative?: string | null
+  sector?: string | null
+  industries?: Array<{ code?: string | null; name?: string | null }> | null
   fetchedAt: string
   source?: string | null
 }
@@ -102,6 +105,11 @@ function rowToRecord(row: TaxLookupRow): TaxRecord {
     englishName: row.englishName ?? null,
     address: row.address ?? null,
     representative: row.representative ?? null,
+    sector: row.sector ?? null,
+    industries:
+      row.industries
+        ?.map((i) => ({ code: i.code ?? '', name: i.name ?? '' }))
+        .filter((i) => i.code && i.name) ?? null,
   }
 }
 
@@ -180,6 +188,19 @@ export async function lookupTaxCode(rawMst: string, ipHash: string | null): Prom
   if (record) {
     const missing = missingExpectedFields(record)
     if (missing.length) console.warn('[mst] partial record:', { mst, missing: missing.join(',') })
+    // Free integrity cross-check: the industries section title carries the item
+    // count (`Ngành nghề kinh doanh (35)`). If it disagrees with what we parsed,
+    // the markup shifted — a quiet signal, not a failure.
+    if (record.industries) {
+      const titleCount = industriesTitleCount(html ?? '')
+      if (titleCount !== null && titleCount !== record.industries.length) {
+        console.warn('[mst] industries count mismatch:', {
+          mst,
+          title: titleCount,
+          parsed: record.industries.length,
+        })
+      }
+    }
   }
 
   const fetchedAt = new Date().toISOString()
@@ -199,6 +220,8 @@ export async function lookupTaxCode(rawMst: string, ipHash: string | null): Prom
     englishName: record?.englishName ?? null,
     address: record?.address ?? null,
     representative: record?.representative ?? null,
+    sector: record?.sector ?? null,
+    industries: record?.industries ?? [],
     fetchedAt,
     fetchedByIpHash: ipHash ?? null,
     source,

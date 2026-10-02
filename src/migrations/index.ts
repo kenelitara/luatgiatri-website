@@ -9,6 +9,8 @@ import * as migration_20261001_092326 from './20261001_092326';
 import * as migration_20261001_105457 from './20261001_105457';
 import * as migration_20261001_165834_search_vector from './20261001_165834_search_vector';
 import * as migration_20261002_123501_add_tax_lookups from './20261002_123501_add_tax_lookups';
+import * as migration_20261002_130438_add_tax_lookups_sector from './20261002_130438_add_tax_lookups_sector';
+import * as migration_20261002_130853_add_tax_lookups_industries from './20261002_130853_add_tax_lookups_industries';
 
 export const migrations = [
   {
@@ -64,6 +66,16 @@ export const migrations = [
   {
     up: migration_20261002_123501_add_tax_lookups.up,
     down: migration_20261002_123501_add_tax_lookups.down,
-    name: '20261002_123501_add_tax_lookups'
+    name: '20261002_123501_add_tax_lookups',
+  },
+  {
+    up: migration_20261002_130438_add_tax_lookups_sector.up,
+    down: migration_20261002_130438_add_tax_lookups_sector.down,
+    name: '20261002_130438_add_tax_lookups_sector',
+  },
+  {
+    up: migration_20261002_130853_add_tax_lookups_industries.up,
+    down: migration_20261002_130853_add_tax_lookups_industries.down,
+    name: '20261002_130853_add_tax_lookups_industries'
   },
 ];

@@ -5,9 +5,11 @@ import {
   FOUND_TTL_MS,
   MISS_TTL_MS,
   expectedFields,
+  industriesTitleCount,
   isCacheFresh,
   labelledValue,
   missingExpectedFields,
+  parseIndustries,
   parseTaxRecord,
   recordBlock,
   taxSourceUrl,
@@ -17,6 +19,8 @@ import {
 const read = (f: string) => readFileSync(join(process.cwd(), 'tests', 'fixtures', f), 'utf8')
 const ENTERPRISE = read('dailychukyso-mst-0319122355.html')
 const HOUSEHOLD = read('dailychukyso-mst-060091003294.html')
+// A company with a large registered-industry list (35 items).
+const BIG = read('dailychukyso-mst-0319461598.html')
 const strip = (h: string) =>
   h.replace(/<script[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi, '')
 
@@ -26,6 +30,8 @@ const EXPECTED_ENTERPRISE = {
   englishName: 'HA NHI TECHNOLOGY TRADING COMPANY LIMITED',
   address: '54/16 Đường Số 2, Phường Bình Tân, TP Hồ Chí Minh, Việt Nam',
   representative: 'TRẦN LƯƠNG KHÁNH THY',
+  sector: 'Bán buôn đồ dùng khác cho gia đình',
+  industries: null, // this record has no industries section
 }
 
 describe('parseTaxRecord — enterprise fixture (10-digit code)', () => {
@@ -64,6 +70,8 @@ describe('parseTaxRecord — business-household fixture (12-digit code)', () => 
       englishName: null, // households have no alternateName
       address: 'LKB 36, Khu nhà ở U&I An Phú, đường An Phú 18, Khu phố 1B, Phường An Phú, TP Hồ Chí Minh',
       representative: null, // households have no founder
+      sector: null, // households have no "Ngành nghề chính" row
+      industries: null, // households have no "industries-list" section
     })
   })
 
@@ -121,6 +129,116 @@ describe('record-region anchoring (the structural fix)', () => {
     expect(recordBlock(TRAP, 'invoice-section')).toContain('CÔNG TY ABC')
     expect(recordBlock(TRAP, 'invoice-section')).not.toContain('✓')
     expect(recordBlock(TRAP, 'does-not-exist')).toBeNull()
+  })
+})
+
+describe('sector ("Lĩnh vực chính") — record-region provenance, not the FAQ prose', () => {
+  it('enterprise fixture yields the sector from the record region', () => {
+    expect(parseTaxRecord(ENTERPRISE, '0319122355')?.sector).toBe('Bán buôn đồ dùng khác cho gia đình')
+  })
+
+  it('household fixture yields null (no such row)', () => {
+    expect(parseTaxRecord(HOUSEHOLD, '060091003294')?.sector).toBeNull()
+  })
+
+  it('REGRESSION: the FAQPage prose is NOT the source, even though the value coincides', () => {
+    // The raw page DOES contain the phrase in marketing copy…
+    expect(ENTERPRISE).toContain('Ngành nghề kinh doanh chính của công ty là:')
+    // …but the parser reads the record region, so it cannot be the source.
+    expect(parseTaxRecord(ENTERPRISE, '0319122355')?.sector).toBe('Bán buôn đồ dùng khác cho gia đình')
+  })
+
+  // A page whose FAQ names a sector the record itself does NOT have. The values
+  // are deliberately DIFFERENT, so a document-wide match would return the FAQ
+  // string and this test would fail.
+  const FAQ_VALUE = 'FAQ-MARKETING-VALUE'
+  const SECTOR_PROVENANCE = `
+    <html><body>
+      <div class="card-info-grid">
+        <div class="info-item"><span class="info-label">🏭 Ngành nghề chính</span><span class="info-value copyable">Bán buôn đồ dùng khác cho gia đình</span></div>
+      </div>
+      <div class="invoice-section"><div class="invoice-table">
+        <div class="invoice-row"><span class="invoice-label">Tên công ty</span><span class="invoice-value">CÔNG TY ABC</span></div>
+        <div class="invoice-row"><span class="invoice-label">Mã số thuế</span><span class="invoice-value">0319122355</span></div>
+      </div></div>
+      <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Lĩnh vực chính?","acceptedAnswer":{"@type":"Answer","text":"Ngành nghề doanh nghiệp chính của công ty là: ${FAQ_VALUE}."}}]}]}</script>
+    </body></html>`
+
+  it('returns the RECORD value, never the FAQ value (provenance)', () => {
+    expect(SECTOR_PROVENANCE).toContain(FAQ_VALUE) // the trap is present in the page
+    const rec = parseTaxRecord(SECTOR_PROVENANCE, '0319122355')
+    expect(rec?.sector).toBe('Bán buôn đồ dùng khác cho gia đình')
+    expect(rec?.sector).not.toBe(FAQ_VALUE)
+  })
+
+  it('a FAQ-only sector mention yields null (no record row to read)', () => {
+    // Rename the RECORD label so it no longer matches, leaving the FAQ prose
+    // (which still says "Ngành nghề") as the ONLY mention in the page.
+    const faqOnly = SECTOR_PROVENANCE.replace('🏭 Ngành nghề chính', '🏭 Lĩnh vực hoạt động')
+    expect(faqOnly).toContain(FAQ_VALUE) // the FAQ prose is still there…
+    expect(faqOnly).toContain('Ngành nghề') // …and still says "Ngành nghề"
+    expect(parseTaxRecord(faqOnly, '0319122355')?.sector).toBeNull() // …but is not parsed
+  })
+})
+
+describe('industries ("Ngành nghề kinh doanh") — its own record section', () => {
+  const rec = parseTaxRecord(BIG, '0319461598')
+
+  it('parses exactly 35 items from the industries-list container', () => {
+    expect(rec?.industries).toHaveLength(35)
+  })
+
+  it('first and last entries match the source order', () => {
+    expect(rec?.industries?.[0]).toEqual({ code: '1075', name: 'Sản xuất món ăn, thức ăn chế biến sẵn' })
+    expect(rec?.industries?.[34]?.code).toBe('9011')
+    expect(rec?.industries?.[34]?.name).toMatch(/^Hoạt động sáng tác văn học và sáng tác âm nhạc/)
+  })
+
+  it('cross-check: the item count matches the section title count', () => {
+    expect(industriesTitleCount(BIG)).toBe(35)
+    expect(rec?.industries?.length).toBe(industriesTitleCount(BIG))
+  })
+
+  it('keeps long names with parenthetical qualifiers verbatim (no truncation)', () => {
+    const last = rec?.industries?.[34]?.name ?? ''
+    expect(last.length).toBeGreaterThan(100)
+    expect(last).toContain('(trừ kinh doanh vũ trường')
+  })
+
+  it('the main sector is a SEPARATE single value (7310 - Quảng cáo), not the list', () => {
+    expect(rec?.sector).toBe('7310 - Quảng cáo')
+    expect(rec?.industries?.[0]?.code).not.toBe('7310')
+  })
+
+  it('REGRESSION: the summary prose is NOT the source', () => {
+    // The page's intro paragraph says "Ngành nghề kinh doanh chính là 7310 - quảng cáo"…
+    expect(BIG).toContain('Ngành nghề kinh doanh chính là')
+    // …but the list comes from the container, so it starts at 1075, not 7310.
+    expect(parseIndustries(BIG)?.[0]?.code).toBe('1075')
+    expect(parseIndustries(BIG)).toHaveLength(35)
+  })
+
+  it('a page with prose but NO industries-list yields null', () => {
+    const proseOnly = `
+      <html><body>
+        <div class="card-info-grid">
+          <div class="info-item"><span class="info-label">🏭 Ngành nghề chính</span><span class="info-value">7310 - Quảng cáo</span></div>
+        </div>
+        <div class="invoice-section"><div class="invoice-table">
+          <div class="invoice-row"><span class="invoice-label">Tên công ty</span><span class="invoice-value">CÔNG TY ABC</span></div>
+          <div class="invoice-row"><span class="invoice-label">Mã số thuế</span><span class="invoice-value">0319461598</span></div>
+        </div></div>
+        <p>Ngành nghề kinh doanh chính là <strong>7310 - quảng cáo</strong>.</p>
+      </body></html>`
+    expect(proseOnly).toContain('Ngành nghề kinh doanh chính là')
+    expect(parseTaxRecord(proseOnly, '0319461598')?.industries).toBeNull()
+  })
+
+  it('the two other fixtures have no industries section', () => {
+    expect(parseTaxRecord(ENTERPRISE, '0319122355')?.industries).toBeNull()
+    expect(parseTaxRecord(HOUSEHOLD, '060091003294')?.industries).toBeNull()
+    expect(parseIndustries(ENTERPRISE)).toBeNull()
+    expect(parseIndustries(HOUSEHOLD)).toBeNull()
   })
 })
 
