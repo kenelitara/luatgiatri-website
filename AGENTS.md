@@ -1907,11 +1907,15 @@ light for bulk collection.
   (`src/lib/reserved-slugs.ts`), enforced in BOTH the route (`[slug]` refuses it)
   and `Pages.slug`'s validation (description + message updated). A CMS page can
   never collide with it, exactly like `tim-kiem`.
-- **Input handling** — `src/lib/tax-code.ts` (PURE). A code is **10 digits**, or
-  **10 digits + `-` + 3 digits** (a branch / dependent unit). `normalizeTaxCode`
+- **Input handling** — `src/lib/tax-code.ts` (PURE). The regex is
+  `^(?:\d{10}|\d{12})(?:-\d{3})?$` — **10 digits** (enterprise / doanh nghiệp),
+  **12 digits** (business household / hộ kinh doanh, e.g. `060091003294`), and
+  either base **+ `-` + 3 digits** (a branch / dependent unit). `normalizeTaxCode`
   strips spaces/dots, maps en/em dashes to `-`, turns a bare 13-digit run into
-  the `10-3` form; `isValidTaxCode` decides. Invalid input → a Vietnamese alert
-  and **NO outbound request**.
+  `10-3` and a 15-digit run into `12-3`; `isValidTaxCode` decides. Invalid input
+  → a Vietnamese alert and **NO outbound request**. (12-3 is not fixture-confirmed
+  — only 10, 10-3 and 12 are — but it follows the same branch convention and a
+  code the source does not know simply degrades; see the unit tests.)
 
 ### Why the official sources were unusable — DO NOT re-investigate
 
@@ -1935,19 +1939,49 @@ carries no query string). **Do not expand this into bulk collection.**
   server-rendered WordPress (~166 KB) — no headless browser needed. A code with
   no record → **404** (a small "Không tìm thấy MST" page).
 - Data comes from the `application/ld+json` `@graph` Organization node
-  (`legalName`/`name`, `alternateName` = English name, `taxID`/`identifier`,
-  `address.streetAddress`, `founder.name`), with a labelled-span fallback
-  (`Tên công ty` / `Mã số thuế` / `Địa chỉ` invoice rows + the `Người đại diện`
-  info-item).
-- **Parser** — `src/lib/tax-lookup-parse.ts`, PURE (HTML string → record | null),
-  unit-tested against the SAVED real page
-  `tests/fixtures/dailychukyso-mst-0319122355.html`. **Never hit the live site in
-  a test.** A page that does not describe the requested code (mismatched
-  `taxID`), a malformed JSON-LD block, or renamed labels all yield `null` — never
-  a partial record, never a throw.
-- Verified sample (`0319122355`): CÔNG TY TNHH THƯƠNG MẠI CÔNG NGHỆ HÀ NHI ·
-  `54/16 Đường Số 2, Phường Bình Tân, TP Hồ Chí Minh` · TRẦN LƯƠNG KHÁNH THY ·
-  HA NHI TECHNOLOGY TRADING COMPANY LIMITED.
+  (`legalName`/`name`, `taxID`/`identifier`, `address.streetAddress`, plus
+  `alternateName` = English name and `founder.name` WHEN the entity has them),
+  with a labelled-span fallback (`Tên công ty` / `Mã số thuế` / `Địa chỉ` invoice
+  rows + the `Người đại diện` info-item).
+- **Two entity subtypes, two fixtures.** An enterprise (10-digit) has
+  `alternateName` + `founder`; a **business household** (12-digit) has NEITHER —
+  a subset schema is a LEGITIMATE record, not a parse failure. Both are
+  fixture-tested: `tests/fixtures/dailychukyso-mst-{0319122355,060091003294}.html`.
+- **Parser** — `src/lib/tax-lookup-parse.ts`, PURE (HTML string → record | null).
+  **Never hit the live site in a test.** A page that does not describe the
+  requested code (mismatched `taxID`), a malformed JSON-LD block, or renamed
+  labels all yield `null` — never a partial record, never a throw.
+
+#### STRUCTURAL RULE — labelled fields are read ONLY from the record region
+
+The page also carries a **sitewide stats card** (`MÃ SỐ THUẾ`, `Doanh nghiệp`)
+and a **marketing feature checklist** reading `✓ Người đại diện pháp luật`. A
+whole-document label scan matches those: it stored the checkmark `✓` as the legal
+representative and would print `Người đại diện pháp luật: ✓` on a law firm's site
+as if it were a person (silent wrong data, not a failure). The parser therefore
+reads labels ONLY from the record containers — `recordBlock(html, 'card-info-grid')`
+(the info-items) and `recordBlock(html, 'invoice-section')` (the invoice rows) —
+via a balanced-`<div>` scan. If neither container is found the page is treated as
+unrecognised and returns `null` (it must NEVER fall back to the whole document).
+An absent field is `null` and its row is simply not rendered. The regression test
+`tax-lookup-parse.test.ts → "record-region anchoring"` builds a page whose only
+mention of the representative is a label-classed `✓` entry: `labelledValue` on
+the whole document returns `✓` (the hazard), while `parseTaxRecord` returns
+`null`.
+- **Business households genuinely have NO representative.** Scanned the whole
+  household fixture: no `founder`/owner in the JSON-LD, no `Chủ hộ`/`Giám đốc`/
+  owner row, and the phrase `Người đại diện` occurs exactly ONCE — in the
+  checklist. `englishName` and `representative` are both `null` for a household,
+  by design.
+- **`missingExpectedFields`** decides "partial record" per entity type: a
+  household is complete without englishName/representative (so its lookup logs
+  nothing), an enterprise missing its representative IS partial (warn). Keeps a
+  healthy run quiet.
+- Verified samples: enterprise `0319122355` → CÔNG TY TNHH THƯƠNG MẠI CÔNG NGHỆ
+  HÀ NHI · `54/16 Đường Số 2, Phường Bình Tân, TP Hồ Chí Minh` · TRẦN LƯƠNG
+  KHÁNH THY · HA NHI TECHNOLOGY TRADING COMPANY LIMITED; household `060091003294`
+  → HỘ KINH DOANH ELITARA TECH · `LKB 36, Khu nhà ở U&I An Phú, … Phường An Phú,
+  TP Hồ Chí Minh` · no English name · no representative.
 
 ### The cache — `tax-lookups` collection (server-only writer)
 
@@ -2017,19 +2051,28 @@ window returns the throttle message and makes no outbound request.
 
 ### Verification (2026-10-02)
 
-- `0319122355` renders the real record — rows: Mã số thuế / Tên doanh nghiệp /
-  Tên giao dịch (tiếng Anh) / Địa chỉ / Người đại diện pháp luật / Thời điểm tra
-  cứu.
+- **Enterprise `0319122355`** renders 6 rows: Mã số thuế / Tên / Tên giao dịch
+  (tiếng Anh) / Địa chỉ / Người đại diện pháp luật / Thời điểm tra cứu.
+- **Household `060091003294`** renders 4 rows: Mã số thuế / Tên / Địa chỉ / Thời
+  điểm tra cứu — NO empty "Tên giao dịch" row and **no `✓` anywhere** in the
+  served HTML (`grep` for the checkmark returns false in every state).
 - Cache: 3 requests → 1 `[mst] FETCH` line and `fetched_at` unchanged; a server
-  restart re-served the code from the DB with 0 fetches.
-- Invalid `abc` / `1234567` → Vietnamese alert, 0 outbound requests. `9999999999`
-  (valid, no record) → graceful `Không tìm thấy thông tin cho mã số thuế …`, no
-  empty card, and no source mention anywhere in the served HTML.
+  restart re-served the code from the DB with 0 fetches. The household is
+  likewise cache-served on its second request.
+- Invalid `abc` / `1234567` (and an 11-digit code) → Vietnamese alert, 0
+  outbound requests. `9999999999` (valid, no record) → graceful `Không tìm thấy
+  thông tin cho mã số thuế …`, no empty card, and no source mention anywhere in
+  the served HTML. The two failure messages stay distinct.
 - Rate limit trips on the 6th lookup with no outbound request.
 - `noindex, nofollow` (staging build), exactly one `<h1>`, zero console errors.
-  `pnpm typecheck` clean; `pnpm test` 126/126 (was 107; +19: tax-code 8, parser
-  9, rate-limit 2); `pnpm e2e` 29/29; DB-less `docker build --target runner`
-  exits 0. **No new env var** — `IP_HASH_SALT` already existed.
+  `pnpm typecheck` clean; `pnpm test` **140/140** (was 107 before the feature:
+  +19 for the original, +14 for the household/record-region fix); `pnpm e2e`
+  29/29; DB-less `docker build --target runner` exits 0. **No new env var** —
+  `IP_HASH_SALT` already existed.
+- **Politeness ledger:** the household page was fetched ONCE to make the second
+  fixture, and once more to prove the live parse end-to-end on the served build.
+  No range sweeps, no probing: validation is unit-tested, never exercised
+  against the source.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

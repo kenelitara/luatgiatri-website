@@ -31,7 +31,10 @@ export const TaxLookups: CollectionConfig = {
       label: 'Mã số thuế',
       required: true,
       unique: true,
-      admin: { description: 'Dạng chuẩn hoá: 10 chữ số, hoặc 10 chữ số + 3 chữ số của đơn vị trực thuộc.' },
+      admin: {
+        description:
+          'Dạng chuẩn hoá: 10 chữ số (doanh nghiệp) hoặc 12 chữ số (hộ kinh doanh), kèm 3 chữ số của đơn vị trực thuộc nếu có.',
+      },
     },
     {
       name: 'outcome',

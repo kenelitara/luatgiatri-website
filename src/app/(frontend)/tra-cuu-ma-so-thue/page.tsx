@@ -43,7 +43,7 @@ export const metadata: Metadata = buildMetadata({
  *  - `MSG_DISCLAIMER` — reference-only; the firm does not certify the data
  */
 const MSG_INVALID =
-  'Mã số thuế không hợp lệ. Vui lòng nhập 10 chữ số, hoặc 10 chữ số kèm 3 chữ số của đơn vị trực thuộc (ví dụ: 0319122355 hoặc 0319122355-001).'
+  'Mã số thuế không hợp lệ. Vui lòng nhập 10 chữ số (doanh nghiệp) hoặc 12 chữ số (hộ kinh doanh), kèm 3 chữ số của đơn vị trực thuộc nếu có (ví dụ: 0319122355, 060091003294 hoặc 0319122355-001).'
 const msgNotFound = (mst: string) => `Không tìm thấy thông tin cho mã số thuế ${mst}.`
 const msgUnavailable = (mst: string) =>
   `Hiện chưa tải được dữ liệu cho mã số thuế ${mst}. Vui lòng thử lại sau.`
@@ -67,7 +67,7 @@ function ResultCard({ outcome }: { outcome: Extract<TaxLookupOutcome, { status: 
       <Heading level={2}>{record.name}</Heading>
       <dl className="mt-2 divide-y divide-brand-50">
         <Field label="Mã số thuế" value={record.mst} />
-        <Field label="Tên doanh nghiệp" value={record.name ?? '—'} />
+        <Field label="Tên" value={record.name ?? '—'} />
         {record.englishName ? <Field label="Tên giao dịch (tiếng Anh)" value={record.englishName} /> : null}
         {record.address ? <Field label="Địa chỉ" value={record.address} /> : null}
         {record.representative ? <Field label="Người đại diện pháp luật" value={record.representative} /> : null}
@@ -106,7 +106,7 @@ export default async function TaxLookupPage({
     <section className="mx-auto max-w-3xl px-4 py-section">
       <h1 className="text-3xl font-bold text-brand-900">Tra cứu mã số thuế</h1>
       <p className="mt-2 text-brand-700">
-        Nhập mã số thuế doanh nghiệp để xem thông tin đăng ký: tên, địa chỉ và người đại diện pháp luật.
+        Nhập mã số thuế của doanh nghiệp hoặc hộ kinh doanh để xem thông tin đăng ký.
       </p>
 
       <form action="/tra-cuu-ma-so-thue/" method="get" role="search" className="mt-6 flex flex-col gap-2 sm:flex-row">
@@ -136,7 +136,7 @@ export default async function TaxLookupPage({
 
       {!hasInput ? (
         <p className="mt-6 text-sm text-brand-700">
-          Mã số thuế gồm 10 chữ số, hoặc 10 chữ số kèm 3 chữ số của đơn vị trực thuộc.
+          Mã số thuế gồm 10 chữ số (doanh nghiệp) hoặc 12 chữ số (hộ kinh doanh), kèm 3 chữ số của đơn vị trực thuộc nếu có.
         </p>
       ) : null}
 

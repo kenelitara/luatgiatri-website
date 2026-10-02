@@ -26,6 +26,7 @@ import { hashIp, isRateLimited, TAX_LOOKUP_RATE_LIMIT } from '@/lib/rate-limit'
 import { normalizeTaxCode } from '@/lib/tax-code'
 import {
   isCacheFresh,
+  missingExpectedFields,
   parseTaxRecord,
   taxSourceUrl,
   type TaxRecord,
@@ -172,10 +173,12 @@ export async function lookupTaxCode(rawMst: string, ipHash: string | null): Prom
       bytes: html?.length ?? 0,
     })
   }
-  // A record with holes — the labels the parser reads still exist, but a field
-  // went missing. Warn (not error): we still have something to show.
+  // A record with holes in the fields the ENTITY TYPE should have — warn (not
+  // error): we still have something to show. Fields a household legitimately
+  // lacks (English name, representative) are excluded, so a healthy household
+  // lookup is silent (see expectedFields).
   if (record) {
-    const missing = (['englishName', 'address', 'representative'] as const).filter((k) => !record[k])
+    const missing = missingExpectedFields(record)
     if (missing.length) console.warn('[mst] partial record:', { mst, missing: missing.join(',') })
   }
 
