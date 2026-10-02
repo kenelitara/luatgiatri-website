@@ -33,7 +33,12 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const hero = post.heroImage && typeof post.heroImage === 'object' ? post.heroImage : null
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-section">
+    // max-w-6xl, matching the news index and the category archive: a card
+    // clicked in a 6xl grid must not land on a 3xl page. Widening this is safe
+    // for readability because `.prose` in globals.css caps the BODY text at
+    // 65ch independent of the container — only the title, meta line and hero
+    // image grow.
+    <article className="mx-auto max-w-6xl px-4 py-section">
       <JsonLd
         data={postSchemas({
           title: post.title,
@@ -63,7 +68,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             src={hero.url}
             alt={hero.alt}
             fill
-            sizes="(max-width: 768px) 100vw, 768px"
+            sizes="(max-width: 1152px) 100vw, 1152px"
             className="rounded object-cover"
           />
         </div>
