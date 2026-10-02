@@ -1,5 +1,12 @@
 import type { CSSProperties } from 'react'
 
+import { MessengerIcon, PhoneIcon, ZaloIcon } from '@/components/icons/contact'
+// The icons and the phone/Zalo link rules are shared with the /lien-he/ channel
+// cards — one definition per channel, so the surfaces cannot drift apart.
+import { telHref, zaloHref, ZALO_BASE_URL } from '@/lib/contact-links'
+
+export { ZALO_BASE_URL }
+
 /**
  * FloatingContact — a fixed bottom-right stack of circular quick-contact
  * buttons: Phone, Zalo, Facebook (Messenger). Rendered from
@@ -26,9 +33,6 @@ import type { CSSProperties } from 'react'
  * The component emits NO headings (heading-discipline.spec.ts counts them).
  */
 
-/** Zalo deep-link base. The number appended to it comes from `hotline`. */
-export const ZALO_BASE_URL = 'https://zalo.me'
-
 type Variant = 'phone' | 'zalo' | 'facebook'
 
 type FloatingContactProps = {
@@ -52,70 +56,6 @@ const VARIANT_CLASS: Record<Variant, string> = {
 
 const VARIANT_STYLE: Partial<Record<Variant, CSSProperties>> = {
   facebook: { backgroundImage: 'linear-gradient(135deg, #1877F2 0%, #A033FF 100%)' },
-}
-
-/** strip separators from a dialled number — `tel:` may keep a leading `+` */
-function telDigits(hotline: string): string {
-  return hotline.replace(/[\s.\-()]/g, '')
-}
-
-/** digits only — what zalo.me takes in its path */
-function zaloDigits(hotline: string): string {
-  return hotline.replace(/\D/g, '')
-}
-
-function PhoneIcon() {
-  // Lucide "phone" handset (MIT), drawn as a stroke so it takes currentColor.
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-6 w-6"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  )
-}
-
-function ZaloIcon() {
-  // Zalo's rounded-square logo carries its wordmark; at this size the wordmark
-  // alone is the cleanest recognisable equivalent.
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true" focusable="false">
-      <text
-        x="12"
-        y="16"
-        textAnchor="middle"
-        fontFamily="Arial, Helvetica, sans-serif"
-        fontSize="8.5"
-        fontWeight="700"
-        fill="currentColor"
-      >
-        Zalo
-      </text>
-    </svg>
-  )
-}
-
-function MessengerIcon() {
-  // Messenger glyph: the speech bubble with the lightning bolt knocked out via
-  // fill-rule evenodd (so the button's own colour shows through the bolt). The
-  // client asked for Facebook MESSAGE, not the plain "f".
-  return (
-    <svg viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor" aria-hidden="true" focusable="false">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.301 2.246.464 3.443.464 6.627 0 12-4.974 12-11.111S18.627 0 12 0zm1.191 14.963-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.26L19.752 8.2l-6.561 6.763z"
-      />
-    </svg>
-  )
 }
 
 function FloatingButton({
@@ -153,8 +93,6 @@ function FloatingButton({
 }
 
 export function FloatingContact({ hotline, facebookUrl }: FloatingContactProps) {
-  const phoneHref = `tel:${telDigits(hotline)}`
-  const zaloHref = `${ZALO_BASE_URL}/${zaloDigits(hotline)}`
   const facebookHref = facebookUrl?.trim() || null
 
   return (
@@ -162,10 +100,10 @@ export function FloatingContact({ hotline, facebookUrl }: FloatingContactProps) 
       aria-label="Liên hệ nhanh"
       className="floating-contact fixed bottom-6 right-4 z-[60] flex flex-col items-end gap-3 print:hidden"
     >
-      <FloatingButton href={phoneHref} label="Gọi điện" variant="phone">
+      <FloatingButton href={telHref(hotline)} label="Gọi điện" variant="phone">
         <PhoneIcon />
       </FloatingButton>
-      <FloatingButton href={zaloHref} label="Chat Zalo" variant="zalo" external>
+      <FloatingButton href={zaloHref(hotline)} label="Chat Zalo" variant="zalo" external>
         <ZaloIcon />
       </FloatingButton>
       {facebookHref ? (

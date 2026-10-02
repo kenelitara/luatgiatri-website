@@ -4,56 +4,6 @@
   "primaryHeading": "Liên Hệ Luật Gia Trí",
   "layout": [
     {
-      "blockType": "ctaBanner",
-      "heading": "Liên Hệ Ngay Với Luật Gia Trí",
-      "body": "Chuyên viên tư vấn giàu kinh nghiệm sẵn sàng hỗ trợ mọi vấn đề pháp lý của bạn 24/7",
-      "eyebrow": "Contact"
-    },
-    {
-      "blockType": "richText",
-      "body": {
-        "root": {
-          "type": "root",
-          "version": 0,
-          "children": [
-            {
-              "type": "paragraph",
-              "version": 0,
-              "children": [
-                {
-                  "type": "text",
-                  "version": 0,
-                  "text": "Địa chỉ: 54/16 Đường số 2, quận Bình Tân, TP.HCM"
-                }
-              ]
-            },
-            {
-              "type": "paragraph",
-              "version": 0,
-              "children": [
-                {
-                  "type": "text",
-                  "version": 0,
-                  "text": "Email: luatsu@luatgiatri.com"
-                }
-              ]
-            },
-            {
-              "type": "paragraph",
-              "version": 0,
-              "children": [
-                {
-                  "type": "text",
-                  "version": 0,
-                  "text": "Phone: 0919088119"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "blockType": "formEmbed",
       "heading": "Liên hệ với chúng tôi",
       "intro": "Để lại thông tin, chuyên viên của Luật Gia Trí sẽ liên hệ tư vấn trong thời gian sớm nhất."

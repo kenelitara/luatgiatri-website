@@ -1845,6 +1845,53 @@ Rules for this content:
   hex ObjectID. Payload stores them and the admin/editor and front-end converter
   both handle them (verified 2026-10-02). No seeded Post is dropped on load.
 
+## Bespoke `/lien-he/` layout — cards, click-to-load map, map+form row (2026-10-02)
+
+`/lien-he/` is the ONE route that does not render `<PageShell>` (client request:
+its content is channels + location + form, not prose).
+`src/app/(frontend)/lien-he/page.tsx` renders a purpose-built layout, but keeps
+PageShell's two structural promises — `<JsonLd data={pageSchemas(page)} />` and
+the page's single `<h1>` from `page.primaryHeading` (spec §6.4).
+
+- **Order:** `<h1>` → `ContactChannels` (four tiles: Phone · Zalo · Email ·
+  Messenger) → one two-column row: map LEFT (`LocationCard`), form RIGHT →
+  end. Every value comes from `SiteSettings`, read ONCE by the route and passed
+  down. The map card is FIRST in the DOM, so mobile stacks map-above-form
+  (DOM order === visual order at both breakpoints; flip with `order-*` if the
+  client prefers form-first on mobile). `items-stretch` + `flex-1` +
+  `min-h-[320px]` make the map match the form's height instead of collapsing.
+- **Shared module — `src/lib/contact-links.ts` + `src/components/icons/
+  contact.tsx`.** The floating buttons and the cards import the SAME SVGs
+  (phone, Zalo wordmark, Messenger bubble; the cards add mail + map-pin, same
+  24×24 / stroke-2 family) and the same `telHref`/`zaloHref`/`formatHotline`
+  rules — one definition per channel, so the surfaces cannot drift.
+  `FloatingContact` still exports `ZALO_BASE_URL` (re-export) and its rendered
+  output is unchanged.
+- **The map is CLICK-TO-LOAD** (`src/components/lien-he/MapEmbed.tsx`, a tiny
+  `'use client'` island). An always-on Google iframe sends the visitor's IP to
+  Google and can set Google cookies BEFORE consent — contradicting the Nghị
+  định 13 gate on GA4 and the firm's own privacy policy. So the iframe is not in
+  the DOM until "Xem bản đồ" is clicked: verified **0** google-* requests before
+  the click, the `output=embed` iframe (coords `10.8009031,106.5920852` — the
+  resolved `maps.app.goo.gl/dQeNuXRD6m3fzHgV6`) after. A `<details>` would NOT
+  work: browsers still load an iframe inside a closed one.
+- **`FormEmbedView` gained `variant?: 'section' | 'plain'`.** `'section'` is the
+  default and unchanged (what `<Renderer>` uses on every other page); `'plain'`
+  drops the full-width tinted band + `py-section` so the form sits in the row's
+  right-hand card. Heading/intro still come from the block → still CMS-managed.
+- **Two blocks deleted** from the DB (`pages_blocks_cta_banner` /
+  `pages_blocks_rich_text`, page 8) AND from `seed/content/lien-he.json`:
+  `cta_banner` (its CTA pointed at `/lien-he/` — the page it was on) and
+  `rich_text` (the ported contact info, now rendered from `SiteSettings`). Only
+  `form_embed` remains; a re-seed reproduces that with no duplicates.
+- **Knock-on:** the derived meta description now falls past the removed richText
+  to `primaryHeading` → `"Liên Hệ Luật Gia Trí"` (was `"Địa chỉ: … Email: … Phone:
+  …"`). Cleaner, but still a heading, not a SERP pitch — the `_notes.json`
+  `needsHandWrittenCopy` flag was updated to the new value and stays open.
+  `heading-discipline.spec.ts` and `crawl.spec.ts` both still cover the route.
+- The `#0f908a` focus ring (`.contact-focus`) and the `.map-placeholder`
+  blueprint grid live in `globals.css` beside the floating-contact rules.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

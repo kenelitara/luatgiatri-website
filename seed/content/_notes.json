@@ -88,8 +88,8 @@
     },
     {
       "page": "lien-he",
-      "topic": "contact form",
-      "detail": "The CF7 contact form is M3 scope (Leads) — not ported. The three contact boxes are ported as a richText block with \"label: value\" lines assembled from the raw h3 labels and values. ctaBanner carries the section heading/intro; its ctaLabel/ctaHref are left to the schema defaults (\"Liên hệ ngay\" → /lien-he/)."
+      "topic": "contact page redesign (2026-10-02, client request)",
+      "detail": "The CF7 contact form is M3 scope (Leads) — not ported; it is the ONE layout block left on the page. The original port also carried a ctaBanner (its CTA pointed at /lien-he/ — the page it was already on) and a richText block holding the three contact boxes as \"label: value\" lines. BOTH were removed from the DB and from this fixture on 2026-10-02: the bespoke /lien-he/ layout renders the contact channels (phone/Zalo/email/Messenger) and the address straight from SiteSettings, so the ported richText is no longer the source. `pnpm seed` on a fresh DB therefore reproduces the single-block page."
     },
     {
       "page": "all",
@@ -161,8 +161,8 @@
     "needsHandWrittenCopy": [
       {
         "page": "lien-he",
-        "current": "Địa chỉ: 54/16 Đường số 2, quận Bình Tân, TP.HCM Email: luatsu@luatgiatri.com Phone: 0919088119",
-        "why": "derived from the page's contact richText block — reads as contact details, not a SERP description"
+        "current": "Liên Hệ Luật Gia Trí",
+        "why": "the contact richText block was removed in the 2026-10-02 contact-page redesign, so the derived chain now falls past tier 3 straight to the primaryHeading (the H1). Cleaner than the old \"Địa chỉ: … Email: … Phone: …\" but still a heading, not a SERP pitch — a hand-written seo.metaDescription is still wanted"
       },
       {
         "page": "home",

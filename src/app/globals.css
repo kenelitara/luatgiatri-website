@@ -85,3 +85,26 @@ body:has([role='dialog'][aria-label='Thông báo cookie']) .floating-contact {
     bottom: 7rem; /* clears the single-row desktop banner */
   }
 }
+
+/* ---------------------------------------------------------------------------
+   /lien-he/ bespoke layout (src/components/lien-he/*)
+
+   The contact channel cards, the "Xem bản đồ" button and the directions link
+   all take the same teal focus ring as the floating buttons above — #0f908a is
+   the project's one focus colour (~3.9:1 on white, ~4.1:1 on the navy footer).
+--------------------------------------------------------------------------- */
+.contact-focus:focus-visible {
+  outline: 2px solid #0f908a;
+  outline-offset: 3px;
+}
+
+/* The click-to-load map's placeholder (src/components/lien-he/MapEmbed.tsx).
+   A faint blueprint grid reads as "map, not loaded yet" — and makes no network
+   request, which is the whole point of the consent gate. */
+.map-placeholder {
+  background-color: var(--color-brand-50);
+  background-image:
+    linear-gradient(to right, rgba(0, 33, 71, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 33, 71, 0.06) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
