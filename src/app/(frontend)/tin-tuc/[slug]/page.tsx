@@ -68,6 +68,12 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             src={hero.url}
             alt={hero.alt}
             fill
+            // `preload` (NOT the deprecated `priority` — Next 16.3.6 types mark
+            // `priority` @deprecated in favour of `preload`). The hero is the
+            // page's LCP element and next/image lazy-loads by default, so
+            // without this the largest paint waits on the lazy loader — a real
+            // Core Web Vitals cost on a site whose whole purpose is ranking.
+            preload
             sizes="(max-width: 1152px) 100vw, 1152px"
             className="rounded object-cover"
           />
