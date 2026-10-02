@@ -21,8 +21,26 @@
   --spacing-section: 4rem;
 }
 
+/* Body-text measure. 65ch is the classic readable optimum, but on the article
+   page — whose container is now max-w-6xl (1152px) to match the news index —
+   that left the text column at 703px, ~60% of the container, looking starved
+   beside a 1120px hero image. 75ch is the TOP of the accepted readable range
+   (45–75ch) and takes the column to 811px.
+
+   MEASURED, not assumed: at 16px the rendered line is **78 characters**, not
+   75 — `ch` is the width of the "0" glyph, which is wider than the average
+   character in Vietnamese prose. So 75ch here sits right at the edge of the
+   comfortable range. If it ever needs to feel tighter, 70ch measures ~73
+   characters.
+
+   This is safe as a GLOBAL change because every other `.prose` consumer is
+   already capped by its own container and so is unaffected: RichTextView and
+   FaqView sit in max-w-3xl (736px of content), and ServicePairView's `.prose`
+   is inside a `md:grid-cols-2` column (~560px). Only the article page has a
+   container wider than the cap. Do NOT remove the cap entirely — filling
+   1152px would be ~103 characters per line, well past comfortable reading. */
 .prose {
-  max-width: 65ch;
+  max-width: 75ch;
 }
 
 /* ---------------------------------------------------------------------------
