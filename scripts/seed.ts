@@ -129,7 +129,11 @@ async function main() {
     console.log(`seeded category: ${slug}`)
   }
 
-  // 4. Navigation global — the 8 header links (Task 10).
+  // 4. Navigation global — the 9 header links (Task 10; the tax-code lookup
+  // added 2026-10-02). Order matters: the tool sits with the service links,
+  // leaving "Liên hệ" as the final item — the firm's main conversion gets the
+  // last position. NOTE: this write is UNCONDITIONAL, so re-running the seed
+  // resets the nav to exactly this list; it is the source of truth for the nav.
   await payload.updateGlobal({
     slug: 'navigation',
     data: {
@@ -140,12 +144,13 @@ async function main() {
         { label: 'Kế toán', href: '/dich-vu-ke-toan/' },
         { label: 'Hóa đơn', href: '/hoa-don-dien-tu/' },
         { label: 'Chữ ký số', href: '/chu-ky-so-token/' },
+        { label: 'Tra cứu MST', href: '/tra-cuu-ma-so-thue/' },
         { label: 'Tin tức', href: '/tin-tuc/' },
         { label: 'Liên hệ', href: '/lien-he/' },
       ],
     },
   })
-  console.log('seeded navigation: 8 header links')
+  console.log('seeded navigation: 9 header links')
 
   // 5. SiteSettings global — brand + NAP (footer + schema source of truth).
   // The header logo is uploaded by `seed:media` (its EXTRA_ASSETS entry, hence
