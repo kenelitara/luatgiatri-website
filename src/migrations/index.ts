@@ -8,6 +8,7 @@ import * as migration_20261001_085957 from './20261001_085957';
 import * as migration_20261001_092326 from './20261001_092326';
 import * as migration_20261001_105457 from './20261001_105457';
 import * as migration_20261001_165834_search_vector from './20261001_165834_search_vector';
+import * as migration_20261002_123501_add_tax_lookups from './20261002_123501_add_tax_lookups';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261001_165834_search_vector.up,
     down: migration_20261001_165834_search_vector.down,
-    name: '20261001_165834_search_vector'
+    name: '20261001_165834_search_vector',
+  },
+  {
+    up: migration_20261002_123501_add_tax_lookups.up,
+    down: migration_20261002_123501_add_tax_lookups.down,
+    name: '20261002_123501_add_tax_lookups'
   },
 ];

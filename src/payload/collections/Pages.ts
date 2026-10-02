@@ -69,7 +69,7 @@ export const Pages: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description:
-          'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem, next.',
+          'Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem, tra-cuu-ma-so-thue, next.',
       },
       // A page must never claim a root segment owned by another route (admin,
       // api, og, tin-tuc, tim-kiem, next, …). The dynamic `(frontend)/[slug]`
@@ -78,7 +78,7 @@ export const Pages: CollectionConfig = {
       // lib/reserved-slugs.
       validate: (value: unknown) =>
         typeof value === 'string' && isReservedRootSegment(value)
-          ? `Slug "${value}" trùng với đường dẫn hệ thống (admin, api, og, tin-tuc, tim-kiem, next). Vui lòng chọn slug khác.`
+          ? `Slug "${value}" trùng với đường dẫn hệ thống (admin, api, og, tin-tuc, tim-kiem, tra-cuu-ma-so-thue, next). Vui lòng chọn slug khác.`
           : true,
       hooks: {
         beforeValidate: [

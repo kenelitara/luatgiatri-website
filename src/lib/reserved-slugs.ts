@@ -10,6 +10,8 @@
  *   og                     -> `src/app/og/[...slug]/route.tsx` (generated OG cards)
  *   tin-tuc                -> the news index (`(frontend)/tin-tuc/`)
  *   tim-kiem               -> the search page (`(frontend)/tim-kiem/`)
+ *   tra-cuu-ma-so-thue     -> the tax-code lookup page
+ *                             (`(frontend)/tra-cuu-ma-so-thue/`)
  *   next                   -> Live Preview entry/exit (`(frontend)/next/preview`,
  *                             `(frontend)/next/exit-preview`)
  *   _next                  -> Next.js internals
@@ -26,6 +28,7 @@ export const RESERVED_ROOT_SEGMENTS = [
   'og',
   'tin-tuc',
   'tim-kiem',
+  'tra-cuu-ma-so-thue',
   'next',
   '_next',
   'icon.svg',

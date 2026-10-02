@@ -75,6 +75,7 @@ export interface Config {
     posts: Post;
     redirects: Redirect;
     leads: Lead;
+    'tax-lookups': TaxLookup;
     pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -91,6 +92,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
+    'tax-lookups': TaxLookupsSelect<false> | TaxLookupsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -389,13 +391,40 @@ export interface Lead {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tax-lookups".
+ */
+export interface TaxLookup {
+  id: number;
+  /**
+   * Dạng chuẩn hoá: 10 chữ số, hoặc 10 chữ số + 3 chữ số của đơn vị trực thuộc.
+   */
+  mst: string;
+  /**
+   * parsed-empty = nguồn trả 200 nhưng không đọc được bản ghi (dấu hiệu trang nguồn đổi cấu trúc).
+   */
+  outcome: 'found' | 'notfound' | 'unavailable' | 'parsed-empty';
+  name?: string | null;
+  englishName?: string | null;
+  address?: string | null;
+  representative?: string | null;
+  fetchedAt: string;
+  source: string;
+  /**
+   * Không lưu IP thô — dùng cho giới hạn tần suất.
+   */
+  fetchedByIpHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
   id: number;
   title: string;
   /**
-   * Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem, next.
+   * Giữ nguyên slug cũ khi chuyển nội dung — URL đang dùng không được đổi (spec §6.7). Không dùng các đường dẫn hệ thống: admin, api, og, tin-tuc, tim-kiem, tra-cuu-ma-so-thue, next.
    */
   slug: string;
   /**
@@ -706,6 +735,10 @@ export interface PayloadLockedDocument {
         value: number | Lead;
       } | null)
     | ({
+        relationTo: 'tax-lookups';
+        value: number | TaxLookup;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null);
@@ -961,6 +994,23 @@ export interface LeadsSelect<T extends boolean = true> {
   status?: T;
   internalNotes?: T;
   submittedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tax-lookups_select".
+ */
+export interface TaxLookupsSelect<T extends boolean = true> {
+  mst?: T;
+  outcome?: T;
+  name?: T;
+  englishName?: T;
+  address?: T;
+  representative?: T;
+  fetchedAt?: T;
+  source?: T;
+  fetchedByIpHash?: T;
   updatedAt?: T;
   createdAt?: T;
 }

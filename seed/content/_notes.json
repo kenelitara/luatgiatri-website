@@ -271,5 +271,15 @@
       "value": "(firm task)",
       "why": "logo cho schema Organization/knowledge panel — no logo asset exists yet; the firm uploads it into SiteSettings.logo (JSON-LD logo/image are omitted until then), spec §6.3/§6.9"
     }
+  ],
+  "handover": [
+    {
+      "topic": "Tra cứu mã số thuế — đọc dữ liệu doanh nghiệp từ nguồn thứ ba dailychukyso.com.vn",
+      "status": "CLIENT-ACCEPTED RISK — for the firm's lawyer to review",
+      "detail": "Both official lookups are unusable. tracuunnt.gdt.gov.vn (thuế) serves a captcha and returns HTTP 429 to a parameterised query — a deliberate anti-automation control — and its TLS chain is incomplete. dangkykinhdoanh.gov.vn (đăng ký kinh doanh) is SharePoint, driven by __VIEWSTATE/__REQUESTDIGEST postbacks; the old Timkiemdoanhnghiep.aspx path 404s and there is no usable query interface. The client therefore chose, with EXPLICIT acceptance of the legal risk, to read the record ON DEMAND from https://dailychukyso.com.vn/mst/<mã số thuế> (that site's robots.txt permits the /mst/<code> path; it carries no query string) and display it on our own page /tra-cuu-ma-so-thue/.",
+      "source": "https://dailychukyso.com.vn/mst/<mã số thuế>",
+      "design": "On-demand ONLY, one fetch per code — never bulk, never a background job, never a retry loop. Every result is cached in the Payload collection tax-lookups (server-only writer: access.create is false; migration 20261002_123501_add_tax_lookups) so repeat lookups are served from OUR database. TTL: 30 days for a found record, 24 hours for a negative one, after which a lookup refreshes once. Rate limit: 5 source fetches / 10 minutes / salted-hashed IP (reuses src/lib/rate-limit.ts, the lead-form limiter). The page is noindex,follow and carries an attribution line naming the source and stating the data is for reference and is NOT certified by Luật Gia Trí, plus a link to the source to verify.",
+      "action": "The firm's lawyer should review the arrangement (reading + displaying third-party business-registration data) and confirm it is acceptable. If not, the feature can be disabled by removing the route alone — no other surface depends on it."
+    }
   ]
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { hashIp, isRateLimited, LEAD_RATE_LIMIT } from './rate-limit'
+import { hashIp, isRateLimited, LEAD_RATE_LIMIT, TAX_LOOKUP_RATE_LIMIT } from './rate-limit'
 
 describe('isRateLimited (spec §8)', () => {
   it('allows submissions up to max, then blocks', async () => {
@@ -13,6 +13,19 @@ describe('isRateLimited (spec §8)', () => {
 
   it('defaults to the shared lead config (5 per 10 minutes)', () => {
     expect(LEAD_RATE_LIMIT).toEqual({ windowMinutes: 10, max: 5 })
+  })
+})
+
+describe('tax-code lookup limit (one visitor cannot drive bulk lookups)', () => {
+  it('is 5 source fetches per 10 minutes per hashed IP', () => {
+    expect(TAX_LOOKUP_RATE_LIMIT).toEqual({ windowMinutes: 10, max: 5 })
+  })
+
+  it('trips at the 6th lookup in the window', async () => {
+    for (let count = 0; count < TAX_LOOKUP_RATE_LIMIT.max; count++) {
+      expect(await isRateLimited(async () => count, TAX_LOOKUP_RATE_LIMIT)).toBe(false)
+    }
+    expect(await isRateLimited(async () => TAX_LOOKUP_RATE_LIMIT.max, TAX_LOOKUP_RATE_LIMIT)).toBe(true)
   })
 })
 

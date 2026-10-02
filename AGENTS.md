@@ -1892,6 +1892,145 @@ the page's single `<h1>` from `page.primaryHeading` (spec §6.4).
 - The `#0f908a` focus ring (`.contact-focus`) and the `.map-placeholder`
   blueprint grid live in `globals.css` beside the floating-contact rules.
 
+## Tax-code business lookup — `/tra-cuu-ma-so-thue/` (2026-10-02)
+
+Read this whole section before touching the feature. It is a deliberate,
+client-accepted arrangement with a third-party source, and it is NOT a green
+light for bulk collection.
+
+- **Route** — `(frontend)/tra-cuu-ma-so-thue/page.tsx`: a plain GET form
+  (`?mst=<code>`, works without JS, like `/tim-kiem/`), `export const dynamic =
+  'force-dynamic'`. The lookup runs on the SERVER in the request path and NEVER
+  at build time, so the DB-less production image is unaffected (the build table
+  marks it `ƒ (Dynamic)`).
+- **Reserved slug** — `tra-cuu-ma-so-thue` was added to `RESERVED_ROOT_SEGMENTS`
+  (`src/lib/reserved-slugs.ts`), enforced in BOTH the route (`[slug]` refuses it)
+  and `Pages.slug`'s validation (description + message updated). A CMS page can
+  never collide with it, exactly like `tim-kiem`.
+- **Input handling** — `src/lib/tax-code.ts` (PURE). A code is **10 digits**, or
+  **10 digits + `-` + 3 digits** (a branch / dependent unit). `normalizeTaxCode`
+  strips spaces/dots, maps en/em dashes to `-`, turns a bare 13-digit run into
+  the `10-3` form; `isValidTaxCode` decides. Invalid input → a Vietnamese alert
+  and **NO outbound request**.
+
+### Why the official sources were unusable — DO NOT re-investigate
+
+Both are closed (verified 2026-10-02):
+
+- `tracuunnt.gdt.gov.vn` (tax authority) — serves a **captcha** and returns
+  **HTTP 429** to a parameterised query: a deliberate anti-automation control.
+  Its TLS chain is also incomplete. Never attempt a workaround.
+- `dangkykinhdoanh.gov.vn` (business registration) — SharePoint:
+  `__VIEWSTATE`/`__REQUESTDIGEST` postbacks; the old `Timkiemdoanhnghiep.aspx`
+  path 404s; no usable query interface.
+
+The client therefore chose — with explicit acceptance of the legal risk — to read
+the record **on demand** from `https://dailychukyso.com.vn/mst/<code>` and
+display it on our own page. That site's `robots.txt` PERMITS this path (it
+carries no query string). **Do not expand this into bulk collection.**
+
+### The source and the parser
+
+- `GET https://dailychukyso.com.vn/mst/<code>` → **200**, `text/html`,
+  server-rendered WordPress (~166 KB) — no headless browser needed. A code with
+  no record → **404** (a small "Không tìm thấy MST" page).
+- Data comes from the `application/ld+json` `@graph` Organization node
+  (`legalName`/`name`, `alternateName` = English name, `taxID`/`identifier`,
+  `address.streetAddress`, `founder.name`), with a labelled-span fallback
+  (`Tên công ty` / `Mã số thuế` / `Địa chỉ` invoice rows + the `Người đại diện`
+  info-item).
+- **Parser** — `src/lib/tax-lookup-parse.ts`, PURE (HTML string → record | null),
+  unit-tested against the SAVED real page
+  `tests/fixtures/dailychukyso-mst-0319122355.html`. **Never hit the live site in
+  a test.** A page that does not describe the requested code (mismatched
+  `taxID`), a malformed JSON-LD block, or renamed labels all yield `null` — never
+  a partial record, never a throw.
+- Verified sample (`0319122355`): CÔNG TY TNHH THƯƠNG MẠI CÔNG NGHỆ HÀ NHI ·
+  `54/16 Đường Số 2, Phường Bình Tân, TP Hồ Chí Minh` · TRẦN LƯƠNG KHÁNH THY ·
+  HA NHI TECHNOLOGY TRADING COMPANY LIMITED.
+
+### The cache — `tax-lookups` collection (server-only writer)
+
+- `src/payload/collections/TaxLookups.ts`; migration
+  `20261002_123501_add_tax_lookups` (table `tax_lookups`, `mst` UNIQUE). Fields:
+  `mst`, `outcome`, `name`, `englishName`, `address`, `representative`,
+  `fetchedAt`, `source`, `fetchedByIpHash`.
+- **`access.create: () => false`** — the same server-only-writer lock-out as
+  Leads. The lookup writes through the Local API with `overrideAccess`; the
+  browser can never POST a row.
+- **TTL** — a `found` row is served for **30 days**; a negative row for **24 h**
+  (`isCacheFresh` in `tax-lookup-parse.ts`), so a transient failure cannot stick
+  for 30 days. After TTL the next request refreshes ONCE. EVERY outcome is
+  cached, so a code the source does not know is not re-fetched per visitor.
+- `outcome` keeps apart `notfound` (source has no record — a definitive 404),
+  `unavailable` (OUR failure: network/timeout/status) and `parsed-empty` (200 but
+  nothing parsed — the shape a theme change has). All three read differently to
+  the visitor and are logged differently.
+
+### The fetch — polite by construction (`src/lib/tax-lookup.ts`, server-only)
+
+- One `fetch` per code per TTL, `redirect: 'follow'`,
+  `AbortSignal.timeout(5000)`, a browser-ish UA, `cache: 'no-store'`. Any
+  non-200 / timeout / parse failure degrades to a soft Vietnamese message —
+  never a stack trace and never an empty card. There is deliberately NO link out
+  to the source (client instruction 2026-10-02, see "Indexing & UI" below).
+- One `console.info('[mst] FETCH <url>')` per ACTUAL source request (a cache hit
+  logs nothing), so the "one fetch per code" guarantee is observable in the log.
+- Failure logging (house convention, cf. `[og]`) — one line each, only on its
+  real path, silent on a healthy run:
+  - `[mst] source fetch failed:` (status/reason) — network / non-404 status;
+  - `[mst] source returned 200 but no record parsed — the page shape may have
+    changed:` — **the theme-change signal**, the one that matters most because it
+    would otherwise look identical to "unknown tax code";
+  - `[mst] partial record:` (which fields are missing) — a warn; we still show
+    what we have.
+
+### Rate limit — `TAX_LOOKUP_RATE_LIMIT`
+
+`src/lib/rate-limit.ts` adds `TAX_LOOKUP_RATE_LIMIT = { windowMinutes: 10,
+max: 5 }`, reused through the same `isRateLimited` helper as the lead form and
+counted per **hashed** IP (`hashIp` + `IP_HASH_SALT`; the raw IP is never stored)
+over `tax-lookups` rows whose `fetchedAt` is inside the window. A repeat lookup
+of an already-cached code is served from our DB and does NOT count — the limit
+caps SOURCE fetches, which is the point. Verified: the 6th distinct lookup in the
+window returns the throttle message and makes no outbound request.
+
+### Indexing & UI
+
+- `noindex, follow` via `buildMetadata({ noindex: true })` — a query-parameter
+  result page is thin/duplicate content, exactly like `/tim-kiem/`. In a staging
+  build `buildMetadata` widens it to the wholesale `noindex, nofollow` (the
+  staging contract `crawl.spec.ts` asserts for `/tim-kiem/`).
+- One `<h1>` (`Tra cứu mã số thuế`); the result card's company name is the only
+  `<h2>` (heading law). Brand navy/gold, Be Vietnam Pro, a
+  `mx-auto max-w-3xl px-4 py-section` container.
+- **The source is NOT named or linked on the page (client instruction
+  2026-10-02).** No "Nguồn:" line, no link out, no third-party domain in any
+  title / aria-label / alt / metadata string. The source URL still lives in the
+  DB row and the internal lookup result, and is never rendered.
+- **The reference-only disclaimer is a SEPARATE concern and stays**: the result
+  card carries `Dữ liệu chỉ mang tính tham khảo. Luật Gia Trí không xác nhận tính
+  chính xác của thông tin này.` — a wrong address or representative on a law
+  firm's site is a trust problem regardless of who supplied it. The distinct
+  failure strings (`Không tìm thấy thông tin…` vs `Hiện chưa tải được dữ liệu…`)
+  likewise never name the source.
+
+### Verification (2026-10-02)
+
+- `0319122355` renders the real record — rows: Mã số thuế / Tên doanh nghiệp /
+  Tên giao dịch (tiếng Anh) / Địa chỉ / Người đại diện pháp luật / Thời điểm tra
+  cứu.
+- Cache: 3 requests → 1 `[mst] FETCH` line and `fetched_at` unchanged; a server
+  restart re-served the code from the DB with 0 fetches.
+- Invalid `abc` / `1234567` → Vietnamese alert, 0 outbound requests. `9999999999`
+  (valid, no record) → graceful `Không tìm thấy thông tin cho mã số thuế …`, no
+  empty card, and no source mention anywhere in the served HTML.
+- Rate limit trips on the 6th lookup with no outbound request.
+- `noindex, nofollow` (staging build), exactly one `<h1>`, zero console errors.
+  `pnpm typecheck` clean; `pnpm test` 126/126 (was 107; +19: tax-code 8, parser
+  9, rate-limit 2); `pnpm e2e` 29/29; DB-less `docker build --target runner`
+  exits 0. **No new env var** — `IP_HASH_SALT` already existed.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
